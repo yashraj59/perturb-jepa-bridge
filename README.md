@@ -10,7 +10,7 @@ group-safe splits, PyTorch model modules, losses, metrics, and a synthetic smoke
 training entrypoint.
 
 <p align="center">
-  <img src="docs/architecture.svg" alt="Perturb-JEPA Bridge architecture diagram" width="100%">
+  <img src="docs/architecture-generated.png" alt="Perturb-JEPA Bridge architecture diagram" width="100%">
 </p>
 
 ## Install
@@ -122,3 +122,16 @@ python scripts/evaluate_retrieval_baselines.py \
 - Fluorescence channels can be used as optional teacher targets, but label-free
   model input should remain brightfield or phase contrast.
 - v1 predicts RNA distributions and image embeddings/prototypes, not full images.
+
+## Citation
+
+If you use this work, please cite:
+
+```bibtex
+@software{raj_perturb_jepa_bridge_2026,
+  author = {Raj, Yash},
+  title = {Perturb-JEPA Bridge: Unpaired scRNA-seq and Brightfield Perturbation Modeling},
+  year = {2026},
+  url = {https://github.com/yashraj59/perturb-jepa-bridge}
+}
+```

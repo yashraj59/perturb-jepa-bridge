@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.DS_Store
+
+# Raw public datasets are intentionally downloaded outside version control.
+data/raw/
+data/interim/
+data/processed/

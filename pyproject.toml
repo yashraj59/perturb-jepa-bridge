@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "perturb-jepa-bridge"
+version = "0.1.0"
+description = "Unpaired scRNA-seq and brightfield perturbation modeling scaffold."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "numpy>=1.24",
+  "pandas>=2.0",
+  "torch>=2.1",
+]
+
+[project.optional-dependencies]
+data = [
+  "anndata>=0.10",
+  "scipy>=1.10",
+  "pillow>=10.0",
+]
+dev = [
+  "pytest>=8.0",
+]
+
+[project.scripts]
+perturb-jepa-download = "scripts.download_public_data:main"
+perturb-jepa-build-bf-moa = "scripts.build_bf_moa_manifest:main"
+perturb-jepa-smoke-train = "scripts.train_smoke:main"
+perturb-jepa-train-synthetic = "scripts.train_synthetic:main"
+perturb-jepa-eval-expression = "scripts.evaluate_expression_baselines:main"
+perturb-jepa-eval-retrieval = "scripts.evaluate_retrieval_baselines:main"
+
+[tool.setuptools]
+packages = [
+  "perturb_jepa",
+  "perturb_jepa.data",
+  "perturb_jepa.models",
+  "perturb_jepa.training",
+  "perturb_jepa.evaluation",
+  "scripts",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

@@ -9,6 +9,10 @@ The code is intentionally data-source agnostic. It provides normalized manifests
 group-safe splits, PyTorch model modules, losses, metrics, and a synthetic smoke
 training entrypoint.
 
+<p align="center">
+  <img src="docs/architecture.svg" alt="Perturb-JEPA Bridge architecture diagram" width="100%">
+</p>
+
 ## Install
 
 ```bash

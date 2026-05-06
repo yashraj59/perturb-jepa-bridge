@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="720" viewBox="0 0 1280 720" role="img" aria-labelledby="title desc">
+  <title id="title">Perturb-JEPA Bridge Architecture</title>
+  <desc id="desc">Architecture diagram for unpaired scRNA-seq and brightfield perturbation modeling with modality-specific encoders, condition-level alignment, and counterfactual outputs.</desc>
+  <defs>
+    <linearGradient id="rnaGrad" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#e8f7ee"/>
+      <stop offset="100%" stop-color="#cfeee0"/>
+    </linearGradient>
+    <linearGradient id="imgGrad" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#eaf2ff"/>
+      <stop offset="100%" stop-color="#d4e4ff"/>
+    </linearGradient>
+    <linearGradient id="bridgeGrad" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#fff3dd"/>
+      <stop offset="100%" stop-color="#ffe4ad"/>
+    </linearGradient>
+    <linearGradient id="outGrad" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f4edff"/>
+      <stop offset="100%" stop-color="#e8d9ff"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="11" markerHeight="11" refX="8.5" refY="5.5" orient="auto">
+      <path d="M1,1 L10,5.5 L1,10 Z" fill="#344054"/>
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; }
+      .panel { stroke: #344054; stroke-width: 2.2; rx: 18; }
+      .sub { fill: #ffffff; stroke: #667085; stroke-width: 1.4; rx: 12; }
+      .title { font: 700 30px Arial, sans-serif; fill: #101828; }
+      .section { font: 700 20px Arial, sans-serif; fill: #101828; }
+      .label { font: 600 16px Arial, sans-serif; fill: #1d2939; }
+      .small { font: 14px Arial, sans-serif; fill: #344054; }
+      .tiny { font: 12px Arial, sans-serif; fill: #475467; }
+      .arrow { stroke: #344054; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .dash { stroke: #667085; stroke-width: 2; stroke-dasharray: 7 7; fill: none; marker-end: url(#arrow); }
+      .token { stroke: #667085; stroke-width: 1.2; rx: 6; }
+      .loss { fill: #ecfdf3; stroke: #12b76a; stroke-width: 1.6; rx: 12; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1280" height="720"/>
+  <text x="640" y="54" text-anchor="middle" class="title">Perturb-JEPA Bridge</text>
+  <text x="640" y="83" text-anchor="middle" class="small">Unpaired scRNA-seq and label-free microscopy aligned through perturbation condition bags</text>
+
+  <rect x="40" y="120" width="250" height="500" class="panel" fill="#ffffff"/>
+  <text x="165" y="156" text-anchor="middle" class="section">Data Inputs</text>
+
+  <rect x="65" y="185" width="200" height="145" class="sub" fill="url(#rnaGrad)"/>
+  <text x="165" y="215" text-anchor="middle" class="label">scRNA-seq</text>
+  <text x="88" y="248" class="small">Gene IDs</text>
+  <text x="88" y="274" class="small">Expression values</text>
+  <text x="88" y="300" class="small">Perturbation obs</text>
+  <circle cx="224" cy="249" r="9" fill="#12b76a" opacity="0.8"/>
+  <circle cx="244" cy="270" r="9" fill="#14b8a6" opacity="0.8"/>
+  <circle cx="224" cy="291" r="9" fill="#84cc16" opacity="0.8"/>
+
+  <rect x="65" y="370" width="200" height="145" class="sub" fill="url(#imgGrad)"/>
+  <text x="165" y="400" text-anchor="middle" class="label">Brightfield Images</text>
+  <text x="88" y="433" class="small">FOV or cell crops</text>
+  <text x="88" y="459" class="small">BF z-planes</text>
+  <text x="88" y="485" class="small">Plate/well metadata</text>
+  <rect x="210" y="428" width="32" height="26" fill="#d0d5dd" stroke="#667085"/>
+  <rect x="204" y="438" width="32" height="26" fill="#e4e7ec" stroke="#667085"/>
+  <rect x="198" y="448" width="32" height="26" fill="#f2f4f7" stroke="#667085"/>
+
+  <rect x="340" y="120" width="300" height="500" class="panel" fill="#ffffff"/>
+  <text x="490" y="156" text-anchor="middle" class="section">Modality Encoders</text>
+
+  <rect x="365" y="185" width="250" height="145" class="sub" fill="url(#rnaGrad)"/>
+  <text x="490" y="213" text-anchor="middle" class="label">RNA Transformer</text>
+  <rect x="390" y="240" width="44" height="28" class="token" fill="#d9f99d"/>
+  <rect x="444" y="240" width="44" height="28" class="token" fill="#bbf7d0"/>
+  <rect x="498" y="240" width="44" height="28" class="token" fill="#fef3c7"/>
+  <rect x="552" y="240" width="38" height="28" class="token" fill="#fecaca"/>
+  <text x="490" y="295" text-anchor="middle" class="small">gene embedding + value embedding</text>
+  <text x="490" y="316" text-anchor="middle" class="tiny">masked gene reconstruction + JEPA</text>
+
+  <rect x="365" y="370" width="250" height="145" class="sub" fill="url(#imgGrad)"/>
+  <text x="490" y="398" text-anchor="middle" class="label">Image ViT / ConvNeXt</text>
+  <rect x="408" y="426" width="40" height="34" class="token" fill="#dbeafe"/>
+  <rect x="458" y="426" width="40" height="34" class="token" fill="#bfdbfe"/>
+  <rect x="508" y="426" width="40" height="34" class="token" fill="#e0e7ff"/>
+  <rect x="558" y="426" width="28" height="34" class="token" fill="#fecaca"/>
+  <text x="490" y="486" text-anchor="middle" class="small">masked patches or BF planes</text>
+  <text x="490" y="507" text-anchor="middle" class="tiny">patch reconstruction + EMA teacher</text>
+
+  <rect x="690" y="120" width="300" height="500" class="panel" fill="#ffffff"/>
+  <text x="840" y="156" text-anchor="middle" class="section">Bridge Space</text>
+
+  <rect x="715" y="190" width="250" height="90" class="sub" fill="url(#bridgeGrad)"/>
+  <text x="840" y="220" text-anchor="middle" class="label">Condition Bags</text>
+  <text x="840" y="248" text-anchor="middle" class="small">perturbation | dose | time | cell line</text>
+  <text x="840" y="269" text-anchor="middle" class="tiny">no cell-image pairing required</text>
+
+  <rect x="715" y="315" width="250" height="120" class="sub" fill="#ffffff"/>
+  <text x="840" y="345" text-anchor="middle" class="label">Shared Latent</text>
+  <text x="755" y="378" class="small">z_state</text>
+  <text x="755" y="405" class="small">z_response</text>
+  <text x="860" y="378" class="small">z_perturbation</text>
+  <path d="M740 389 C790 350, 860 350, 920 389" stroke="#f79009" stroke-width="3" fill="none"/>
+  <path d="M740 401 C795 440, 865 440, 920 401" stroke="#12b76a" stroke-width="3" fill="none"/>
+
+  <rect x="715" y="470" width="250" height="95" class="loss"/>
+  <text x="840" y="501" text-anchor="middle" class="label">Alignment Losses</text>
+  <text x="840" y="529" text-anchor="middle" class="small">InfoNCE + MMD/OT prototypes</text>
+  <text x="840" y="550" text-anchor="middle" class="tiny">batch adversary preserves perturbation signal</text>
+
+  <rect x="1030" y="120" width="210" height="500" class="panel" fill="#ffffff"/>
+  <text x="1135" y="156" text-anchor="middle" class="section">Outputs</text>
+
+  <rect x="1055" y="195" width="160" height="80" class="sub" fill="url(#outGrad)"/>
+  <text x="1135" y="226" text-anchor="middle" class="label">Counterfactual RNA</text>
+  <text x="1135" y="253" text-anchor="middle" class="small">gene distribution</text>
+
+  <rect x="1055" y="315" width="160" height="80" class="sub" fill="url(#outGrad)"/>
+  <text x="1135" y="346" text-anchor="middle" class="label">Image Prototype</text>
+  <text x="1135" y="373" text-anchor="middle" class="small">BF embedding</text>
+
+  <rect x="1055" y="435" width="160" height="105" class="sub" fill="#ffffff"/>
+  <text x="1135" y="466" text-anchor="middle" class="label">Evaluation</text>
+  <text x="1135" y="494" text-anchor="middle" class="small">delta metrics</text>
+  <text x="1135" y="516" text-anchor="middle" class="small">retrieval mAP</text>
+
+  <path class="arrow" d="M265 258 H360"/>
+  <path class="arrow" d="M265 443 H360"/>
+  <path class="arrow" d="M615 258 C650 258, 655 230, 710 230"/>
+  <path class="arrow" d="M615 443 C660 443, 660 395, 710 385"/>
+  <path class="arrow" d="M965 375 H1025"/>
+  <path class="arrow" d="M965 375 C1008 375, 1005 235, 1050 235"/>
+  <path class="arrow" d="M965 375 C1008 375, 1005 355, 1050 355"/>
+  <path class="dash" d="M490 330 C490 345, 510 345, 510 330"/>
+  <path class="dash" d="M490 515 C490 530, 510 530, 510 515"/>
+
+  <text x="505" y="352" class="tiny">EMA teacher</text>
+  <text x="505" y="537" class="tiny">EMA teacher</text>
+  <text x="640" y="658" text-anchor="middle" class="tiny">Training objective: masked reconstruction + JEPA + condition-bag alignment + perturbation classification + counterfactual distribution loss</text>
+</svg>

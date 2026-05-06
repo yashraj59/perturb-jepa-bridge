@@ -64,6 +64,69 @@ def test_evaluate_expression_baselines_cli_writes_grouped_report(tmp_path):
     assert set(report["group"]) == {"overall", "drugA", "drugB"}
 
 
+def test_evaluate_expression_baselines_cli_supports_cell_line_transfer_grouping(tmp_path):
+    train_expression = np.array(
+        [
+            [1.0, 1.0],
+            [3.0, 1.0],
+            [5.0, 1.0],
+        ]
+    )
+    eval_expression = np.array(
+        [
+            [4.0, 1.0],
+            [4.0, 2.0],
+        ]
+    )
+    train_metadata = pd.DataFrame(
+        {
+            "perturbation": ["DMSO", "drugA", "drugA"],
+            "perturbation_type": ["control", "compound", "compound"],
+            "cell_line": ["U2OS", "U2OS", "U2OS"],
+        }
+    )
+    eval_metadata = pd.DataFrame(
+        {
+            "perturbation": ["drugA", "drugA"],
+            "perturbation_type": ["compound", "compound"],
+            "cell_line": ["U2OS", "A549"],
+        }
+    )
+    train_expression_path = tmp_path / "train_expression.npy"
+    eval_expression_path = tmp_path / "eval_expression.npy"
+    train_metadata_path = tmp_path / "train_metadata.csv"
+    eval_metadata_path = tmp_path / "eval_metadata.csv"
+    output_path = tmp_path / "transfer_metrics.csv"
+    np.save(train_expression_path, train_expression)
+    np.save(eval_expression_path, eval_expression)
+    train_metadata.to_csv(train_metadata_path, index=False)
+    eval_metadata.to_csv(eval_metadata_path, index=False)
+
+    exit_code = expression_main(
+        [
+            "--train-expression",
+            str(train_expression_path),
+            "--train-metadata",
+            str(train_metadata_path),
+            "--eval-expression",
+            str(eval_expression_path),
+            "--eval-metadata",
+            str(eval_metadata_path),
+            "--report-groupby",
+            "cell_line_transfer,cell_line",
+            "--topk",
+            "1",
+            "--output",
+            str(output_path),
+        ]
+    )
+
+    report = pd.read_csv(output_path)
+    assert exit_code == 0
+    assert set(report["cell_line_transfer"].dropna()) == {"seen", "held_out"}
+    assert set(report["group"]) == {"overall", "held_out|A549", "seen|U2OS"}
+
+
 def test_evaluate_retrieval_baselines_cli_writes_centroid_and_shuffle_rows(tmp_path):
     embeddings = np.eye(3)
     metadata = pd.DataFrame({"condition_key": ["a", "b", "c"]})

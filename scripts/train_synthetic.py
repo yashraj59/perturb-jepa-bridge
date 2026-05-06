@@ -38,6 +38,8 @@ def main() -> None:
         model,
         optimizer,
         weights=config.loss,
+        schedule=config.training.objective_schedule,
+        uncertainty_weighting=config.training.uncertainty_weighting,
         ema_decay=config.training.ema_decay,
         device=device,
         grad_clip_norm=config.training.grad_clip_norm,

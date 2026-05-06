@@ -77,6 +77,11 @@ python scripts/train_synthetic.py \
   --checkpoint-out checkpoints/synthetic.pt
 ```
 
+The config-driven trainer supports reconstruction warmup/annealing and optional
+Kendall uncertainty weighting. Set `training.objective_schedule.enabled=true`
+to warm up reconstruction-only training before ramping in JEPA, alignment,
+counterfactual, and adversarial terms.
+
 ## Baseline Evaluation
 
 Expression baselines expect `.npy` expression matrices and CSV metadata:
@@ -105,15 +110,31 @@ python scripts/evaluate_retrieval_baselines.py \
 
 - `perturb_jepa.data.schema`: metadata validation and condition keys.
 - `perturb_jepa.data.conditions`: metadata vocabularies, condition bags, and prototypes.
+- `perturb_jepa.data.sampling`: stratified hard-negative sampling for nuisance-matched InfoNCE.
 - `perturb_jepa.data.scrna`: `SCRNATokenDataset` and collator for masked gene batches.
 - `perturb_jepa.data.images`: `ImageManifestDataset` and collator for label-free image batches.
 - `perturb_jepa.data.splits`: group-safe train/val/test splits.
 - `perturb_jepa.models.bridge`: dual encoder model with EMA teachers.
-- `perturb_jepa.losses`: masked reconstruction, JEPA, InfoNCE, MMD.
+- `perturb_jepa.losses`: masked reconstruction, JEPA, hierarchical InfoNCE, sliced Wasserstein, MMD.
 - `perturb_jepa.training.trainer`: trainer loop, loss assembly, optimizer steps, and EMA updates.
+- `perturb_jepa.training.objectives`: staged objective schedules and Kendall uncertainty weighting.
 - `perturb_jepa.training.checkpoint`: checkpoint save/load helpers.
-- `perturb_jepa.evaluation.metrics`: RNA/image/cross-modal retrieval metrics.
+- `perturb_jepa.evaluation.metrics`: RNA/image/cross-modal retrieval, DE recovery, and dose monotonicity metrics.
 - `perturb_jepa.evaluation.baselines`: control mean, perturbation mean, centroid retrieval, and label-shuffle controls.
+
+## Recommendation-Driven Features
+
+- Hierarchical condition bags are added at coarse, medium, and fine resolution:
+  `condition_key_coarse`, `condition_key_medium`, `condition_key_fine`, plus
+  the legacy `condition_key` alias for fine conditions.
+- Alignment can use multi-resolution InfoNCE and sliced Wasserstein bag losses,
+  so bags keep distributional spread instead of collapsing only to centroids.
+- The bridge model uses a gated additive counterfactual form,
+  `delta_z = gate(z_state, e_pert) * W(e_pert)`, with cycle consistency.
+- `z_state` has perturbation and batch adversaries; `z_response` keeps the
+  perturbation classifier and a lightweight bottleneck penalty.
+- Evaluation includes held-out perturbation reporting, cell-line transfer
+  status, top-k differential-expression recovery, and dose-response monotonicity.
 
 ## Design Guardrails
 

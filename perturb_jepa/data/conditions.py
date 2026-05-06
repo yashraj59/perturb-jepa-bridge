@@ -7,7 +7,12 @@ from typing import Iterable, Mapping, Sequence
 import numpy as np
 import pandas as pd
 
-from perturb_jepa.data.schema import add_condition_key, normalize_value
+from perturb_jepa.data.schema import (
+    CONDITION_KEY_OUTPUT_COLUMNS_BY_LEVEL,
+    add_condition_key,
+    condition_key_columns,
+    normalize_value,
+)
 
 
 _NUMERIC_RE = re.compile(r"[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?")
@@ -137,7 +142,15 @@ def build_condition_bags(
     sort: bool = True,
 ) -> ConditionBags:
     if key_col not in frame.columns:
-        frame = add_condition_key(frame, output_col=key_col)
+        columns = next(
+            (
+                condition_key_columns(level)
+                for level, output_col in CONDITION_KEY_OUTPUT_COLUMNS_BY_LEVEL.items()
+                if output_col == key_col
+            ),
+            condition_key_columns("fine"),
+        )
+        frame = add_condition_key(frame, columns=columns, output_col=key_col)
     grouped = frame.reset_index(drop=True).groupby(key_col, sort=sort).indices
     indices = {normalize_value(key): np.asarray(value, dtype=np.int64) for key, value in grouped.items()}
     keys = list(indices)

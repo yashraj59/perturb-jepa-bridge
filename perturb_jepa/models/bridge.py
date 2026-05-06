@@ -51,6 +51,13 @@ class PerturbJEPABridge(nn.Module):
             depth=2,
             dropout=config.dropout,
         )
+        self.state_perturbation_adversary = MLP(
+            config.shared_dim,
+            config.shared_dim,
+            config.perturbation.num_perturbations,
+            depth=2,
+            dropout=config.dropout,
+        )
         self.batch_adversary = MLP(
             config.shared_dim,
             config.shared_dim,
@@ -58,13 +65,14 @@ class PerturbJEPABridge(nn.Module):
             depth=2,
             dropout=config.dropout,
         )
-        self.counterfactual_delta = MLP(
+        self.delta_gate = MLP(
             config.shared_dim + config.perturbation.dim,
             config.shared_dim,
             config.shared_dim,
             depth=3,
             dropout=config.dropout,
         )
+        self.delta_effect = nn.Linear(config.perturbation.dim, config.shared_dim)
         self.rna_distribution_decoder = MLP(
             config.shared_dim,
             config.shared_dim,
@@ -107,6 +115,12 @@ class PerturbJEPABridge(nn.Module):
             time,
             descriptor=descriptor,
         )
+
+    def predict_delta(self, z_state: torch.Tensor, perturbation_embedding: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        gate = torch.sigmoid(self.delta_gate(torch.cat((z_state, perturbation_embedding), dim=-1)))
+        base_delta = self.delta_effect(perturbation_embedding)
+        delta = gate * base_delta
+        return delta, gate, base_delta
 
     def forward(
         self,
@@ -154,6 +168,9 @@ class PerturbJEPABridge(nn.Module):
                     "rna_state": rna_state,
                     "rna_response": rna_response,
                     "rna_perturbation_logits": self.perturbation_classifier(rna_response),
+                    "rna_state_perturbation_logits": self.state_perturbation_adversary(
+                        gradient_reverse(rna_state, scale=self.config.adversary_scale)
+                    ),
                     "rna_batch_logits": self.batch_adversary(
                         gradient_reverse(rna_state, scale=self.config.adversary_scale)
                     ),
@@ -178,6 +195,9 @@ class PerturbJEPABridge(nn.Module):
                     "image_state": image_state,
                     "image_response": image_response,
                     "image_perturbation_logits": self.perturbation_classifier(image_response),
+                    "image_state_perturbation_logits": self.state_perturbation_adversary(
+                        gradient_reverse(image_state, scale=self.config.adversary_scale)
+                    ),
                     "image_batch_logits": self.batch_adversary(
                         gradient_reverse(image_state, scale=self.config.adversary_scale)
                     ),
@@ -188,14 +208,22 @@ class PerturbJEPABridge(nn.Module):
         if shared_for_state is not None:
             z_state = self.state_head(shared_for_state)
             z_response = self.response_head(shared_for_state)
-            delta = self.counterfactual_delta(torch.cat((z_state, perturbation), dim=-1))
+            delta, delta_gate, delta_base = self.predict_delta(z_state, perturbation)
             z_counterfactual = z_state + delta
+            reverse_delta, reverse_gate, reverse_base = self.predict_delta(z_counterfactual, -perturbation)
+            z_cycle = z_counterfactual + reverse_delta
             outputs.update(
                 {
                     "z_state": z_state,
                     "z_response": z_response,
                     "z_counterfactual": z_counterfactual,
                     "counterfactual_delta": delta,
+                    "counterfactual_gate": delta_gate,
+                    "counterfactual_base_delta": delta_base,
+                    "cycle_reconstruction": z_cycle,
+                    "cycle_delta": reverse_delta,
+                    "cycle_gate": reverse_gate,
+                    "cycle_base_delta": reverse_base,
                     "counterfactual_rna": self.rna_distribution_decoder(z_counterfactual),
                     "counterfactual_image": self.image_prototype_decoder(z_counterfactual),
                 }

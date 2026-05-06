@@ -60,6 +60,44 @@ class OptimizerConfig:
 
 
 @dataclass(frozen=True)
+class ObjectiveScheduleConfig:
+    enabled: bool = False
+    reconstruction_warmup_steps: int = 0
+    reconstruction_anneal_steps: int = 0
+    reconstruction_final_scale: float = 1.0
+    warmup_non_reconstruction_scale: float = 0.0
+
+    def __post_init__(self) -> None:
+        if self.reconstruction_warmup_steps < 0:
+            raise ValueError("reconstruction_warmup_steps must be non-negative")
+        if self.reconstruction_anneal_steps < 0:
+            raise ValueError("reconstruction_anneal_steps must be non-negative")
+        if self.reconstruction_final_scale < 0.0:
+            raise ValueError("reconstruction_final_scale must be non-negative")
+        if self.warmup_non_reconstruction_scale < 0.0:
+            raise ValueError("warmup_non_reconstruction_scale must be non-negative")
+
+
+@dataclass(frozen=True)
+class KendallUncertaintyConfig:
+    enabled: bool = False
+    term_names: tuple[str, ...] = ()
+    initial_log_variance: float = 0.0
+    loss_scale: float = 0.5
+    regularizer_scale: float = 0.5
+
+    def __post_init__(self) -> None:
+        term_names = tuple(self.term_names)
+        if len(set(term_names)) != len(term_names):
+            raise ValueError("term_names must not contain duplicates")
+        if self.loss_scale < 0.0:
+            raise ValueError("loss_scale must be non-negative")
+        if self.regularizer_scale < 0.0:
+            raise ValueError("regularizer_scale must be non-negative")
+        object.__setattr__(self, "term_names", term_names)
+
+
+@dataclass(frozen=True)
 class TrainingConfig:
     steps: int = 2
     device: str = "cpu"
@@ -67,6 +105,8 @@ class TrainingConfig:
     ema_decay: float = 0.996
     grad_clip_norm: float | None = None
     log_every: int = 1
+    objective_schedule: ObjectiveScheduleConfig = field(default_factory=ObjectiveScheduleConfig)
+    uncertainty_weighting: KendallUncertaintyConfig = field(default_factory=KendallUncertaintyConfig)
 
 
 @dataclass(frozen=True)
@@ -159,6 +199,21 @@ def _dataclass_from_mapping(cls: type[Any], data: Mapping[str, Any], *, default:
     kwargs = {key: value for key, value in merged.items() if key in field_names}
     if cls is OptimizerConfig and "betas" in kwargs:
         kwargs["betas"] = tuple(kwargs["betas"])
+    if cls is TrainingConfig:
+        if "schedule" in merged and "objective_schedule" not in merged:
+            kwargs["objective_schedule"] = merged["schedule"]
+        kwargs["objective_schedule"] = _dataclass_from_mapping(
+            ObjectiveScheduleConfig,
+            kwargs.get("objective_schedule", {}),
+            default=TrainingConfig().objective_schedule,
+        )
+        kwargs["uncertainty_weighting"] = _dataclass_from_mapping(
+            KendallUncertaintyConfig,
+            kwargs.get("uncertainty_weighting", {}),
+            default=TrainingConfig().uncertainty_weighting,
+        )
+    if cls is KendallUncertaintyConfig and "term_names" in kwargs:
+        kwargs["term_names"] = tuple(kwargs["term_names"])
     return cls(**kwargs)
 
 

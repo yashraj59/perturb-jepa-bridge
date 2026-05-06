@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable, Mapping, Sequence
+from typing import Iterable, Literal, Mapping, Sequence
 
 import pandas as pd
 
@@ -39,6 +39,28 @@ CONDITION_COLUMNS = (
     "time",
     "cell_line",
 )
+
+COARSE_CONDITION_COLUMNS = ("perturbation",)
+
+MEDIUM_CONDITION_COLUMNS = ("perturbation", "dose", "time")
+
+FINE_CONDITION_COLUMNS = CONDITION_COLUMNS
+
+CONDITION_KEY_LEVELS = ("coarse", "medium", "fine")
+
+ConditionKeyLevel = Literal["coarse", "medium", "fine"]
+
+CONDITION_KEY_COLUMNS_BY_LEVEL: dict[str, tuple[str, ...]] = {
+    "coarse": COARSE_CONDITION_COLUMNS,
+    "medium": MEDIUM_CONDITION_COLUMNS,
+    "fine": FINE_CONDITION_COLUMNS,
+}
+
+CONDITION_KEY_OUTPUT_COLUMNS_BY_LEVEL: dict[str, str] = {
+    "coarse": "condition_key_coarse",
+    "medium": "condition_key_medium",
+    "fine": "condition_key_fine",
+}
 
 DEFAULT_METADATA = {
     "perturbation": "unknown",
@@ -94,6 +116,30 @@ def normalize_value(value: object) -> str:
     return text
 
 
+def condition_key_columns(level: str = "fine") -> tuple[str, ...]:
+    try:
+        return CONDITION_KEY_COLUMNS_BY_LEVEL[level]
+    except KeyError as exc:
+        raise ValueError(f"unknown condition key level {level!r}; expected one of {CONDITION_KEY_LEVELS}") from exc
+
+
+def condition_key_output_column(level: str = "fine") -> str:
+    try:
+        return CONDITION_KEY_OUTPUT_COLUMNS_BY_LEVEL[level]
+    except KeyError as exc:
+        raise ValueError(f"unknown condition key level {level!r}; expected one of {CONDITION_KEY_LEVELS}") from exc
+
+
+def format_condition_key(
+    row: Mapping[str, object],
+    *,
+    level: str = "fine",
+    columns: Sequence[str] | None = None,
+) -> str:
+    key_columns = tuple(columns) if columns is not None else condition_key_columns(level)
+    return "|".join(normalize_value(row.get(column, DEFAULT_METADATA.get(column, "NA"))) for column in key_columns)
+
+
 def assert_columns(frame: pd.DataFrame, required: Iterable[str], *, name: str) -> None:
     missing = [column for column in required if column not in frame.columns]
     if missing:
@@ -127,15 +173,33 @@ def add_condition_key(
     assert_columns(frame, columns, name="condition metadata")
     keyed = frame.copy()
     keyed[output_col] = keyed.apply(
-        lambda row: ConditionKey.from_mapping({column: row[column] for column in columns}).as_string(),
+        lambda row: format_condition_key(row, columns=columns),
         axis=1,
     )
     return keyed
 
 
+def add_hierarchical_condition_keys(
+    frame: pd.DataFrame,
+    *,
+    levels: Sequence[str] = CONDITION_KEY_LEVELS,
+    output_cols: Mapping[str, str] | None = None,
+    include_legacy_fine: bool = True,
+) -> pd.DataFrame:
+    keyed = frame.copy()
+    output_columns = {**CONDITION_KEY_OUTPUT_COLUMNS_BY_LEVEL, **(output_cols or {})}
+    for level in levels:
+        columns = condition_key_columns(level)
+        output_col = output_columns[level]
+        keyed = add_condition_key(keyed, columns=columns, output_col=output_col)
+        if include_legacy_fine and level == "fine" and output_col != "condition_key":
+            keyed["condition_key"] = keyed[output_col]
+    return keyed
+
+
 def normalize_scrna_obs(obs: pd.DataFrame) -> pd.DataFrame:
     normalized = normalize_metadata_frame(obs, SCRNA_OBS_COLUMNS, name="AnnData.obs")
-    return add_condition_key(normalized)
+    return add_hierarchical_condition_keys(normalized)
 
 
 def normalize_scrna_var(var: pd.DataFrame) -> pd.DataFrame:
@@ -159,4 +223,4 @@ def normalize_image_manifest(frame: pd.DataFrame) -> pd.DataFrame:
         defaults={"perturbation_type": "unknown"},
         name="image manifest",
     )
-    return add_condition_key(normalized)
+    return add_hierarchical_condition_keys(normalized)

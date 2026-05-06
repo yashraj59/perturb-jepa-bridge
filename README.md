@@ -128,7 +128,7 @@ python scripts/evaluate_retrieval_baselines.py \
 If you use this work, please cite:
 
 ```bibtex
-@software{raj_perturb_jepa_bridge_2026,
+@software{perturb_jepa,
   author = {Raj, Yash},
   title = {Perturb-JEPA Bridge: Unpaired scRNA-seq and Brightfield Perturbation Modeling},
   year = {2026},

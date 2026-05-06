@@ -77,6 +77,21 @@ python scripts/train_synthetic.py \
   --checkpoint-out checkpoints/synthetic.pt
 ```
 
+## Google Colab
+
+An end-to-end Colab notebook is available at
+`notebooks/perturb_jepa_colab_end_to_end.ipynb`. It clones the repo, installs
+dependencies, optionally downloads public data assets, runs all synthetic
+training stages, evaluates retrieval and counterfactual metrics, and saves
+checkpoints/metrics artifacts.
+
+Open it in Colab, set `REPO_URL` to your pushed GitHub repo, and run top to
+bottom:
+
+```text
+notebooks/perturb_jepa_colab_end_to_end.ipynb
+```
+
 The config-driven trainer supports reconstruction warmup/annealing and optional
 Kendall uncertainty weighting. Set `training.objective_schedule.enabled=true`
 to warm up reconstruction-only training before ramping in JEPA, alignment,
@@ -106,6 +121,56 @@ python scripts/evaluate_retrieval_baselines.py \
   --output retrieval_baselines.csv
 ```
 
+## Leakage-safe Perturb-JEPA Bridge
+
+Perturb-JEPA should be evaluated as an unpaired, condition-level bridge. Retrieval
+scores use RNA and image embeddings only; metadata is reserved for relevance
+labels, stratification, and leakage diagnostics. Report RNA->image and image->RNA
+Recall@1/5/10, mAP, median rank, same-MoA enrichment when MoA labels are present,
+same-perturbation enrichment, and stratified slices for batch, perturbation, dose,
+time, and cell line.
+
+RNA cells and microscopy fields are not assumed to be cell-paired or sample-paired.
+The bridge aligns biological condition bags, where the biological key is
+`perturbation`, `dose`, `time`, and `cell_line`. Technical fields including
+`batch`, `plate`, `run`, `well`, `site`, `z_plane`, `sequencing_lane`, and
+`library_id` are treated as nuisance metadata and must not enter the biological
+condition key or encoder inputs.
+
+Counterfactual predictions are distributional condition-bag predictions, not
+individual-cell counterfactual matches. The response module predicts treated
+prototype distributions relative to control prototype distributions and reports
+uncertainty. Retrieval uses learned RNA/image embeddings only; condition labels
+and metadata are used after scoring for ground truth and diagnostics. Metadata-only
+and batch-only baselines must be reported next to learned retrieval metrics.
+
+Three lightweight baselines are included:
+
+- `metadata_only_retrieval`: scores only `perturbation`, `dose`, `time`, and
+  `cell_line` to expose how much retrieval can be solved by condition metadata.
+- `batch_only_baseline`: scores only technical metadata such as batch, plate,
+  run, well, site, z-plane, sequencing lane, and library ID to reveal acquisition
+  leakage.
+- `mean_prototype_alignment`: predicts target-space condition prototypes from
+  target metadata groups and evaluates retrieval from those mean prototypes.
+
+Counterfactual evaluation is split by modality. RNA reports pseudobulk
+correlation, logFC correlation, top-k DE overlap, direction accuracy, optional
+pathway score correlation, and latent MMD under condition, perturbation,
+dose-time, or held-out perturbation grouping. Image embeddings report distance to
+the observed bag embedding, true-condition retrieval rank, replicate correlation,
+dose/time ordering accuracy, and same-MoA enrichment.
+
+Stage entrypoints are available for smokeable scaffolds:
+
+```bash
+python scripts/train_pretrain_rna.py --synthetic --steps 1
+python scripts/train_pretrain_image.py --synthetic --steps 1
+python scripts/train_bridge.py --synthetic --steps 1
+python scripts/train_counterfactual.py --synthetic --steps 1
+python scripts/train_finetune.py --synthetic --steps 1
+```
+
 ## Main Modules
 
 - `perturb_jepa.data.schema`: metadata validation and condition keys.
@@ -120,7 +185,11 @@ python scripts/evaluate_retrieval_baselines.py \
 - `perturb_jepa.training.objectives`: staged objective schedules and Kendall uncertainty weighting.
 - `perturb_jepa.training.checkpoint`: checkpoint save/load helpers.
 - `perturb_jepa.evaluation.metrics`: RNA/image/cross-modal retrieval, DE recovery, and dose monotonicity metrics.
+- `perturb_jepa.evaluation.retrieval`: leakage-safe cross-modal retrieval and enrichment metrics.
+- `perturb_jepa.evaluation.rna_counterfactual`: RNA counterfactual profile metrics.
+- `perturb_jepa.evaluation.image_counterfactual`: image embedding counterfactual metrics.
 - `perturb_jepa.evaluation.baselines`: control mean, perturbation mean, centroid retrieval, and label-shuffle controls.
+- `perturb_jepa.baselines`: metadata-only, batch-only, and mean-prototype bridge baselines.
 
 ## Recommendation-Driven Features
 
@@ -131,8 +200,9 @@ python scripts/evaluate_retrieval_baselines.py \
   so bags keep distributional spread instead of collapsing only to centroids.
 - The bridge model uses a gated additive counterfactual form,
   `delta_z = gate(z_state, e_pert) * W(e_pert)`, with cycle consistency.
-- `z_state` has perturbation and batch adversaries; `z_response` keeps the
-  perturbation classifier and a lightweight bottleneck penalty.
+- Shared bag embeddings use batch adversarial removal for technical nuisance
+  labels; perturbation, dose, time, and cell line are not adversarially removed
+  by default.
 - Evaluation includes held-out perturbation reporting, cell-line transfer
   status, top-k differential-expression recovery, and dose-response monotonicity.
 

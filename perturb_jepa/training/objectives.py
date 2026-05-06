@@ -17,6 +17,7 @@ BRIDGE_LOSS_TERM_WEIGHTS = {
     "rna_jepa": "jepa",
     "image_jepa": "jepa",
     "align": "align",
+    "mmd": "mmd",
     "sliced_wasserstein": "sliced_wasserstein",
     "rna_perturbation_cls": "perturbation_cls",
     "image_perturbation_cls": "perturbation_cls",

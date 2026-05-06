@@ -9,6 +9,11 @@ from perturb_jepa.data.conditions import (
     parse_metadata_float,
     prototype_lookup_indices,
 )
+from perturb_jepa.data.condition_bags import (
+    ImageConditionBagDataset,
+    PairedConditionBagDataset,
+    RNAConditionBagDataset,
+)
 from perturb_jepa.data.images import ImageManifestBatch, ImageManifestCollator, ImageManifestDataset
 from perturb_jepa.data.sampling import (
     HardNegativeCandidates,
@@ -19,11 +24,24 @@ from perturb_jepa.data.sampling import (
     sample_stratified_hard_negatives,
     stratified_hard_negative_candidates,
 )
+from perturb_jepa.data.splits import (
+    heldout_batch_split,
+    heldout_cell_line_split,
+    heldout_dose_time_split,
+    heldout_moa_split,
+    heldout_perturbation_split,
+    random_sample_split,
+)
 from perturb_jepa.data.schema import (
+    MetadataSchema,
     add_hierarchical_condition_keys,
     condition_key_columns,
     condition_key_output_column,
     format_condition_key,
+    make_bio_key,
+    make_condition_id,
+    make_tech_key,
+    validate_metadata_columns,
 )
 from perturb_jepa.data.scrna import SCRNATokenBatch, SCRNATokenCollator, SCRNATokenDataset
 
@@ -34,10 +52,14 @@ __all__ = [
     "HardNegativeSamples",
     "ImageManifestBatch",
     "ImageManifestCollator",
+    "ImageConditionBagDataset",
     "ImageManifestDataset",
     "MISSING_NEGATIVE_INDEX",
     "MetadataVocab",
+    "MetadataSchema",
     "NUISANCE_COLUMNS",
+    "PairedConditionBagDataset",
+    "RNAConditionBagDataset",
     "SCRNATokenBatch",
     "SCRNATokenCollator",
     "SCRNATokenDataset",
@@ -48,8 +70,18 @@ __all__ = [
     "condition_key_columns",
     "condition_key_output_column",
     "format_condition_key",
+    "heldout_batch_split",
+    "heldout_cell_line_split",
+    "heldout_dose_time_split",
+    "heldout_moa_split",
+    "heldout_perturbation_split",
+    "make_bio_key",
+    "make_condition_id",
+    "make_tech_key",
     "parse_metadata_float",
     "prototype_lookup_indices",
+    "random_sample_split",
     "sample_stratified_hard_negatives",
     "stratified_hard_negative_candidates",
+    "validate_metadata_columns",
 ]

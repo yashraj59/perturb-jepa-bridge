@@ -1,0 +1,74 @@
+name: eval-counterfactual
+model:
+  shared_dim: 256
+  num_bag_prototypes: 8
+  rna_encoder_dim: 128
+  image_encoder_dim: 128
+data:
+  rna_bag_size: 128
+  image_bag_size: 128
+  min_rna_bag_size: 16
+  min_image_bag_size: 16
+  biological_keys:
+    - perturbation
+    - dose
+    - time
+    - cell_line
+  technical_keys:
+    - batch
+    - plate
+    - run
+    - well
+    - site
+    - z_plane
+    - sequencing_lane
+    - library_id
+loss:
+  contrastive_weight: 1.0
+  mmd_weight: 0.1
+  sliced_wasserstein_weight: 0.05
+  batch_adv_weight: 0.05
+  perturbation_cls_weight: 0.1
+  counterfactual_nll_weight: 1.0
+  counterfactual_mmd_weight: 0.1
+  temperature: 0.07
+training:
+  batch_size: 32
+  epochs: 1
+  lr: 0.001
+  weight_decay: 0.01
+  batch_adv_warmup_epochs: 5
+  freeze_encoders_initially: true
+inputs:
+  predicted_rna: predicted_rna.npy
+  observed_rna: observed_rna.npy
+  control_rna: control_rna.npy
+  predicted_image_embeddings: predicted_image_embeddings.npy
+  observed_image_embeddings: observed_image_embeddings.npy
+  metadata: metadata.csv
+rna_metrics:
+  pseudobulk_correlation: true
+  logfc_correlation: true
+  topk_de_overlap: [20, 50, 100]
+  direction_accuracy: true
+  pathway_score_correlation:
+    enabled: false
+    gene_sets: null
+  latent_mmd:
+    enabled: true
+    predicted_latent: predicted_latent.npy
+    observed_latent: observed_latent.npy
+  grouping:
+    modes: [condition, perturbation, dose_time, heldout_perturbation]
+image_metrics:
+  distance_to_observed_bag_embedding: true
+  retrieval_rank_true_condition: true
+  replicate_correlation: true
+  dose_ordering_accuracy: true
+  time_ordering_accuracy: true
+  same_moa_enrichment: true
+  enrichment_k: 10
+labels:
+  label_col: condition_key
+  condition_cols: [perturbation, dose, time, cell_line]
+output: counterfactual_metrics.csv

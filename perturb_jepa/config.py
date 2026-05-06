@@ -27,6 +27,7 @@ def default_bridge_config() -> PerturbJEPABridgeConfig:
             dim=32,
         ),
         shared_dim=32,
+        num_bag_prototypes=4,
     )
 
 
@@ -214,6 +215,17 @@ def _dataclass_from_mapping(cls: type[Any], data: Mapping[str, Any], *, default:
         )
     if cls is KendallUncertaintyConfig and "term_names" in kwargs:
         kwargs["term_names"] = tuple(kwargs["term_names"])
+    if cls is BridgeLossWeights:
+        alias_map = {
+            "contrastive_weight": "align",
+            "mmd_weight": "mmd",
+            "sliced_wasserstein_weight": "sliced_wasserstein",
+            "batch_adv_weight": "batch_adv",
+            "perturbation_cls_weight": "perturbation_cls",
+        }
+        for alias, target in alias_map.items():
+            if alias in merged and target not in kwargs:
+                kwargs[target] = merged[alias]
     return cls(**kwargs)
 
 
@@ -231,6 +243,7 @@ def _bridge_config_from_dict(data: Mapping[str, Any]) -> PerturbJEPABridgeConfig
             default=default.perturbation,
         ),
         shared_dim=int(data.get("shared_dim", default.shared_dim)),
+        num_bag_prototypes=int(data.get("num_bag_prototypes", default.num_bag_prototypes)),
         dropout=float(data.get("dropout", default.dropout)),
         adversary_scale=float(data.get("adversary_scale", default.adversary_scale)),
     )

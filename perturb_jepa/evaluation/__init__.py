@@ -22,6 +22,18 @@ from perturb_jepa.evaluation.metrics import (
     topk_differential_expression_recovery,
     topk_jaccard,
 )
+from perturb_jepa.evaluation.image_counterfactual import (
+    image_counterfactual_metrics,
+    replicate_correlation,
+)
+from perturb_jepa.evaluation.retrieval import (
+    average_precision_from_scores,
+    cross_modal_retrieval_metrics,
+    directional_retrieval_metrics,
+    label_enrichment_at_k,
+    ranks_from_scores,
+    retrieval_ranks,
+)
 from perturb_jepa.evaluation.reporting import (
     add_cell_line_transfer_status,
     add_held_out_perturbation_status,
@@ -40,11 +52,18 @@ from perturb_jepa.evaluation.reporting import (
     topk_de_recovery_metric,
     topk_differential_expression_recovery_metric,
 )
+from perturb_jepa.evaluation.rna_counterfactual import (
+    direction_accuracy,
+    maximum_mean_discrepancy,
+    pathway_score_correlations,
+    rna_counterfactual_metrics,
+)
 
 __all__ = [
     "CentroidRetrievalBaseline",
     "ControlMeanBaseline",
     "PerturbationMeanBaseline",
+    "average_precision_from_scores",
     "centroid_by_condition",
     "centroid_retrieval_metrics",
     "add_cell_line_transfer_status",
@@ -56,6 +75,8 @@ __all__ = [
     "delta_mean_absolute_error",
     "delta_mean_squared_error",
     "distance_matrix_spearman",
+    "direction_accuracy",
+    "directional_retrieval_metrics",
     "dose_response_monotonicity",
     "dose_response_monotonicity_report",
     "grouped_metric_report",
@@ -63,12 +84,21 @@ __all__ = [
     "held_out_perturbation_report",
     "heldout_perturbation_prediction_report",
     "heldout_perturbation_report",
+    "image_counterfactual_metrics",
     "infer_control_mask",
     "label_shuffle_centroid_retrieval_metrics",
     "label_shuffle_retrieval_metrics",
+    "label_enrichment_at_k",
+    "maximum_mean_discrepancy",
     "mean_average_precision",
+    "cross_modal_retrieval_metrics",
+    "pathway_score_correlations",
     "pearson_delta",
+    "ranks_from_scores",
     "recall_at_k",
+    "replicate_correlation",
+    "retrieval_ranks",
+    "rna_counterfactual_metrics",
     "shuffle_labels",
     "spearman_delta",
     "topk_de_recovery",

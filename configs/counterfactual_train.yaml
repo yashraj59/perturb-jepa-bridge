@@ -1,0 +1,107 @@
+name: counterfactual-train
+data:
+  rna_anndata: null
+  image_manifest: null
+  split_key: train
+  grouping: condition
+  rna_bag_size: 128
+  image_bag_size: 128
+  min_rna_bag_size: 16
+  min_image_bag_size: 16
+  biological_keys:
+    - perturbation
+    - dose
+    - time
+    - cell_line
+  technical_keys:
+    - batch
+    - plate
+    - run
+    - well
+    - site
+    - z_plane
+    - sequencing_lane
+    - library_id
+  heldout_perturbation_column: heldout_perturbation
+  leakage_guard_columns: [perturbation, dose, time, cell_line, batch]
+model:
+  shared_dim: 256
+  num_bag_prototypes: 8
+  rna_encoder_dim: 128
+  image_encoder_dim: 128
+  rna:
+    vocab_size: 128
+    dim: 128
+    depth: 1
+    heads: 4
+    max_genes: 64
+  image:
+    in_channels: 3
+    image_size: 32
+    patch_size: 8
+    dim: 128
+    depth: 1
+    heads: 4
+  perturbation:
+    num_perturbations: 16
+    num_types: 3
+    num_cell_lines: 4
+    num_batches: 4
+    dim: 128
+optimizer:
+  name: adamw
+  lr: 0.001
+  weight_decay: 0.01
+training:
+  batch_size: 32
+  epochs: 50
+  steps: 2
+  device: cpu
+  seed: 0
+  lr: 0.001
+  weight_decay: 0.01
+  batch_adv_warmup_epochs: 5
+  freeze_encoders_initially: true
+  ema_decay: 0.996
+  grad_clip_norm: 1.0
+  log_every: 1
+loss:
+  contrastive_weight: 1.0
+  mmd_weight: 0.1
+  sliced_wasserstein_weight: 0.05
+  batch_adv_weight: 0.05
+  perturbation_cls_weight: 0.1
+  counterfactual_nll_weight: 1.0
+  counterfactual_mmd_weight: 0.1
+  temperature: 0.07
+  rna_mask: 1.0
+  image_mask: 1.0
+  jepa: 0.5
+  align: 0.5
+  mmd: 0.1
+  sliced_wasserstein: 0.05
+  perturbation_cls: 0.1
+  state_perturbation_adv: 0.0
+  batch_adv: 0.05
+  counterfactual: 1.0
+  cycle: 0.25
+  response_bottleneck: 0.01
+evaluation:
+  rna_metrics:
+    topk: [20, 50, 100]
+    groupby: [condition, perturbation, dose_time, heldout_perturbation]
+    gene_sets: null
+  image_metrics:
+    retrieval_k: [1, 5, 10]
+    enrichment_k: 10
+synthetic:
+  batch_size: 4
+  genes: 32
+  vocab_size: 128
+  image_channels: 3
+  image_size: 32
+  patch_size: 8
+  num_perturbations: 16
+  num_types: 3
+  num_cell_lines: 4
+  num_batches: 4

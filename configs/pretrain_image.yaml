@@ -1,0 +1,86 @@
+name: pretrain-image
+data:
+  image_manifest: null
+  split_key: train
+  input_channels: [brightfield]
+  condition_key: condition_key
+  rna_bag_size: 128
+  image_bag_size: 128
+  min_rna_bag_size: 16
+  min_image_bag_size: 16
+  biological_keys:
+    - perturbation
+    - dose
+    - time
+    - cell_line
+  technical_keys:
+    - batch
+    - plate
+    - run
+    - well
+    - site
+    - z_plane
+    - sequencing_lane
+    - library_id
+  leakage_guard_columns: [perturbation, dose, time, cell_line, batch, plate, well]
+model:
+  shared_dim: 256
+  num_bag_prototypes: 8
+  rna_encoder_dim: 128
+  image_encoder_dim: 128
+  rna:
+    vocab_size: 128
+    dim: 128
+    depth: 1
+    heads: 4
+    max_genes: 64
+  image:
+    in_channels: 3
+    image_size: 32
+    patch_size: 8
+    dim: 128
+    depth: 1
+    heads: 4
+  perturbation:
+    num_perturbations: 16
+    num_types: 3
+    num_cell_lines: 4
+    num_batches: 4
+    dim: 128
+optimizer:
+  name: adamw
+  lr: 0.001
+  weight_decay: 0.01
+training:
+  batch_size: 32
+  epochs: 25
+  steps: 2
+  device: cpu
+  seed: 0
+  lr: 0.001
+  weight_decay: 0.01
+  batch_adv_warmup_epochs: 5
+  freeze_encoders_initially: true
+  ema_decay: 0.996
+  grad_clip_norm: 1.0
+  log_every: 1
+loss:
+  contrastive_weight: 1.0
+  mmd_weight: 0.1
+  sliced_wasserstein_weight: 0.05
+  batch_adv_weight: 0.05
+  perturbation_cls_weight: 0.1
+  counterfactual_nll_weight: 1.0
+  counterfactual_mmd_weight: 0.1
+  temperature: 0.07
+synthetic:
+  batch_size: 4
+  genes: 32
+  vocab_size: 128
+  image_channels: 3
+  image_size: 32
+  patch_size: 8
+  num_perturbations: 16
+  num_types: 3
+  num_cell_lines: 4
+  num_batches: 4

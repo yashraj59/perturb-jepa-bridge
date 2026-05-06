@@ -76,6 +76,38 @@ DEFAULT_METADATA = {
 
 
 @dataclass(frozen=True)
+class MetadataSchema:
+    """Column schema for biological condition keys and technical nuisance metadata."""
+
+    biological_keys: tuple[str, ...] = ("perturbation", "dose", "time", "cell_line")
+    optional_biological_keys: tuple[str, ...] = (
+        "perturbation_type",
+        "target_gene",
+        "compound_id",
+        "moa",
+        "pathway",
+    )
+    technical_keys: tuple[str, ...] = (
+        "batch",
+        "plate",
+        "run",
+        "well",
+        "site",
+        "z_plane",
+        "imaging_channel",
+        "sequencing_lane",
+        "library_id",
+    )
+
+    @property
+    def all_biological_keys(self) -> tuple[str, ...]:
+        return (*self.biological_keys, *self.optional_biological_keys)
+
+
+DEFAULT_METADATA_SCHEMA = MetadataSchema()
+
+
+@dataclass(frozen=True)
 class ConditionKey:
     perturbation: str
     perturbation_type: str
@@ -114,6 +146,35 @@ def normalize_value(value: object) -> str:
     if not text or text.lower() in {"nan", "none", "null"}:
         return "NA"
     return text
+
+
+def make_bio_key(row: Mapping[str, object]) -> tuple[str, ...]:
+    """Return the biological condition key.
+
+    The default biological identity is perturbation, dose, time, and cell line.
+    Optional biological annotations remain metadata and can be used for analysis
+    or heldout splits, but technical acquisition fields are deliberately excluded.
+    """
+
+    return tuple(normalize_value(row.get(column, "NA")) for column in DEFAULT_METADATA_SCHEMA.biological_keys)
+
+
+def make_tech_key(row: Mapping[str, object]) -> tuple[str, ...]:
+    """Return the technical nuisance key in a fixed schema order."""
+
+    return tuple(normalize_value(row.get(column, "NA")) for column in DEFAULT_METADATA_SCHEMA.technical_keys)
+
+
+def make_condition_id(row: Mapping[str, object]) -> str:
+    """Format the biological key as a stable string identifier."""
+
+    return "|".join(make_bio_key(row))
+
+
+def validate_metadata_columns(frame: pd.DataFrame) -> None:
+    """Validate that required biological condition columns are present."""
+
+    assert_columns(frame, DEFAULT_METADATA_SCHEMA.biological_keys, name="metadata")
 
 
 def condition_key_columns(level: str = "fine") -> tuple[str, ...]:

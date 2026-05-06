@@ -7,11 +7,15 @@ from typing import Sequence
 
 import numpy as np
 import pandas as pd
+import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from perturb_jepa.evaluation.image_counterfactual import image_counterfactual_metrics
 from perturb_jepa.evaluation.rna_counterfactual import rna_counterfactual_metrics
+from perturb_jepa.models.counterfactual import CounterfactualResponsePredictor, PerturbationConditionEncoder
+from perturb_jepa.training.real_data import prepare_expression_matrix, read_h5ad_subset
+from scripts.train_counterfactual import _control_treated_pairs
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -22,6 +26,13 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--predicted-image-embeddings", type=Path)
     parser.add_argument("--observed-image-embeddings", type=Path)
     parser.add_argument("--metadata", type=Path)
+    parser.add_argument("--checkpoint", type=Path, help="Counterfactual checkpoint for real RNA evaluation.")
+    parser.add_argument("--rna-anndata", type=Path)
+    parser.add_argument("--max-cells", type=int, default=None)
+    parser.add_argument("--n-top-genes", type=int, default=None)
+    parser.add_argument("--control-values", default="control,ctrl,dmso,vehicle,untreated,mock")
+    parser.add_argument("--device", default="cpu")
+    parser.add_argument("--save-arrays-dir", type=Path)
     parser.add_argument("--synthetic", action="store_true", help="Run on a deterministic synthetic dataset.")
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--conditions", type=int, default=8)
@@ -33,6 +44,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
+    include_image = True
     if args.synthetic:
         predicted_rna, observed_rna, control_rna, predicted_image, observed_image, metadata = _synthetic_data(
             seed=args.seed,
@@ -40,6 +52,25 @@ def main(argv: Sequence[str] | None = None) -> int:
             genes=args.genes,
             dim=args.dim,
         )
+    elif args.checkpoint is not None:
+        if args.rna_anndata is None:
+            raise ValueError("--checkpoint evaluation requires --rna-anndata")
+        predicted_rna, observed_rna, control_rna, metadata = _rna_predictions_from_checkpoint(
+            checkpoint_path=args.checkpoint,
+            rna_path=args.rna_anndata,
+            max_cells=args.max_cells,
+            n_top_genes=args.n_top_genes,
+            control_values=[value.strip() for value in args.control_values.split(",") if value.strip()],
+            device=torch.device(args.device),
+        )
+        predicted_image = observed_image = None
+        include_image = False
+        if args.save_arrays_dir is not None:
+            args.save_arrays_dir.mkdir(parents=True, exist_ok=True)
+            np.save(args.save_arrays_dir / "predicted_rna.npy", predicted_rna)
+            np.save(args.save_arrays_dir / "observed_rna.npy", observed_rna)
+            np.save(args.save_arrays_dir / "control_rna.npy", control_rna)
+            metadata.to_csv(args.save_arrays_dir / "counterfactual_metadata.csv", index=False)
     else:
         required = (
             args.predicted_rna,
@@ -58,10 +89,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         observed_image = np.load(args.observed_image_embeddings)
         metadata = pd.read_csv(args.metadata)
 
-    metrics = {
-        **rna_counterfactual_metrics(predicted_rna, observed_rna, control_rna, metadata),
-        **image_counterfactual_metrics(predicted_image, observed_image, metadata),
-    }
+    metrics = rna_counterfactual_metrics(predicted_rna, observed_rna, control_rna, metadata)
+    if include_image:
+        metrics.update(image_counterfactual_metrics(predicted_image, observed_image, metadata))
     report = pd.DataFrame({"metric": list(metrics), "value": list(metrics.values())})
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -69,6 +99,74 @@ def main(argv: Sequence[str] | None = None) -> int:
     else:
         print(report.to_csv(index=False), end="")
     return 0
+
+
+def _rna_predictions_from_checkpoint(
+    *,
+    checkpoint_path: Path,
+    rna_path: Path,
+    max_cells: int | None,
+    n_top_genes: int | None,
+    control_values: list[str],
+    device: torch.device,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, pd.DataFrame]:
+    checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
+    config_dict = checkpoint.get("experiment_config") or {}
+    max_genes = (((config_dict.get("model") or {}).get("rna") or {}).get("max_genes"))
+    adata = read_h5ad_subset(rna_path, max_cells=max_cells, seed=((config_dict.get("training") or {}).get("seed", 0)))
+    expression, _ = prepare_expression_matrix(adata.X, n_top_genes=n_top_genes, max_genes=max_genes)
+    metadata = pd.DataFrame(adata.obs).reset_index(drop=True)
+    pairs, vocab = _control_treated_pairs(
+        expression,
+        metadata,
+        control_values,
+    )
+    if not pairs:
+        raise ValueError("No control-relative condition pairs found for evaluation")
+    predictor_first = checkpoint["predictor"]["net.0.weight"]
+    prototype_dim = int(checkpoint["predictor"]["net.4.weight"].shape[0] // 2)
+    condition_dim = int(predictor_first.shape[1] - prototype_dim)
+    condition_encoder = PerturbationConditionEncoder(
+        num_perturbations=vocab.num_perturbations,
+        num_cell_lines=vocab.num_cell_lines,
+        hidden_dim=condition_dim,
+        output_dim=condition_dim,
+    ).to(device)
+    predictor = CounterfactualResponsePredictor(
+        prototype_dim=prototype_dim,
+        condition_dim=condition_dim,
+        hidden_dim=int(predictor_first.shape[0]),
+    ).to(device)
+    condition_encoder.load_state_dict(checkpoint["condition_encoder"])
+    predictor.load_state_dict(checkpoint["predictor"])
+    condition_encoder.eval()
+    predictor.eval()
+    predicted: list[np.ndarray] = []
+    observed: list[np.ndarray] = []
+    control_values_out: list[np.ndarray] = []
+    rows: list[dict[str, object]] = []
+    with torch.no_grad():
+        for pair in pairs:
+            control = torch.as_tensor(pair["control"], dtype=torch.float32, device=device).reshape(1, 1, -1)
+            condition_embedding = condition_encoder(
+                perturbation_id=torch.tensor([pair["perturbation_id"]], dtype=torch.long, device=device),
+                cell_line_id=torch.tensor([pair["cell_line_id"]], dtype=torch.long, device=device),
+                dose=torch.tensor([pair["dose"]], dtype=torch.float32, device=device),
+                time=torch.tensor([pair["time"]], dtype=torch.float32, device=device),
+            )
+            output = predictor(control, condition_embedding)
+            predicted.append(output.treated_mu.squeeze(0).squeeze(0).detach().cpu().numpy())
+            observed.append(np.asarray(pair["treated"], dtype=np.float32))
+            control_values_out.append(np.asarray(pair["control"], dtype=np.float32))
+            rows.append(
+                {
+                    "perturbation": str(pair.get("perturbation", "")),
+                    "dose": pair["dose"],
+                    "time": pair["time"],
+                    "cell_line": str(pair.get("cell_line", "")),
+                }
+            )
+    return np.stack(predicted), np.stack(observed), np.stack(control_values_out), pd.DataFrame(rows)
 
 
 def _synthetic_data(*, seed: int, conditions: int, genes: int, dim: int):

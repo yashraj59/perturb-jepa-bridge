@@ -6,13 +6,28 @@ import json
 from pathlib import Path
 import sys
 
+import numpy as np
+import pandas as pd
 import torch
+from torch.utils.data import DataLoader
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from perturb_jepa.config import ExperimentConfig
+from perturb_jepa.data.condition_bags import ImageConditionBagDataset, PairedConditionBagDataset, RNAConditionBagDataset
+from perturb_jepa.data.conditions import MetadataVocab
 from perturb_jepa.models.image_encoder import patchify
+from perturb_jepa.losses import bridge_loss
 from perturb_jepa.training.checkpoint import save_checkpoint
+from perturb_jepa.training.real_data import (
+    load_yaml_or_json_config,
+    metadata_tensors,
+    override_bridge_config_for_real_data,
+    prepare_expression_matrix,
+    raw_get,
+    read_h5ad_subset,
+    resize_for_manifest,
+)
 from perturb_jepa.training.seed import seed_everything
 from perturb_jepa.training.synthetic import make_synthetic_bridge_batch
 from perturb_jepa.training.trainer import forward_batch
@@ -24,17 +39,40 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--steps", type=int, default=None)
     parser.add_argument("--device", default=None)
     parser.add_argument("--synthetic", action="store_true", help="Run on generated synthetic batches.")
+    parser.add_argument("--rna-anndata", type=Path, default=None)
+    parser.add_argument("--image-manifest", type=Path, default=None)
+    parser.add_argument("--image-root", type=Path, default=None)
+    parser.add_argument("--max-cells", type=int, default=None)
+    parser.add_argument("--max-images", type=int, default=None)
+    parser.add_argument("--n-top-genes", type=int, default=None)
+    parser.add_argument("--batch-size", type=int, default=None)
     parser.add_argument("--checkpoint-out", type=Path, default=None)
     args = parser.parse_args(argv)
 
-    config = _load_config(args.config)
+    config, raw_config = load_yaml_or_json_config(args.config)
     if args.steps is not None:
         config = replace(config, training=replace(config.training, steps=args.steps))
     if args.device is not None:
         config = replace(config, training=replace(config.training, device=args.device))
-    if not args.synthetic:
-        print("No real-data bridge loader is configured yet; running synthetic scaffold. Pass --synthetic to make this explicit.")
-    _run_synthetic_training(config, stage="bridge", checkpoint_out=args.checkpoint_out)
+    rna_path = args.rna_anndata or _optional_path(raw_get(raw_config, ("data", "rna_anndata")))
+    manifest_path = args.image_manifest or _optional_path(raw_get(raw_config, ("data", "image_manifest")))
+    if args.synthetic or rna_path is None or manifest_path is None:
+        if not args.synthetic:
+            print("Real bridge training needs both --rna-anndata and --image-manifest; running synthetic scaffold.")
+        _run_synthetic_training(config, stage="bridge", checkpoint_out=args.checkpoint_out)
+    else:
+        _run_real_bridge_training(
+            config,
+            raw_config=raw_config,
+            rna_path=rna_path,
+            manifest_path=manifest_path,
+            image_root=args.image_root or _optional_path(raw_get(raw_config, ("data", "image_root"))) or Path(""),
+            max_cells=args.max_cells or raw_get(raw_config, ("data", "max_cells")),
+            max_images=args.max_images or raw_get(raw_config, ("data", "max_images")),
+            n_top_genes=args.n_top_genes or raw_get(raw_config, ("data", "n_top_genes")),
+            batch_size=args.batch_size or raw_get(raw_config, ("training", "batch_size"), 4),
+            checkpoint_out=args.checkpoint_out,
+        )
     return 0
 
 
@@ -110,6 +148,164 @@ def _synthetic_stage_step(
     return {name: float(value.detach().cpu()) for name, value in terms.items()}
 
 
+def _run_real_bridge_training(
+    config: ExperimentConfig,
+    *,
+    raw_config: dict,
+    rna_path: Path,
+    manifest_path: Path,
+    image_root: Path,
+    max_cells: int | None,
+    max_images: int | None,
+    n_top_genes: int | None,
+    batch_size: int,
+    checkpoint_out: Path | None,
+) -> None:
+    seed_everything(config.training.seed)
+    device = torch.device(config.training.device)
+    adata = read_h5ad_subset(rna_path, max_cells=max_cells, seed=config.training.seed)
+    expression, gene_token_ids = prepare_expression_matrix(
+        adata.X,
+        n_top_genes=n_top_genes,
+        max_genes=config.model.rna.max_genes,
+    )
+    rna_metadata = pd.DataFrame(adata.obs).reset_index(drop=False).rename(columns={"index": "sample_id"})
+    image_manifest = pd.read_csv(manifest_path)
+    if max_images is not None and max_images > 0:
+        image_manifest = image_manifest.iloc[:max_images].copy()
+    metadata_vocab = MetadataVocab.from_frames([rna_metadata, image_manifest])
+    config = override_bridge_config_for_real_data(
+        config,
+        num_genes=expression.shape[1],
+        max_genes=expression.shape[1],
+        metadata_vocab=metadata_vocab,
+    )
+    rna_bag_size = int(raw_get(raw_config, ("data", "rna_bag_size"), 128))
+    image_bag_size = int(raw_get(raw_config, ("data", "image_bag_size"), 128))
+    min_rna_bag_size = int(raw_get(raw_config, ("data", "min_rna_bag_size"), 1))
+    min_image_bag_size = int(raw_get(raw_config, ("data", "min_image_bag_size"), 1))
+    rna_bags = RNAConditionBagDataset(
+        expression,
+        rna_metadata,
+        rna_bag_size=rna_bag_size,
+        min_rna_bag_size=min_rna_bag_size,
+        split="train",
+        seed=config.training.seed,
+    )
+    image_bags = ImageConditionBagDataset(
+        image_manifest,
+        image_bag_size=image_bag_size,
+        min_image_bag_size=min_image_bag_size,
+        split="train",
+        seed=config.training.seed,
+        image_root=image_root,
+        channels=config.model.image.in_channels,
+        resize=resize_for_manifest(image_manifest, config.model.image.image_size),
+    )
+    paired = PairedConditionBagDataset(rna_bags, image_bags)
+    if len(paired) == 0:
+        raise ValueError("No overlapping biological conditions between RNA and image data")
+    print(f"Real bridge conditions: {len(paired)} shared biological condition bags")
+    model = config.build_model().to(device)
+    optimizer = config.build_optimizer(model.parameters())
+    collate = _BridgeBagCollator(gene_token_ids, metadata_vocab, device=device)
+    loader = DataLoader(paired, batch_size=int(batch_size), shuffle=True, collate_fn=collate)
+    global_step = 0
+    for _ in range(max(1, config.training.steps)):
+        for batch in loader:
+            model.train()
+            optimizer.zero_grad(set_to_none=True)
+            outputs = model(
+                gene_ids=batch["gene_ids"],
+                expression_values=batch["expression_values"],
+                rna_token_mask=batch["rna_token_mask"],
+                rna_bag_mask=batch["rna_bag_mask"],
+                images=batch["images"],
+                image_patch_mask=None,
+                image_bag_mask=batch["image_bag_mask"],
+                **batch["metadata"],
+            )
+            image_target = patchify(
+                batch["images"].reshape(-1, *batch["images"].shape[-3:]),
+                config.model.image.patch_size,
+            ).reshape(*batch["images"].shape[:2], -1, config.model.image.patch_dim)
+            image_patch_mask = batch["image_bag_mask"].unsqueeze(-1).expand(*image_target.shape[:-1])
+            total, terms = bridge_loss(
+                outputs,
+                rna_values=batch["expression_values"],
+                rna_mask=batch["rna_token_mask"],
+                image_patches=image_target,
+                image_patch_mask=image_patch_mask,
+                bio_keys=batch["bio_keys"],
+                perturbation_id=batch["metadata"]["perturbation_id"],
+                batch_id=batch["metadata"]["batch_id"],
+                weights=config.loss,
+            )
+            total.backward()
+            if config.training.grad_clip_norm is not None:
+                torch.nn.utils.clip_grad_norm_(model.parameters(), config.training.grad_clip_norm)
+            optimizer.step()
+            model.update_teachers(decay=config.training.ema_decay)
+            if config.training.log_every > 0 and global_step % config.training.log_every == 0:
+                floats = {name: float(value.detach().cpu()) for name, value in terms.items()}
+                print(f"stage=bridge step={global_step} " + _format_terms(floats))
+            global_step += 1
+            if global_step >= config.training.steps:
+                break
+        if global_step >= config.training.steps:
+            break
+    if checkpoint_out is not None:
+        save_checkpoint(
+            checkpoint_out,
+            model=model,
+            optimizer=optimizer,
+            trainer_state={"global_step": global_step, "conditions": len(paired)},
+            experiment_config=config,
+            metadata={"stage": "bridge", "rna_anndata": str(rna_path), "image_manifest": str(manifest_path)},
+        )
+
+
+class _BridgeBagCollator:
+    def __init__(self, gene_token_ids: np.ndarray, metadata_vocab: MetadataVocab, *, device: torch.device) -> None:
+        self.gene_token_ids = np.asarray(gene_token_ids, dtype=np.int64)
+        self.metadata_vocab = metadata_vocab
+        self.device = device
+
+    def __call__(self, items: list[dict]) -> dict[str, object]:
+        rna_arrays = [np.asarray(item["rna"]["x"], dtype=np.float32) for item in items]
+        image_arrays = [np.asarray(item["image"]["x"], dtype=np.float32) for item in items]
+        max_rna = max(array.shape[0] for array in rna_arrays)
+        max_image = max(array.shape[0] for array in image_arrays)
+        expression_np = np.zeros((len(items), max_rna, rna_arrays[0].shape[-1]), dtype=np.float32)
+        images_np = np.zeros((len(items), max_image, *image_arrays[0].shape[1:]), dtype=np.float32)
+        rna_mask_np = np.zeros((len(items), max_rna), dtype=bool)
+        image_mask_np = np.zeros((len(items), max_image), dtype=bool)
+        for index, array in enumerate(rna_arrays):
+            expression_np[index, : array.shape[0]] = array
+            rna_mask_np[index, : array.shape[0]] = True
+        for index, array in enumerate(image_arrays):
+            images_np[index, : array.shape[0]] = array
+            image_mask_np[index, : array.shape[0]] = True
+        expression = torch.as_tensor(expression_np, dtype=torch.float32, device=self.device)
+        images = torch.as_tensor(images_np, dtype=torch.float32, device=self.device)
+        gene_ids = torch.as_tensor(
+            np.broadcast_to(self.gene_token_ids[None, None, :], expression.shape).copy(),
+            dtype=torch.long,
+            device=self.device,
+        )
+        rows = [item["condition"] for item in items]
+        return {
+            "gene_ids": gene_ids,
+            "expression_values": expression,
+            "rna_token_mask": torch.zeros_like(expression, dtype=torch.bool),
+            "rna_bag_mask": torch.as_tensor(rna_mask_np, dtype=torch.bool, device=self.device),
+            "images": images,
+            "image_bag_mask": torch.as_tensor(image_mask_np, dtype=torch.bool, device=self.device),
+            "metadata": metadata_tensors(rows, self.metadata_vocab, device=self.device),
+            "bio_keys": [item["bio_key"] for item in items],
+        }
+
+
 def _load_config(path: Path | None) -> ExperimentConfig:
     if path is None:
         return ExperimentConfig.smoke()
@@ -130,6 +326,12 @@ def _load_yaml(path: Path) -> dict:
 
 def _format_terms(terms: dict[str, float]) -> str:
     return " ".join(f"{key}={value:.4f}" for key, value in sorted(terms.items()))
+
+
+def _optional_path(value: object) -> Path | None:
+    if value in (None, "", "null"):
+        return None
+    return Path(str(value))
 
 
 if __name__ == "__main__":

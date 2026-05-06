@@ -81,8 +81,9 @@ python scripts/train_synthetic.py \
 
 An end-to-end Colab notebook is available at
 `notebooks/perturb_jepa_colab_end_to_end.ipynb`. It clones the repo, installs
-dependencies, optionally downloads public data assets, runs all synthetic
-training stages, evaluates retrieval and counterfactual metrics, and saves
+dependencies, optionally downloads public data assets, runs synthetic smoke
+training, can run real-data RNA/image/bridge/counterfactual stages when file
+paths are supplied, evaluates retrieval and counterfactual metrics, and saves
 checkpoints/metrics artifacts.
 
 Open it in Colab, set `REPO_URL` to your pushed GitHub repo, and run top to
@@ -161,7 +162,7 @@ dose-time, or held-out perturbation grouping. Image embeddings report distance t
 the observed bag embedding, true-condition retrieval rank, replicate correlation,
 dose/time ordering accuracy, and same-MoA enrichment.
 
-Stage entrypoints are available for smokeable scaffolds:
+Stage entrypoints support synthetic smoke runs and real-data inputs:
 
 ```bash
 python scripts/train_pretrain_rna.py --synthetic --steps 1
@@ -169,6 +170,43 @@ python scripts/train_pretrain_image.py --synthetic --steps 1
 python scripts/train_bridge.py --synthetic --steps 1
 python scripts/train_counterfactual.py --synthetic --steps 1
 python scripts/train_finetune.py --synthetic --steps 1
+```
+
+Real-data examples:
+
+```bash
+python scripts/train_pretrain_rna.py \
+  --config configs/pretrain_rna.yaml \
+  --rna-anndata data/raw/SrivatsanTrapnell2020_sciplex3.h5ad \
+  --max-cells 2048 \
+  --n-top-genes 512 \
+  --checkpoint-out checkpoints/real_pretrain_rna.pt
+
+python scripts/train_pretrain_image.py \
+  --config configs/pretrain_image.yaml \
+  --image-manifest data/processed/bf_moa_manifest.csv \
+  --image-root data/raw/bf_moa_images \
+  --max-images 2048 \
+  --checkpoint-out checkpoints/real_pretrain_image.pt
+```
+
+Bridge and fine-tuning real-data runs require overlapping biological condition
+IDs between RNA and image metadata:
+
+```bash
+python scripts/train_bridge.py \
+  --config configs/bridge_train.yaml \
+  --rna-anndata data/raw/matched_rna.h5ad \
+  --image-manifest data/processed/matched_image_manifest.csv \
+  --image-root data/raw/images \
+  --checkpoint-out checkpoints/real_bridge.pt
+
+python scripts/evaluate_retrieval.py \
+  --checkpoint checkpoints/real_bridge.pt \
+  --rna-anndata data/raw/matched_rna.h5ad \
+  --image-manifest data/processed/matched_image_manifest.csv \
+  --image-root data/raw/images \
+  --output retrieval_metrics.csv
 ```
 
 ## Main Modules

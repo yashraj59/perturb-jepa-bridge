@@ -26,12 +26,11 @@ class PerturbationEncoder(nn.Module):
         self.perturbation_embedding = nn.Embedding(config.num_perturbations, config.dim)
         self.type_embedding = nn.Embedding(config.num_types, config.dim)
         self.cell_line_embedding = nn.Embedding(config.num_cell_lines, config.dim)
-        self.batch_embedding = nn.Embedding(config.num_batches, config.dim)
         numeric_dim = 2 + config.descriptor_dim
         self.numeric_mlp = MLP(numeric_dim, config.dim, config.dim, depth=2, dropout=config.dropout)
         self.fusion = nn.Sequential(
-            nn.LayerNorm(config.dim * 5),
-            nn.Linear(config.dim * 5, config.dim),
+            nn.LayerNorm(config.dim * 4),
+            nn.Linear(config.dim * 4, config.dim),
             nn.GELU(),
             nn.Dropout(config.dropout),
             nn.Linear(config.dim, config.dim),
@@ -60,7 +59,6 @@ class PerturbationEncoder(nn.Module):
             self.perturbation_embedding(perturbation_id),
             self.type_embedding(perturbation_type_id),
             self.cell_line_embedding(cell_line_id),
-            self.batch_embedding(batch_id),
             self.numeric_mlp(numeric),
         )
         return self.fusion(torch.cat(pieces, dim=-1))

@@ -90,9 +90,10 @@ same-MoA enrichment.
 ## Limitations
 
 Synthetic entrypoints verify code paths but do not establish biological validity.
-Real-data loaders for the new stage scripts are intentionally scaffolded and need
-dataset-specific wiring. MoA and pathway metrics are only meaningful when labels
-or gene sets are curated consistently across modalities.
+Real-data stage scripts can load AnnData RNA files and image manifests, but
+bridge/fine-tune training requires actual overlap in biological condition labels
+between modalities. MoA and pathway metrics are only meaningful when labels or
+gene sets are curated consistently across modalities.
 
 ## Expected Failure Modes
 

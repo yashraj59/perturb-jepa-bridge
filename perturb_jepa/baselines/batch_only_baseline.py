@@ -34,11 +34,26 @@ def batch_only_retrieval_metrics(
     condition labels are confounded with acquisition/batch metadata.
     """
 
-    return metadata_only_retrieval_metrics(
-        query_metadata,
-        gallery_metadata,
-        label_col=label_col,
-        columns=columns,
-        ks=ks,
-        prefix=prefix,
-    )
+    try:
+        return metadata_only_retrieval_metrics(
+            query_metadata,
+            gallery_metadata,
+            label_col=label_col,
+            columns=columns,
+            ks=ks,
+            prefix=prefix,
+        )
+    except ValueError as exc:
+        if "no requested metadata columns" not in str(exc):
+            raise
+        metrics = {
+            f"{prefix}_map": 0.0,
+            f"{prefix}_median_rank": float(len(_as_metadata_frame(gallery_metadata)) + 1),
+        }
+        for k in ks:
+            metrics[f"{prefix}_recall@{k}"] = 0.0
+        return metrics
+
+
+def _as_metadata_frame(metadata: pd.DataFrame | Mapping[str, Sequence[object]]) -> pd.DataFrame:
+    return metadata.reset_index(drop=True).copy() if isinstance(metadata, pd.DataFrame) else pd.DataFrame(metadata)

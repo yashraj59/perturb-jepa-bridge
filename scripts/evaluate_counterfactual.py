@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from perturb_jepa.evaluation.image_counterfactual import image_counterfactual_metrics
 from perturb_jepa.evaluation.rna_counterfactual import rna_counterfactual_metrics
+from perturb_jepa.data.conditions import MetadataVocab
 from perturb_jepa.models.counterfactual import CounterfactualResponsePredictor, PerturbationConditionEncoder
 from perturb_jepa.training.real_data import prepare_expression_matrix, read_h5ad_subset
 from scripts.train_counterfactual import _control_treated_pairs
@@ -32,6 +33,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--n-top-genes", type=int, default=None)
     parser.add_argument("--control-values", default="control,ctrl,dmso,vehicle,untreated,mock")
     parser.add_argument("--device", default="cpu")
+    parser.add_argument("--strict-vocab", action="store_true")
     parser.add_argument("--save-arrays-dir", type=Path)
     parser.add_argument("--synthetic", action="store_true", help="Run on a deterministic synthetic dataset.")
     parser.add_argument("--seed", type=int, default=0)
@@ -62,6 +64,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             n_top_genes=args.n_top_genes,
             control_values=[value.strip() for value in args.control_values.split(",") if value.strip()],
             device=torch.device(args.device),
+            strict_vocab=args.strict_vocab,
         )
         predicted_image = observed_image = None
         include_image = False
@@ -109,6 +112,7 @@ def _rna_predictions_from_checkpoint(
     n_top_genes: int | None,
     control_values: list[str],
     device: torch.device,
+    strict_vocab: bool = False,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, pd.DataFrame]:
     checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
     config_dict = checkpoint.get("experiment_config") or {}
@@ -116,10 +120,16 @@ def _rna_predictions_from_checkpoint(
     adata = read_h5ad_subset(rna_path, max_cells=max_cells, seed=((config_dict.get("training") or {}).get("seed", 0)))
     expression, _ = prepare_expression_matrix(adata.X, n_top_genes=n_top_genes, max_genes=max_genes)
     metadata = pd.DataFrame(adata.obs).reset_index(drop=True)
+    checkpoint_metadata = checkpoint.get("metadata") or {}
+    if "metadata_vocab" not in checkpoint_metadata:
+        raise ValueError("checkpoint metadata is missing saved metadata_vocab; refusing to rebuild vocab from eval data")
+    vocab = MetadataVocab.from_dict(checkpoint_metadata["metadata_vocab"])
     pairs, vocab = _control_treated_pairs(
         expression,
         metadata,
         control_values,
+        metadata_vocab=vocab,
+        strict_vocab=strict_vocab,
     )
     if not pairs:
         raise ValueError("No control-relative condition pairs found for evaluation")

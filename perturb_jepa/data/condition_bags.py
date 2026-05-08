@@ -18,6 +18,7 @@ from perturb_jepa.data.schema import (
 
 
 SplitName = Literal["train", "val", "test"]
+TechSummaryStrategy = Literal["mode", "first_non_na", "set"]
 
 
 def _metadata_with_condition_ids(frame: pd.DataFrame) -> pd.DataFrame:
@@ -83,6 +84,38 @@ def _tech_records(frame: pd.DataFrame) -> list[dict[str, str]]:
     for row in frame.to_dict(orient="records"):
         rows.append(dict(zip(DEFAULT_METADATA_SCHEMA.technical_keys, make_tech_key(row), strict=True)))
     return rows
+
+
+def summarize_technical_metadata(
+    records: Sequence[Mapping[str, object]],
+    *,
+    strategy: TechSummaryStrategy = "mode",
+    columns: Sequence[str] = DEFAULT_METADATA_SCHEMA.technical_keys,
+) -> dict[str, str]:
+    """Summarize per-cell/per-image technical metadata into deterministic bag labels.
+
+    ``mode`` excludes NA-like values when possible and breaks ties lexicographically.
+    ``first_non_na`` returns the first non-NA-like value in row order.
+    ``set`` returns a semicolon-joined sorted set of non-NA-like values.
+    """
+
+    if strategy not in {"mode", "first_non_na", "set"}:
+        raise ValueError("strategy must be one of 'mode', 'first_non_na', or 'set'")
+    summary: dict[str, str] = {}
+    for column in columns:
+        values = [normalize_value(row.get(column, "NA")) for row in records]
+        non_na = [value for value in values if value != "NA"]
+        candidates = non_na or values or ["NA"]
+        if strategy == "first_non_na":
+            summary[column] = candidates[0]
+        elif strategy == "set":
+            summary[column] = ";".join(sorted(set(candidates)))
+        else:
+            counts: dict[str, int] = {}
+            for value in candidates:
+                counts[value] = counts.get(value, 0) + 1
+            summary[column] = sorted(counts.items(), key=lambda item: (-item[1], item[0]))[0][0]
+    return summary
 
 
 def _condition_record(row: Mapping[str, object]) -> dict[str, object]:

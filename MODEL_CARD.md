@@ -4,8 +4,8 @@
 
 Perturb-JEPA Bridge is a scaffold for unpaired perturbation modeling across
 single-cell RNA-seq and label-free microscopy. It trains RNA and image encoders
-with masked reconstruction and JEPA-style teacher/student objectives, then aligns
-condition-level bags instead of assuming cell-image pairs.
+with masked reconstruction and masked latent JEPA teacher/student objectives,
+then aligns condition-level bags instead of assuming cell-image pairs.
 
 ## Intended Use
 
@@ -38,6 +38,10 @@ Splits should be leakage-safe and grouped by perturbation, dose, time, cell line
 and batch. Retrieval scoring must use embeddings only; metadata is used after
 scoring to define relevance, enrichment labels, and strata.
 
+`condition_key`, `condition_key_fine`, and `condition_id` are the same
+four-field biological key. `perturbation_type` is optional metadata and is only
+included in the explicit `condition_key_with_type` column.
+
 ## Leakage Risks
 
 Batch, plate, well, site, run, z-plane, sequencing lane, or library identifiers
@@ -56,13 +60,21 @@ Counterfactual predictions are condition-level distributional forecasts. The
 model predicts a treated prototype distribution relative to a control prototype
 distribution and returns uncertainty through log-variance outputs. These outputs
 should be interpreted as bag-level latent response distributions, not as
-individual-cell counterfactuals.
+individual-cell counterfactuals. Bridge-level training does not optimize a
+counterfactual loss unless explicit control and treated targets are supplied; the
+RNA counterfactual script is the explicit control-to-treated pathway.
 
 ## Required Validation Splits
 
 Report random sample splits only as a convenience baseline. Scientific claims
 should include held-out batch, held-out perturbation, held-out dose/time,
 held-out cell line, and held-out MoA splits when MoA labels exist.
+
+Held-out perturbation generalization requires descriptor features. If the model
+uses only perturbation ID embeddings, unseen perturbations map to `unknown` and
+the result is not a true perturbation extrapolation. Suitable descriptors include
+chemical fingerprints, target-gene embeddings, MoA/pathway embeddings, or
+pretrained perturbation descriptors.
 
 ## Evaluation
 
@@ -85,15 +97,19 @@ same-MoA enrichment.
   `cell_line`.
 - Batch-only retrieval uses only technical acquisition metadata.
 - Mean prototype alignment maps source rows to target-space mean prototypes by
-  condition metadata.
+  condition metadata. Eval-target fitting is reported as
+  `mean_prototype_oracle`; train-target fitting is reported as
+  `mean_prototype_trainfit`.
 
 ## Limitations
 
 Synthetic entrypoints verify code paths but do not establish biological validity.
 Real-data stage scripts can load AnnData RNA files and image manifests, but
 bridge/fine-tune training requires actual overlap in biological condition labels
-between modalities. MoA and pathway metrics are only meaningful when labels or
-gene sets are curated consistently across modalities.
+between modalities. Checkpoint evaluation reuses the saved metadata vocab, with
+unknown eval categories mapped to ID 0 unless strict vocab mode is enabled. MoA
+and pathway metrics are only meaningful when labels or gene sets are curated
+consistently across modalities.
 
 ## Expected Failure Modes
 

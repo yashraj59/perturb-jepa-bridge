@@ -13,6 +13,7 @@ from perturb_jepa.data.condition_bags import (
     ImageConditionBagDataset,
     PairedConditionBagDataset,
     RNAConditionBagDataset,
+    summarize_technical_metadata,
 )
 from perturb_jepa.data.images import ImageManifestBatch, ImageManifestCollator, ImageManifestDataset
 from perturb_jepa.data.sampling import (
@@ -83,5 +84,6 @@ __all__ = [
     "random_sample_split",
     "sample_stratified_hard_negatives",
     "stratified_hard_negative_candidates",
+    "summarize_technical_metadata",
     "validate_metadata_columns",
 ]

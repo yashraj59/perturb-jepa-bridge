@@ -9,6 +9,7 @@ from perturb_jepa.data.splits import (
     heldout_perturbation_split,
     random_sample_split,
 )
+from perturb_jepa.training.real_data import assign_real_data_splits, filter_metadata_by_split
 
 
 def _metadata() -> pd.DataFrame:
@@ -62,3 +63,33 @@ def test_heldout_split_rejects_unknown_groups_and_missing_moa_labels():
 
     with pytest.raises(ValueError, match="moa"):
         heldout_moa_split(_metadata().drop(columns=["moa"]))
+
+
+def test_real_data_split_assignment_keeps_train_eval_groups_exclusive():
+    frame = _metadata()
+    cases = [
+        ("heldout_perturbation", ["drugD"], ["perturbation"]),
+        ("heldout_batch", ["b2"], ["batch"]),
+        ("heldout_dose_time", [("10uM", "48h")], ["dose", "time"]),
+        ("heldout_cell_line", ["A549"], ["cell_line"]),
+        ("heldout_moa", ["m3"], ["moa"]),
+    ]
+
+    for strategy, heldout_values, group_cols in cases:
+        rna_split, image_split, metadata = assign_real_data_splits(
+            frame,
+            frame.copy(),
+            split_strategy=strategy,
+            heldout_values=heldout_values,
+            split_col="split",
+            train_split_value="train",
+            eval_split_value="eval",
+            seed=0,
+        )
+        train = filter_metadata_by_split(rna_split, split_col="split", split_value="train", name="train")
+        eval_frame = filter_metadata_by_split(image_split, split_col="split", split_value="eval", name="eval")
+        train_groups = set(train[group_cols].astype(str).agg("|".join, axis=1).tolist())
+        eval_groups = set(eval_frame[group_cols].astype(str).agg("|".join, axis=1).tolist())
+
+        assert train_groups.isdisjoint(eval_groups), strategy
+        assert metadata["heldout_groups"]

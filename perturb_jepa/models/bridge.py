@@ -58,6 +58,16 @@ class PerturbJEPABridge(nn.Module):
             num_prototypes=config.num_bag_prototypes,
             dropout=config.dropout,
         )
+        self.rna_teacher_bag_aggregator = make_ema_teacher(self.rna_bag_aggregator)
+        self.image_teacher_bag_aggregator = make_ema_teacher(self.image_bag_aggregator)
+        self.rna_jepa_predictor = MLP(config.rna.dim, config.rna.dim, config.rna.dim, depth=2, dropout=config.dropout)
+        self.image_jepa_predictor = MLP(
+            config.image.dim,
+            config.image.dim,
+            config.image.dim,
+            depth=2,
+            dropout=config.dropout,
+        )
         self.state_head = MLP(config.shared_dim, config.shared_dim, config.shared_dim, depth=2, dropout=config.dropout)
         self.response_head = MLP(config.shared_dim, config.shared_dim, config.shared_dim, depth=2, dropout=config.dropout)
         self.perturbation_classifier = MLP(
@@ -110,6 +120,25 @@ class PerturbJEPABridge(nn.Module):
         update_ema_teacher(self.image_encoder, self.image_teacher, decay=decay)
         update_ema_teacher(self.rna_projection, self.rna_teacher_projection, decay=decay)
         update_ema_teacher(self.image_projection, self.image_teacher_projection, decay=decay)
+        update_ema_teacher(self.rna_bag_aggregator, self.rna_teacher_bag_aggregator, decay=decay)
+        update_ema_teacher(self.image_bag_aggregator, self.image_teacher_bag_aggregator, decay=decay)
+
+    @staticmethod
+    def _set_eval_temporarily(modules: tuple[nn.Module, ...]):
+        class _TeacherEvalContext:
+            def __init__(self, modules: tuple[nn.Module, ...]) -> None:
+                self.modules = modules
+                self.states = [module.training for module in modules]
+
+            def __enter__(self) -> None:
+                for module in self.modules:
+                    module.eval()
+
+            def __exit__(self, exc_type, exc, tb) -> None:
+                for module, state in zip(self.modules, self.states, strict=True):
+                    module.train(state)
+
+        return _TeacherEvalContext(modules)
 
     def encode_perturbation(
         self,
@@ -192,16 +221,25 @@ class PerturbJEPABridge(nn.Module):
             rna_shared = rna_aggregated.bag_embedding
             rna_state = self.state_head(rna_shared)
             rna_response = self.response_head(rna_shared)
-            with torch.no_grad():
+            with torch.no_grad(), self._set_eval_temporarily(
+                (self.rna_teacher, self.rna_teacher_projection, self.rna_teacher_bag_aggregator)
+            ):
                 rna_teacher = self.rna_teacher(flat_gene_ids, flat_expression_values, token_mask=None)
                 rna_teacher_instances = self.rna_teacher_projection(rna_teacher.cell_embedding).reshape(*rna_bag_shape, -1)
-                rna_teacher_aggregated = self.rna_bag_aggregator(rna_teacher_instances, mask=rna_bag_mask)
-                rna_teacher_shared = rna_teacher_aggregated.bag_embedding
+                rna_teacher_aggregated = self.rna_teacher_bag_aggregator(rna_teacher_instances, mask=rna_bag_mask)
+                rna_teacher_shared = rna_teacher_aggregated.bag_embedding.detach()
             rna_tokens = rna.token_embeddings.reshape(*rna_batch_shape, *rna.token_embeddings.shape[1:])
+            rna_teacher_tokens = rna_teacher.token_embeddings.reshape(*rna_batch_shape, *rna_teacher.token_embeddings.shape[1:])
+            rna_token_prediction = self.rna_jepa_predictor(rna.token_embeddings).reshape(
+                *rna_batch_shape,
+                *rna.token_embeddings.shape[1:],
+            )
             rna_reconstruction = rna.reconstruction.reshape(*rna_batch_shape, rna.reconstruction.shape[-1])
             outputs.update(
                 {
                     "rna_tokens": rna_tokens,
+                    "rna_teacher_tokens": rna_teacher_tokens.detach(),
+                    "rna_token_prediction": rna_token_prediction,
                     "rna_reconstruction": rna_reconstruction,
                     "rna_instance_shared": rna_instance_shared,
                     "rna_prototypes": rna_aggregated.prototypes,
@@ -239,23 +277,38 @@ class PerturbJEPABridge(nn.Module):
             image_shared = image_aggregated.bag_embedding
             image_state = self.state_head(image_shared)
             image_response = self.response_head(image_shared)
-            with torch.no_grad():
+            with torch.no_grad(), self._set_eval_temporarily(
+                (self.image_teacher, self.image_teacher_projection, self.image_teacher_bag_aggregator)
+            ):
                 image_teacher = self.image_teacher(flat_images, patch_mask=None)
                 image_teacher_instances = self.image_teacher_projection(image_teacher.image_embedding).reshape(*image_bag_shape, -1)
-                image_teacher_aggregated = self.image_bag_aggregator(image_teacher_instances, mask=image_bag_mask)
-                image_teacher_shared = image_teacher_aggregated.bag_embedding
+                image_teacher_aggregated = self.image_teacher_bag_aggregator(image_teacher_instances, mask=image_bag_mask)
+                image_teacher_shared = image_teacher_aggregated.bag_embedding.detach()
+            image_patch_prediction_flat = self.image_jepa_predictor(image.patch_embeddings)
             if image_is_bagged:
                 image_patches = image.patch_embeddings.reshape(*image_bag_shape, *image.patch_embeddings.shape[1:])
+                image_teacher_patches = image_teacher.patch_embeddings.reshape(
+                    *image_bag_shape,
+                    *image_teacher.patch_embeddings.shape[1:],
+                )
+                image_patch_prediction = image_patch_prediction_flat.reshape(
+                    *image_bag_shape,
+                    *image_patch_prediction_flat.shape[1:],
+                )
                 image_reconstruction = image.patch_reconstruction.reshape(
                     *image_bag_shape,
                     *image.patch_reconstruction.shape[1:],
                 )
             else:
                 image_patches = image.patch_embeddings
+                image_teacher_patches = image_teacher.patch_embeddings
+                image_patch_prediction = image_patch_prediction_flat
                 image_reconstruction = image.patch_reconstruction
             outputs.update(
                 {
                     "image_patches": image_patches,
+                    "image_teacher_patches": image_teacher_patches.detach(),
+                    "image_patch_prediction": image_patch_prediction,
                     "image_patch_reconstruction": image_reconstruction,
                     "image_instance_shared": image_instance_shared,
                     "image_prototypes": image_aggregated.prototypes,

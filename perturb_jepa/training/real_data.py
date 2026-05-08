@@ -10,6 +10,15 @@ import torch
 
 from perturb_jepa.config import ExperimentConfig
 from perturb_jepa.data.conditions import MetadataVocab
+from perturb_jepa.data.schema import DEFAULT_METADATA_SCHEMA, make_condition_id, normalize_value
+from perturb_jepa.data.splits import (
+    grouped_hash_split,
+    heldout_batch_split,
+    heldout_cell_line_split,
+    heldout_dose_time_split,
+    heldout_moa_split,
+    heldout_perturbation_split,
+)
 from perturb_jepa.data.scrna import as_dense_array, library_size_log1p, normalize_scrna_obs, normalize_scrna_var, select_high_variance_genes
 from perturb_jepa.models.bridge import PerturbJEPABridgeConfig
 from perturb_jepa.models.image_encoder import ImageEncoderConfig
@@ -133,8 +142,9 @@ def metadata_tensors(
     vocab: MetadataVocab,
     *,
     device: torch.device | str,
+    strict: bool = False,
 ) -> dict[str, torch.Tensor]:
-    encoded = [vocab.encode_row(row) for row in rows]
+    encoded = [vocab.encode_row(row, strict=strict) for row in rows]
     device = torch.device(device)
     return {
         "perturbation_id": torch.tensor([int(row["perturbation_id"]) for row in encoded], dtype=torch.long, device=device),
@@ -150,6 +160,179 @@ def make_token_mask(shape: tuple[int, ...], mask_prob: float, *, device: torch.d
     if mask_prob <= 0:
         return torch.zeros(shape, dtype=torch.bool, device=device)
     return torch.rand(shape, device=device) < mask_prob
+
+
+def parse_heldout_values(values: str | Sequence[object] | None, *, strategy: str) -> list[object] | None:
+    if values is None or values == "":
+        return None
+    if isinstance(values, str):
+        pieces: Sequence[object] = [piece.strip() for piece in values.split(",") if piece.strip()]
+    else:
+        pieces = list(values)
+    if not pieces:
+        return None
+    if strategy == "heldout_dose_time":
+        parsed: list[object] = []
+        for piece in pieces:
+            if isinstance(piece, (tuple, list)) and len(piece) == 2:
+                parsed.append((piece[0], piece[1]))
+                continue
+            text = str(piece)
+            delimiter = "|" if "|" in text else ":"
+            if delimiter not in text:
+                raise ValueError("heldout_dose_time values must be formatted as dose|time")
+            dose, time = text.split(delimiter, 1)
+            parsed.append((dose, time))
+        return parsed
+    return list(pieces)
+
+
+def assign_real_data_splits(
+    rna_metadata: pd.DataFrame,
+    image_metadata: pd.DataFrame,
+    *,
+    split_strategy: str = "none",
+    split_col: str = "split",
+    train_split_value: str = "train",
+    eval_split_value: str = "test",
+    heldout_values: Sequence[object] | None = None,
+    heldout_fraction: float = 0.2,
+    seed: int = 13,
+) -> tuple[pd.DataFrame, pd.DataFrame, dict[str, object]]:
+    """Assign leakage-safe splits over the union of RNA and image metadata."""
+
+    rna = rna_metadata.reset_index(drop=True).copy()
+    image = image_metadata.reset_index(drop=True).copy()
+    if split_strategy == "none":
+        return rna, image, {
+            "split_strategy": split_strategy,
+            "split_col": split_col,
+            "train_split_value": train_split_value,
+            "eval_split_value": eval_split_value,
+            "heldout_groups": [],
+        }
+
+    combined = pd.concat(
+        [
+            rna.assign(_modality="rna", _row=np.arange(len(rna))),
+            image.assign(_modality="image", _row=np.arange(len(image))),
+        ],
+        ignore_index=True,
+        sort=False,
+    )
+    for column in DEFAULT_METADATA_SCHEMA.biological_keys:
+        if column not in combined.columns:
+            raise ValueError(f"metadata is missing required split column {column!r}")
+        combined[column] = combined[column].map(normalize_value)
+    if "batch" in combined.columns:
+        combined["batch"] = combined["batch"].map(normalize_value)
+    heldout = parse_heldout_values(heldout_values, strategy=split_strategy)
+
+    if split_strategy == "random_grouped":
+        combined["condition_id"] = [make_condition_id(row) for row in combined.to_dict(orient="records")]
+        split = grouped_hash_split(
+            combined,
+            ["condition_id"],
+            fractions={train_split_value: 1.0 - heldout_fraction, eval_split_value: heldout_fraction},
+            seed=seed,
+            output_col=split_col,
+        )
+        heldout_group_cols = ["condition_id"]
+    elif split_strategy == "heldout_batch":
+        split = heldout_batch_split(
+            combined,
+            heldout_batches=heldout,
+            heldout_fraction=heldout_fraction,
+            seed=seed,
+            output_col=split_col,
+        )
+        heldout_group_cols = ["batch"]
+    elif split_strategy == "heldout_perturbation":
+        split = heldout_perturbation_split(
+            combined,
+            heldout_perturbations=heldout,
+            heldout_fraction=heldout_fraction,
+            seed=seed,
+            output_col=split_col,
+        )
+        heldout_group_cols = ["perturbation"]
+    elif split_strategy == "heldout_dose_time":
+        split = heldout_dose_time_split(
+            combined,
+            heldout_dose_times=heldout,
+            heldout_fraction=heldout_fraction,
+            seed=seed,
+            output_col=split_col,
+        )
+        heldout_group_cols = ["dose", "time"]
+    elif split_strategy == "heldout_cell_line":
+        split = heldout_cell_line_split(
+            combined,
+            heldout_cell_lines=heldout,
+            heldout_fraction=heldout_fraction,
+            seed=seed,
+            output_col=split_col,
+        )
+        heldout_group_cols = ["cell_line"]
+    elif split_strategy == "heldout_moa":
+        split = heldout_moa_split(
+            combined,
+            heldout_moas=heldout,
+            heldout_fraction=heldout_fraction,
+            seed=seed,
+            output_col=split_col,
+        )
+        heldout_group_cols = ["moa"]
+    else:
+        raise ValueError(f"unsupported split_strategy: {split_strategy}")
+
+    if train_split_value != "train" or eval_split_value != "test":
+        split[split_col] = split[split_col].map({"train": train_split_value, "test": eval_split_value}).fillna(split[split_col])
+    heldout_groups = _split_group_values(split, heldout_group_cols, split_col=split_col, split_value=eval_split_value)
+    rna_split = split.loc[split["_modality"] == "rna"].sort_values("_row").drop(columns=["_modality", "_row"])
+    image_split = split.loc[split["_modality"] == "image"].sort_values("_row").drop(columns=["_modality", "_row"])
+    metadata = {
+        "split_strategy": split_strategy,
+        "split_col": split_col,
+        "train_split_value": train_split_value,
+        "eval_split_value": eval_split_value,
+        "heldout_fraction": heldout_fraction,
+        "heldout_values": [_format_heldout_value(value) for value in heldout] if heldout is not None else [],
+        "heldout_group_columns": heldout_group_cols,
+        "heldout_groups": heldout_groups,
+    }
+    return rna_split.reset_index(drop=True), image_split.reset_index(drop=True), metadata
+
+
+def filter_metadata_by_split(frame: pd.DataFrame, *, split_col: str, split_value: str, name: str) -> pd.DataFrame:
+    if split_col not in frame.columns:
+        raise ValueError(f"{name} metadata does not contain split column {split_col!r}")
+    filtered = frame.loc[frame[split_col].astype(str) == str(split_value)].reset_index(drop=True)
+    if filtered.empty:
+        raise ValueError(f"{name} metadata has no rows for {split_col}={split_value!r}")
+    return filtered
+
+
+def _split_group_values(
+    frame: pd.DataFrame,
+    group_cols: Sequence[str],
+    *,
+    split_col: str,
+    split_value: str,
+) -> list[str]:
+    if not group_cols:
+        return []
+    selected = frame.loc[frame[split_col].astype(str) == str(split_value)]
+    if selected.empty:
+        return []
+    values = selected.loc[:, list(group_cols)].fillna("NA").astype(str).agg("|".join, axis=1)
+    return sorted(set(values.tolist()))
+
+
+def _format_heldout_value(value: object) -> str:
+    if isinstance(value, (tuple, list)):
+        return "|".join(normalize_value(item) for item in value)
+    return normalize_value(value)
 
 
 def infer_image_shape_from_array(image: np.ndarray) -> tuple[int, int]:

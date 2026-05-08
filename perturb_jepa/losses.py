@@ -29,6 +29,24 @@ def cosine_jepa_loss(student: torch.Tensor, teacher: torch.Tensor) -> torch.Tens
     return 1.0 - F.cosine_similarity(student, teacher.detach(), dim=-1).mean()
 
 
+def masked_cosine_jepa_loss(
+    student: torch.Tensor,
+    teacher: torch.Tensor,
+    mask: torch.Tensor | None = None,
+) -> torch.Tensor:
+    if student.shape != teacher.shape:
+        raise ValueError(f"JEPA shape mismatch: student={student.shape}, teacher={teacher.shape}")
+    cosine = F.cosine_similarity(student, teacher.detach(), dim=-1)
+    if mask is None:
+        return 1.0 - cosine.mean()
+    if mask.shape != cosine.shape:
+        raise ValueError(f"JEPA mask must have shape {cosine.shape}, got {mask.shape}")
+    selected = mask.to(device=cosine.device, dtype=torch.bool)
+    if not bool(selected.any()):
+        return torch.zeros((), device=student.device, dtype=student.dtype)
+    return 1.0 - cosine[selected].mean()
+
+
 def info_nce_loss(x: torch.Tensor, y: torch.Tensor, *, temperature: float = 0.1) -> torch.Tensor:
     if x.shape != y.shape:
         raise ValueError("InfoNCE inputs must have matching shapes")
@@ -332,6 +350,7 @@ def bag_sliced_wasserstein_loss(
 
 @dataclass(frozen=True)
 class BridgeLossWeights:
+    temperature: float = 0.1
     rna_mask: float = 1.0
     image_mask: float = 1.0
     jepa: float = 1.0
@@ -355,11 +374,17 @@ def bridge_loss(
     image_patch_mask: torch.Tensor | None = None,
     perturbation_id: torch.Tensor | None = None,
     batch_id: torch.Tensor | None = None,
+    rna_batch_id: torch.Tensor | None = None,
+    image_batch_id: torch.Tensor | None = None,
     bag_labels: torch.Tensor | None = None,
     hierarchy_labels: Sequence[torch.Tensor] | None = None,
     bio_keys: Any = None,
     positive_mask: torch.Tensor | None = None,
     positive_weights: torch.Tensor | None = None,
+    counterfactual_rna_target: torch.Tensor | None = None,
+    counterfactual_control_rna: torch.Tensor | None = None,
+    counterfactual_image_target: torch.Tensor | None = None,
+    counterfactual_control_image: torch.Tensor | None = None,
     temperature: float = 0.1,
     weights: BridgeLossWeights | None = None,
 ) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
@@ -370,9 +395,21 @@ def bridge_loss(
         terms["rna_mask"] = masked_mse(outputs["rna_reconstruction"], rna_values, rna_mask)
     if image_patches is not None and "image_patch_reconstruction" in outputs:
         terms["image_mask"] = masked_mse(outputs["image_patch_reconstruction"], image_patches, image_patch_mask)
-    if "rna_shared" in outputs and "rna_teacher_shared" in outputs:
+    if "rna_token_prediction" in outputs and "rna_teacher_tokens" in outputs:
+        terms["rna_jepa"] = masked_cosine_jepa_loss(
+            outputs["rna_token_prediction"],
+            outputs["rna_teacher_tokens"],
+            rna_mask,
+        )
+    elif "rna_shared" in outputs and "rna_teacher_shared" in outputs:
         terms["rna_jepa"] = cosine_jepa_loss(outputs["rna_shared"], outputs["rna_teacher_shared"])
-    if "image_shared" in outputs and "image_teacher_shared" in outputs:
+    if "image_patch_prediction" in outputs and "image_teacher_patches" in outputs:
+        terms["image_jepa"] = masked_cosine_jepa_loss(
+            outputs["image_patch_prediction"],
+            outputs["image_teacher_patches"],
+            image_patch_mask,
+        )
+    elif "image_shared" in outputs and "image_teacher_shared" in outputs:
         terms["image_jepa"] = cosine_jepa_loss(outputs["image_shared"], outputs["image_teacher_shared"])
     if "rna_shared" in outputs and "image_shared" in outputs:
         if bio_keys is not None or positive_mask is not None or positive_weights is not None:
@@ -405,8 +442,18 @@ def bridge_loss(
                 outputs["image_shared"],
                 bag_labels,
             )
-    if "counterfactual_image" in outputs and "image_shared" in outputs:
-        terms["counterfactual_image"] = mmd_rbf(outputs["counterfactual_image"], outputs["image_shared"].detach())
+    if (
+        counterfactual_rna_target is not None
+        and counterfactual_control_rna is not None
+        and "counterfactual_rna" in outputs
+    ):
+        terms["counterfactual_rna"] = mmd_rbf(outputs["counterfactual_rna"], counterfactual_rna_target.detach())
+    if (
+        counterfactual_image_target is not None
+        and counterfactual_control_image is not None
+        and "counterfactual_image" in outputs
+    ):
+        terms["counterfactual_image"] = mmd_rbf(outputs["counterfactual_image"], counterfactual_image_target.detach())
     if "cycle_reconstruction" in outputs and "z_state" in outputs:
         terms["cycle"] = F.mse_loss(outputs["cycle_reconstruction"], outputs["z_state"].detach())
     response_terms = [
@@ -431,11 +478,12 @@ def bridge_loss(
                 outputs["image_state_perturbation_logits"],
                 perturbation_id,
             )
-    if batch_id is not None:
-        if "rna_batch_logits" in outputs:
-            terms["rna_batch_adv"] = F.cross_entropy(outputs["rna_batch_logits"], batch_id)
-        if "image_batch_logits" in outputs:
-            terms["image_batch_adv"] = F.cross_entropy(outputs["image_batch_logits"], batch_id)
+    rna_batch_target = rna_batch_id if rna_batch_id is not None else batch_id
+    image_batch_target = image_batch_id if image_batch_id is not None else batch_id
+    if rna_batch_target is not None and "rna_batch_logits" in outputs:
+        terms["rna_batch_adv"] = F.cross_entropy(outputs["rna_batch_logits"], rna_batch_target)
+    if image_batch_target is not None and "image_batch_logits" in outputs:
+        terms["image_batch_adv"] = F.cross_entropy(outputs["image_batch_logits"], image_batch_target)
 
     device = next(iter(outputs.values())).device
     total = torch.zeros((), device=device)
@@ -460,7 +508,10 @@ def bridge_loss(
         terms.get("rna_batch_adv", torch.zeros((), device=device))
         + terms.get("image_batch_adv", torch.zeros((), device=device))
     )
-    total = total + weights.counterfactual * terms.get("counterfactual_image", torch.zeros((), device=device))
+    total = total + weights.counterfactual * (
+        terms.get("counterfactual_rna", torch.zeros((), device=device))
+        + terms.get("counterfactual_image", torch.zeros((), device=device))
+    )
     total = total + weights.cycle * terms.get("cycle", torch.zeros((), device=device))
     total = total + weights.response_bottleneck * terms.get("response_bottleneck", torch.zeros((), device=device))
     terms["total"] = total

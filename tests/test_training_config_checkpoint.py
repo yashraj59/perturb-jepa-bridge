@@ -3,7 +3,9 @@ from __future__ import annotations
 from dataclasses import replace
 
 import torch
+import pandas as pd
 
+from perturb_jepa.data.conditions import MetadataVocab
 from perturb_jepa.config import ExperimentConfig
 from perturb_jepa.training.checkpoint import load_checkpoint, save_checkpoint
 from perturb_jepa.training.seed import seed_everything
@@ -104,3 +106,30 @@ def test_checkpoint_save_load_restores_training_state(tmp_path):
     assert restored_trainer.global_step == 1
     assert ExperimentConfig.from_dict(checkpoint["experiment_config"]) == config
     assert checkpoint["metadata"] == {"split": "synthetic"}
+
+
+def test_metadata_vocab_checkpoint_round_trip_keeps_ids_stable():
+    train = pd.DataFrame(
+        {
+            "perturbation": ["drugB"],
+            "perturbation_type": ["compound"],
+            "cell_line": ["U2OS"],
+            "batch": ["batchB"],
+        }
+    )
+    eval_frame = pd.DataFrame(
+        {
+            "perturbation": ["drugA", "drugB"],
+            "perturbation_type": ["compound", "compound"],
+            "cell_line": ["A549", "U2OS"],
+            "batch": ["batchA", "batchB"],
+        }
+    )
+
+    saved_vocab = MetadataVocab.from_frame(train)
+    restored = MetadataVocab.from_dict(saved_vocab.to_dict())
+    rebuilt_eval_vocab = MetadataVocab.from_frame(eval_frame)
+
+    assert restored.encode_row({"perturbation": "drugB"})["perturbation_id"] == 1
+    assert rebuilt_eval_vocab.encode_row({"perturbation": "drugB"})["perturbation_id"] == 2
+    assert restored.encode_row({"perturbation": "drugA"})["perturbation_id"] == 0

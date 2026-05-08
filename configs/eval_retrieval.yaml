@@ -2,9 +2,9 @@ name: eval-retrieval
 model:
   shared_dim: 256
   num_bag_prototypes: 8
-  rna_encoder_dim: 128
-  image_encoder_dim: 128
 data:
+  split_col: split
+  eval_split_value: test
   rna_bag_size: 128
   image_bag_size: 128
   min_rna_bag_size: 16
@@ -24,21 +24,9 @@ data:
     - sequencing_lane
     - library_id
 loss:
-  contrastive_weight: 1.0
-  mmd_weight: 0.1
-  sliced_wasserstein_weight: 0.05
-  batch_adv_weight: 0.05
-  perturbation_cls_weight: 0.1
-  counterfactual_nll_weight: 1.0
-  counterfactual_mmd_weight: 0.1
   temperature: 0.07
 training:
   batch_size: 32
-  epochs: 1
-  lr: 0.001
-  weight_decay: 0.01
-  batch_adv_warmup_epochs: 5
-  freeze_encoders_initially: true
 inputs:
   rna_embeddings: rna_embeddings.npy
   rna_metadata: rna_metadata.csv
@@ -64,4 +52,7 @@ baselines:
     columns: [batch, plate, run, well, site, z_plane, imaging_channel, sequencing_lane, library_id]
   mean_prototype_alignment:
     groupby: [perturbation, dose, time, cell_line]
+    train_target_embeddings: null
+    train_target_metadata: null
+    oracle_eval_fit: true
 output: retrieval_metrics.csv

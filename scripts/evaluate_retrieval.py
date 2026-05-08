@@ -13,13 +13,21 @@ from torch.utils.data import DataLoader
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from perturb_jepa.baselines.batch_only_baseline import batch_only_retrieval_metrics
+from perturb_jepa.baselines.mean_prototype_alignment import MeanPrototypeAlignment
 from perturb_jepa.baselines.metadata_only_retrieval import metadata_only_retrieval_metrics
 from perturb_jepa.config import ExperimentConfig
-from perturb_jepa.data.condition_bags import ImageConditionBagDataset, PairedConditionBagDataset, RNAConditionBagDataset
+from perturb_jepa.data.condition_bags import (
+    ImageConditionBagDataset,
+    PairedConditionBagDataset,
+    RNAConditionBagDataset,
+    summarize_technical_metadata,
+)
 from perturb_jepa.data.conditions import MetadataVocab
 from perturb_jepa.evaluation.retrieval import cross_modal_retrieval_metrics
 from perturb_jepa.training.checkpoint import load_checkpoint
 from perturb_jepa.training.real_data import (
+    assign_real_data_splits,
+    filter_metadata_by_split,
     metadata_tensors,
     prepare_expression_matrix,
     raw_get,
@@ -34,6 +42,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--image-embeddings", type=Path)
     parser.add_argument("--rna-metadata", type=Path)
     parser.add_argument("--image-metadata", type=Path)
+    parser.add_argument("--train-target-embeddings", type=Path)
+    parser.add_argument("--train-target-metadata", type=Path)
     parser.add_argument("--checkpoint", type=Path, help="Bridge checkpoint for real-data embedding extraction.")
     parser.add_argument("--rna-anndata", type=Path)
     parser.add_argument("--image-manifest", type=Path)
@@ -43,6 +53,9 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--n-top-genes", type=int, default=None)
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--device", default="cpu")
+    parser.add_argument("--split-col", default=None)
+    parser.add_argument("--eval-split-value", default=None)
+    parser.add_argument("--strict-vocab", action="store_true")
     parser.add_argument("--save-embeddings-dir", type=Path)
     parser.add_argument("--synthetic", action="store_true", help="Run on a deterministic synthetic dataset.")
     parser.add_argument("--seed", type=int, default=0)
@@ -73,6 +86,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             n_top_genes=args.n_top_genes,
             batch_size=args.batch_size,
             device=torch.device(args.device),
+            split_col=args.split_col,
+            eval_split_value=args.eval_split_value,
+            strict_vocab=args.strict_vocab,
         )
         if args.save_embeddings_dir is not None:
             args.save_embeddings_dir.mkdir(parents=True, exist_ok=True)
@@ -91,7 +107,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     rows = [
         {
-            "method": "learned_embeddings",
+            "method": "learned",
             **cross_modal_retrieval_metrics(rna_embeddings, image_embeddings, rna_metadata, image_metadata),
         },
         {
@@ -103,6 +119,33 @@ def main(argv: Sequence[str] | None = None) -> int:
             **batch_only_retrieval_metrics(rna_metadata, image_metadata),
         },
     ]
+    if args.train_target_embeddings is not None or args.train_target_metadata is not None:
+        if args.train_target_embeddings is None or args.train_target_metadata is None:
+            raise ValueError("provide both --train-target-embeddings and --train-target-metadata")
+        train_target_embeddings = np.load(args.train_target_embeddings)
+        train_target_metadata = pd.read_csv(args.train_target_metadata)
+        rows.append(
+            {
+                "method": "mean_prototype_trainfit",
+                **MeanPrototypeAlignment().fit(train_target_embeddings, train_target_metadata).evaluate(
+                    rna_metadata,
+                    image_embeddings,
+                    image_metadata,
+                    prefix="mean_prototype_trainfit",
+                ),
+            }
+        )
+    rows.append(
+        {
+            "method": "mean_prototype_oracle",
+            **MeanPrototypeAlignment().fit(image_embeddings, image_metadata).evaluate(
+                rna_metadata,
+                image_embeddings,
+                image_metadata,
+                prefix="mean_prototype_oracle",
+            ),
+        }
+    )
     report = pd.DataFrame.from_records(rows)
     if args.output is not None:
         args.output.parent.mkdir(parents=True, exist_ok=True)
@@ -123,6 +166,9 @@ def _embeddings_from_checkpoint(
     n_top_genes: int | None,
     batch_size: int,
     device: torch.device,
+    split_col: str | None,
+    eval_split_value: str | None,
+    strict_vocab: bool,
 ) -> tuple[np.ndarray, np.ndarray, pd.DataFrame, pd.DataFrame]:
     checkpoint = load_checkpoint(checkpoint_path, map_location=device)
     if not checkpoint.get("experiment_config"):
@@ -135,23 +181,60 @@ def _embeddings_from_checkpoint(
         max_genes=config.model.rna.max_genes,
     )
     rna_metadata = pd.DataFrame(adata.obs).reset_index(drop=False).rename(columns={"index": "sample_id"})
+    rna_metadata["_matrix_index"] = np.arange(len(rna_metadata))
     image_manifest = pd.read_csv(manifest_path)
     if max_images is not None and max_images > 0:
         image_manifest = image_manifest.iloc[:max_images].copy()
-    vocab = MetadataVocab.from_frames([rna_metadata, image_manifest])
+    checkpoint_metadata = checkpoint.get("metadata") or {}
+    if "metadata_vocab" not in checkpoint_metadata:
+        raise ValueError("checkpoint metadata is missing saved metadata_vocab; refusing to rebuild vocab from eval data")
+    vocab = MetadataVocab.from_dict(checkpoint_metadata["metadata_vocab"])
+    split_metadata = checkpoint_metadata.get("split") or {}
+    resolved_split_col = split_col or split_metadata.get("split_col") or config.data.split_col
+    resolved_eval_value = eval_split_value or split_metadata.get("eval_split_value") or config.data.eval_split_value
+    if resolved_eval_value in (None, ""):
+        raise ValueError("checkpoint evaluation requires --eval-split-value or a saved eval split in the checkpoint")
+    split_strategy = split_metadata.get("split_strategy", config.data.split_strategy)
+    if split_strategy != "none":
+        heldout_values = split_metadata.get("heldout_values") or split_metadata.get("heldout_groups") or config.data.heldout_values
+        rna_metadata, image_manifest, _ = assign_real_data_splits(
+            rna_metadata,
+            image_manifest,
+            split_strategy=split_strategy,
+            split_col=resolved_split_col,
+            train_split_value=split_metadata.get("train_split_value", config.data.train_split_value),
+            eval_split_value=str(resolved_eval_value),
+            heldout_values=heldout_values,
+            heldout_fraction=float(split_metadata.get("heldout_fraction", config.data.heldout_fraction)),
+            seed=config.training.seed,
+        )
+    rna_metadata = filter_metadata_by_split(
+        rna_metadata,
+        split_col=resolved_split_col,
+        split_value=str(resolved_eval_value),
+        name="RNA eval",
+    )
+    image_manifest = filter_metadata_by_split(
+        image_manifest,
+        split_col=resolved_split_col,
+        split_value=str(resolved_eval_value),
+        name="image eval",
+    )
+    expression = expression[rna_metadata["_matrix_index"].astype(int).to_numpy()]
+    rna_metadata = rna_metadata.drop(columns=["_matrix_index"])
     model = config.build_model().to(device)
     model.load_state_dict(checkpoint["model_state"], strict=False)
     rna_bags = RNAConditionBagDataset(
         expression,
         rna_metadata,
-        rna_bag_size=raw_get(checkpoint["experiment_config"], ("data", "rna_bag_size"), 128),
+        rna_bag_size=config.data.rna_bag_size,
         min_rna_bag_size=1,
         split="test",
         seed=config.training.seed,
     )
     image_bags = ImageConditionBagDataset(
         image_manifest,
-        image_bag_size=raw_get(checkpoint["experiment_config"], ("data", "image_bag_size"), 128),
+        image_bag_size=config.data.image_bag_size,
         min_image_bag_size=1,
         split="test",
         seed=config.training.seed,
@@ -160,11 +243,12 @@ def _embeddings_from_checkpoint(
         resize=resize_for_manifest(image_manifest, config.model.image.image_size),
     )
     paired = PairedConditionBagDataset(rna_bags, image_bags)
-    collate = _EvalBagCollator(gene_token_ids, vocab, device=device)
+    collate = _EvalBagCollator(gene_token_ids, vocab, device=device, strict_vocab=strict_vocab)
     loader = DataLoader(paired, batch_size=int(batch_size), shuffle=False, collate_fn=collate)
     rna_embeddings: list[np.ndarray] = []
     image_embeddings: list[np.ndarray] = []
-    rows: list[dict[str, object]] = []
+    rna_rows: list[dict[str, object]] = []
+    image_rows: list[dict[str, object]] = []
     model.eval()
     with torch.no_grad():
         for batch in loader:
@@ -180,23 +264,35 @@ def _embeddings_from_checkpoint(
             )
             rna_embeddings.append(outputs["rna_shared"].detach().cpu().numpy())
             image_embeddings.append(outputs["image_shared"].detach().cpu().numpy())
-            rows.extend(batch["rows"])
-    metadata = pd.DataFrame(rows)
-    if "condition_key" not in metadata.columns:
-        metadata["condition_key"] = metadata["condition_id"]
+            rna_rows.extend(batch["rna_rows"])
+            image_rows.extend(batch["image_rows"])
+    rna_frame = pd.DataFrame(rna_rows)
+    image_frame = pd.DataFrame(image_rows)
+    if "condition_key" not in rna_frame.columns:
+        rna_frame["condition_key"] = rna_frame["condition_id"]
+    if "condition_key" not in image_frame.columns:
+        image_frame["condition_key"] = image_frame["condition_id"]
     return (
         np.concatenate(rna_embeddings, axis=0),
         np.concatenate(image_embeddings, axis=0),
-        metadata.copy(),
-        metadata.copy(),
+        rna_frame,
+        image_frame,
     )
 
 
 class _EvalBagCollator:
-    def __init__(self, gene_token_ids: np.ndarray, metadata_vocab: MetadataVocab, *, device: torch.device) -> None:
+    def __init__(
+        self,
+        gene_token_ids: np.ndarray,
+        metadata_vocab: MetadataVocab,
+        *,
+        device: torch.device,
+        strict_vocab: bool = False,
+    ) -> None:
         self.gene_token_ids = np.asarray(gene_token_ids, dtype=np.int64)
         self.metadata_vocab = metadata_vocab
         self.device = device
+        self.strict_vocab = strict_vocab
 
     def __call__(self, items: list[dict]) -> dict[str, object]:
         rna_arrays = [np.asarray(item["rna"]["x"], dtype=np.float32) for item in items]
@@ -221,14 +317,22 @@ class _EvalBagCollator:
             device=self.device,
         )
         rows = [item["condition"] for item in items]
+        rna_rows = []
+        image_rows = []
+        for item in items:
+            rna_tech = summarize_technical_metadata(item["rna"]["tech"])
+            image_tech = summarize_technical_metadata(item["image"]["tech"])
+            rna_rows.append({**item["condition"], **rna_tech})
+            image_rows.append({**item["condition"], **image_tech})
         return {
             "gene_ids": gene_ids,
             "expression_values": expression,
             "rna_bag_mask": torch.as_tensor(rna_mask_np, dtype=torch.bool, device=self.device),
             "images": images,
             "image_bag_mask": torch.as_tensor(image_mask_np, dtype=torch.bool, device=self.device),
-            "metadata": metadata_tensors(rows, self.metadata_vocab, device=self.device),
-            "rows": rows,
+            "metadata": metadata_tensors(rows, self.metadata_vocab, device=self.device, strict=self.strict_vocab),
+            "rna_rows": rna_rows,
+            "image_rows": image_rows,
         }
 
 

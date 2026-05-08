@@ -25,6 +25,7 @@ BRIDGE_LOSS_TERM_WEIGHTS = {
     "image_state_perturbation_adv": "state_perturbation_adv",
     "rna_batch_adv": "batch_adv",
     "image_batch_adv": "batch_adv",
+    "counterfactual_rna": "counterfactual",
     "counterfactual_image": "counterfactual",
     "cycle": "cycle",
     "response_bottleneck": "response_bottleneck",

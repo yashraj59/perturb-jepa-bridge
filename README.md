@@ -38,8 +38,13 @@ target_gene, dose, time, cell_line, batch
 The shared condition key is:
 
 ```text
-perturbation | perturbation_type | dose | time | cell_line
+perturbation | dose | time | cell_line
 ```
+
+`condition_key`, `condition_key_fine`, and `condition_id` all use exactly those
+four biological fields. `perturbation_type` is available only through the
+explicit `condition_key_with_type` column and is not part of the default
+biological identity.
 
 ## Metadata-First Downloads
 
@@ -93,10 +98,11 @@ bottom:
 notebooks/perturb_jepa_colab_end_to_end.ipynb
 ```
 
-The config-driven trainer supports reconstruction warmup/annealing and optional
-Kendall uncertainty weighting. Set `training.objective_schedule.enabled=true`
-to warm up reconstruction-only training before ramping in JEPA, alignment,
-counterfactual, and adversarial terms.
+The config-driven bridge trainer supports reconstruction warmup/annealing,
+optional Kendall uncertainty weighting, and `loss.temperature` for contrastive
+alignment. Set `training.objective_schedule.enabled=true` to warm up
+reconstruction-only training before ramping in JEPA, alignment, and adversarial
+terms.
 
 ## Baseline Evaluation
 
@@ -154,6 +160,8 @@ Three lightweight baselines are included:
   leakage.
 - `mean_prototype_alignment`: predicts target-space condition prototypes from
   target metadata groups and evaluates retrieval from those mean prototypes.
+  If fit on eval target embeddings it is reported as `mean_prototype_oracle`;
+  pass train target embeddings/metadata to report `mean_prototype_trainfit`.
 
 Counterfactual evaluation is split by modality. RNA reports pseudobulk
 correlation, logFC correlation, top-k DE overlap, direction accuracy, optional
@@ -191,7 +199,20 @@ python scripts/train_pretrain_image.py \
 ```
 
 Bridge and fine-tuning real-data runs require overlapping biological condition
-IDs between RNA and image metadata:
+IDs between RNA and image metadata. Real bridge training filters metadata before
+condition bags are built. Use explicit split columns or one of the grouped split
+strategies:
+
+```text
+--split-strategy none|random_grouped|heldout_batch|heldout_perturbation|heldout_dose_time|heldout_cell_line|heldout_moa
+--split-col split --train-split-value train --eval-split-value test
+--heldout-values drugA,drugB          # dose/time values use dose|time
+--heldout-fraction 0.2
+```
+
+RNA and image masks are controlled by `data.rna_mask_prob` and
+`data.image_patch_mask_prob`. The student sees masked inputs; EMA teachers see
+unmasked inputs and produce stop-gradient token/patch latent targets.
 
 ```bash
 python scripts/train_bridge.py \
@@ -199,6 +220,8 @@ python scripts/train_bridge.py \
   --rna-anndata data/raw/matched_rna.h5ad \
   --image-manifest data/processed/matched_image_manifest.csv \
   --image-root data/raw/images \
+  --split-strategy heldout_batch \
+  --eval-split-value test \
   --checkpoint-out checkpoints/real_bridge.pt
 
 python scripts/evaluate_retrieval.py \
@@ -206,6 +229,7 @@ python scripts/evaluate_retrieval.py \
   --rna-anndata data/raw/matched_rna.h5ad \
   --image-manifest data/processed/matched_image_manifest.csv \
   --image-root data/raw/images \
+  --eval-split-value test \
   --output retrieval_metrics.csv
 ```
 
@@ -233,11 +257,17 @@ python scripts/evaluate_retrieval.py \
 
 - Hierarchical condition bags are added at coarse, medium, and fine resolution:
   `condition_key_coarse`, `condition_key_medium`, `condition_key_fine`, plus
-  the legacy `condition_key` alias for fine conditions.
+  the legacy `condition_key` alias for fine conditions. `condition_key_with_type`
+  is a separate opt-in key that also includes `perturbation_type`.
 - Alignment can use multi-resolution InfoNCE and sliced Wasserstein bag losses,
   so bags keep distributional spread instead of collapsing only to centroids.
+- JEPA is implemented as masked token/patch latent prediction with predictor
+  heads and stop-gradient EMA teacher targets; masked reconstruction remains an
+  auxiliary objective.
 - The bridge model uses a gated additive counterfactual form,
-  `delta_z = gate(z_state, e_pert) * W(e_pert)`, with cycle consistency.
+  `delta_z = gate(z_state, e_pert) * W(e_pert)`, with cycle consistency. The
+  bridge loss does not train a counterfactual term unless explicit control and
+  treated targets are supplied.
 - Shared bag embeddings use batch adversarial removal for technical nuisance
   labels; perturbation, dose, time, and cell line are not adversarially removed
   by default.
@@ -248,6 +278,11 @@ python scripts/evaluate_retrieval.py \
 
 - Cross-modal alignment is condition-level only; no cell-image pairing is assumed.
 - Splits must be grouped by perturbation, dose, time, cell line, and batch.
+- Held-out perturbation generalization is not true extrapolation when using only
+  perturbation ID embeddings. True held-out perturbation claims require
+  descriptor inputs such as chemical fingerprints, gene target embeddings,
+  MoA/pathway embeddings, or pretrained perturbation descriptors
+  (`model.perturbation.descriptor_dim > 0`).
 - Fluorescence channels can be used as optional teacher targets, but label-free
   model input should remain brightfield or phase contrast.
 - v1 predicts RNA distributions and image embeddings/prototypes, not full images.

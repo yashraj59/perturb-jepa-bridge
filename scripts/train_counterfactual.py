@@ -231,7 +231,11 @@ def _run_real_rna_counterfactual(
                 "optimizer": optimizer.state_dict(),
                 "experiment_config": config.to_dict(),
                 "trainer_state": {"global_step": global_step, "pairs": len(pairs)},
-                "metadata": {"stage": "counterfactual", "rna_anndata": str(rna_path)},
+                "metadata": {
+                    "stage": "counterfactual",
+                    "rna_anndata": str(rna_path),
+                    "metadata_vocab": vocab.to_dict(),
+                },
             },
             checkpoint_out,
         )
@@ -241,10 +245,13 @@ def _control_treated_pairs(
     expression: np.ndarray,
     metadata: pd.DataFrame,
     control_values: list[str],
+    *,
+    metadata_vocab: MetadataVocab | None = None,
+    strict_vocab: bool = False,
 ) -> tuple[list[dict[str, object]], MetadataVocab]:
     metadata = metadata.copy()
     metadata["condition_id"] = [make_condition_id(row) for row in metadata.to_dict(orient="records")]
-    vocab = MetadataVocab.from_frame(metadata)
+    vocab = metadata_vocab or MetadataVocab.from_frame(metadata)
     control_tokens = {value.strip().lower() for value in control_values}
     metadata["_is_control"] = metadata["perturbation"].map(lambda value: normalize_value(value).lower() in control_tokens)
     prototypes: dict[str, np.ndarray] = {}
@@ -272,7 +279,7 @@ def _control_treated_pairs(
             control = fallback_controls.get(normalize_value(row.get("cell_line")))
         if control is None:
             continue
-        encoded = vocab.encode_row(row)
+        encoded = vocab.encode_row(row, strict=strict_vocab)
         pairs.append(
             {
                 "control": control.astype(np.float32, copy=False),

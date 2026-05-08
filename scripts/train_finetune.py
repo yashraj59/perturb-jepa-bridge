@@ -33,8 +33,10 @@ def main(argv: list[str] | None = None) -> int:
         config = replace(config, training=replace(config.training, steps=args.steps))
     if args.device is not None:
         config = replace(config, training=replace(config.training, device=args.device))
-    rna_path = args.rna_anndata or _optional_path(raw_get(raw_config, ("data", "rna_anndata")))
-    manifest_path = args.image_manifest or _optional_path(raw_get(raw_config, ("data", "image_manifest")))
+    rna_path = args.rna_anndata or _optional_path(config.data.rna_anndata or raw_get(raw_config, ("data", "rna_anndata")))
+    manifest_path = args.image_manifest or _optional_path(
+        config.data.image_manifest or raw_get(raw_config, ("data", "image_manifest"))
+    )
     if args.synthetic or rna_path is None or manifest_path is None:
         if not args.synthetic:
             print("Real fine-tuning needs both --rna-anndata and --image-manifest; running synthetic fine-tune.")
@@ -45,11 +47,11 @@ def main(argv: list[str] | None = None) -> int:
             raw_config=raw_config,
             rna_path=rna_path,
             manifest_path=manifest_path,
-            image_root=args.image_root or _optional_path(raw_get(raw_config, ("data", "image_root"))) or Path(""),
+            image_root=args.image_root or _optional_path(config.data.image_root or raw_get(raw_config, ("data", "image_root"))) or Path(""),
             max_cells=args.max_cells or raw_get(raw_config, ("data", "max_cells")),
             max_images=args.max_images or raw_get(raw_config, ("data", "max_images")),
             n_top_genes=args.n_top_genes or raw_get(raw_config, ("data", "n_top_genes")),
-            batch_size=args.batch_size or raw_get(raw_config, ("training", "batch_size"), 4),
+            batch_size=args.batch_size or config.training.batch_size,
             checkpoint_out=args.checkpoint_out,
         )
     return 0

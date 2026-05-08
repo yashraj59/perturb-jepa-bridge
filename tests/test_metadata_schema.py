@@ -3,6 +3,7 @@ import pytest
 
 from perturb_jepa.data.schema import (
     MetadataSchema,
+    add_hierarchical_condition_keys,
     make_bio_key,
     make_condition_id,
     make_tech_key,
@@ -43,6 +44,29 @@ def test_bio_key_and_condition_id_exclude_technical_metadata():
         assert technical_value not in make_bio_key(row)
     for technical_value in ("batch1", "plate7", "run3", "A01", "lane1", "lib9"):
         assert technical_value not in make_condition_id(row)
+
+
+def test_condition_key_and_condition_id_are_same_four_field_biology():
+    frame = pd.DataFrame(
+        {
+            "perturbation": ["drugA"],
+            "perturbation_type": ["compound"],
+            "dose": ["10uM"],
+            "time": ["48h"],
+            "cell_line": ["U2OS"],
+            "batch": ["batch1"],
+            "plate": ["plate7"],
+        }
+    )
+
+    keyed = add_hierarchical_condition_keys(frame)
+
+    assert keyed.loc[0, "condition_key"] == "drugA|10uM|48h|U2OS"
+    assert keyed.loc[0, "condition_key_fine"] == make_condition_id(frame.iloc[0].to_dict())
+    assert keyed.loc[0, "condition_key_with_type"] == "drugA|compound|10uM|48h|U2OS"
+    assert "compound" not in keyed.loc[0, "condition_key"]
+    assert "batch1" not in keyed.loc[0, "condition_key"]
+    assert "plate7" not in keyed.loc[0, "condition_key"]
 
 
 def test_tech_key_uses_fixed_technical_order():

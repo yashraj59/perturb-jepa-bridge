@@ -34,7 +34,6 @@ IMAGE_COLUMNS = (
 
 CONDITION_COLUMNS = (
     "perturbation",
-    "perturbation_type",
     "dose",
     "time",
     "cell_line",
@@ -46,20 +45,30 @@ MEDIUM_CONDITION_COLUMNS = ("perturbation", "dose", "time")
 
 FINE_CONDITION_COLUMNS = CONDITION_COLUMNS
 
-CONDITION_KEY_LEVELS = ("coarse", "medium", "fine")
+EXTENDED_CONDITION_COLUMNS = (
+    "perturbation",
+    "perturbation_type",
+    "dose",
+    "time",
+    "cell_line",
+)
 
-ConditionKeyLevel = Literal["coarse", "medium", "fine"]
+CONDITION_KEY_LEVELS = ("coarse", "medium", "fine", "with_type")
+
+ConditionKeyLevel = Literal["coarse", "medium", "fine", "with_type"]
 
 CONDITION_KEY_COLUMNS_BY_LEVEL: dict[str, tuple[str, ...]] = {
     "coarse": COARSE_CONDITION_COLUMNS,
     "medium": MEDIUM_CONDITION_COLUMNS,
     "fine": FINE_CONDITION_COLUMNS,
+    "with_type": EXTENDED_CONDITION_COLUMNS,
 }
 
 CONDITION_KEY_OUTPUT_COLUMNS_BY_LEVEL: dict[str, str] = {
     "coarse": "condition_key_coarse",
     "medium": "condition_key_medium",
     "fine": "condition_key_fine",
+    "with_type": "condition_key_with_type",
 }
 
 DEFAULT_METADATA = {
@@ -110,7 +119,6 @@ DEFAULT_METADATA_SCHEMA = MetadataSchema()
 @dataclass(frozen=True)
 class ConditionKey:
     perturbation: str
-    perturbation_type: str
     dose: str
     time: str
     cell_line: str
@@ -119,7 +127,6 @@ class ConditionKey:
     def from_mapping(cls, row: Mapping[str, object]) -> "ConditionKey":
         return cls(
             perturbation=normalize_value(row.get("perturbation", "unknown")),
-            perturbation_type=normalize_value(row.get("perturbation_type", "unknown")),
             dose=normalize_value(row.get("dose", "NA")),
             time=normalize_value(row.get("time", "NA")),
             cell_line=normalize_value(row.get("cell_line", "unknown")),
@@ -129,7 +136,6 @@ class ConditionKey:
         return "|".join(
             (
                 self.perturbation,
-                self.perturbation_type,
                 self.dose,
                 self.time,
                 self.cell_line,

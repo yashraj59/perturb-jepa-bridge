@@ -23,7 +23,7 @@ from perturb_jepa.data.condition_bags import (
 from perturb_jepa.data.conditions import MetadataVocab
 from perturb_jepa.models.image_encoder import patchify
 from perturb_jepa.losses import BridgeLossWeights, bridge_loss
-from perturb_jepa.training.checkpoint import save_checkpoint
+from perturb_jepa.training.checkpoint import load_checkpoint, save_checkpoint
 from perturb_jepa.training.objectives import build_uncertainty_weighting, weighted_bridge_total
 from perturb_jepa.training.real_data import (
     assign_real_data_splits,
@@ -76,6 +76,18 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--heldout-fraction", type=float, default=None)
     parser.add_argument("--rna-mask-prob", type=float, default=None)
     parser.add_argument("--image-patch-mask-prob", type=float, default=None)
+    parser.add_argument(
+        "--rna-pretrain-checkpoint",
+        type=Path,
+        default=None,
+        help="Optional checkpoint whose rna_encoder weights initialize bridge training.",
+    )
+    parser.add_argument(
+        "--image-pretrain-checkpoint",
+        type=Path,
+        default=None,
+        help="Optional checkpoint whose image_encoder weights initialize bridge training.",
+    )
     parser.add_argument("--checkpoint-out", type=Path, default=None)
     args = parser.parse_args(argv)
 
@@ -121,6 +133,8 @@ def main(argv: list[str] | None = None) -> int:
             max_images=args.max_images or raw_get(raw_config, ("data", "max_images")),
             n_top_genes=args.n_top_genes or raw_get(raw_config, ("data", "n_top_genes")),
             batch_size=args.batch_size or config.training.batch_size,
+            rna_pretrain_checkpoint=args.rna_pretrain_checkpoint,
+            image_pretrain_checkpoint=args.image_pretrain_checkpoint,
             checkpoint_out=args.checkpoint_out,
         )
     return 0
@@ -212,6 +226,8 @@ def _run_real_bridge_training(
     max_images: int | None,
     n_top_genes: int | None,
     batch_size: int,
+    rna_pretrain_checkpoint: Path | None,
+    image_pretrain_checkpoint: Path | None,
     checkpoint_out: Path | None,
 ) -> None:
     seed_everything(config.training.seed)
@@ -258,6 +274,7 @@ def _run_real_bridge_training(
         split="train",
         seed=config.training.seed,
         condition_key_col=config.data.condition_key,
+        balanced_sample_col=config.data.bag_sample_tech_col,
     )
     image_bags = ImageConditionBagDataset(
         image_train_manifest,
@@ -269,12 +286,28 @@ def _run_real_bridge_training(
         channels=config.model.image.in_channels,
         resize=resize_for_manifest(image_manifest, config.model.image.image_size),
         condition_key_col=config.data.condition_key,
+        balanced_sample_col=config.data.bag_sample_tech_col,
     )
     paired = PairedConditionBagDataset(rna_bags, image_bags)
     if len(paired) == 0:
         raise ValueError("No overlapping biological conditions between RNA and image data")
     print(f"Real bridge conditions: {len(paired)} shared biological condition bags")
     model = config.build_model().to(device)
+    pretrain_metadata: dict[str, object] = {}
+    if rna_pretrain_checkpoint is not None:
+        pretrain_metadata["rna"] = _load_pretrained_encoder(
+            model,
+            rna_pretrain_checkpoint,
+            modality="rna",
+            device=device,
+        )
+    if image_pretrain_checkpoint is not None:
+        pretrain_metadata["image"] = _load_pretrained_encoder(
+            model,
+            image_pretrain_checkpoint,
+            modality="image",
+            device=device,
+        )
     optimizer = config.build_optimizer(model.parameters())
     uncertainty_weighting = build_uncertainty_weighting(config.training.uncertainty_weighting)
     if uncertainty_weighting is not None:
@@ -361,10 +394,50 @@ def _run_real_bridge_training(
                 "stage": "bridge",
                 "rna_anndata": str(rna_path),
                 "image_manifest": str(manifest_path),
+                "pretrain_checkpoints": pretrain_metadata,
                 "metadata_vocab": metadata_vocab.to_dict(),
                 "split": split_metadata,
             },
         )
+
+
+def _load_pretrained_encoder(
+    model: torch.nn.Module,
+    checkpoint_path: Path,
+    *,
+    modality: str,
+    device: torch.device,
+) -> dict[str, object]:
+    if modality not in {"rna", "image"}:
+        raise ValueError("modality must be 'rna' or 'image'")
+    checkpoint = load_checkpoint(checkpoint_path, map_location=device)
+    model_state = checkpoint.get("model_state", {})
+    source_prefix = f"{modality}_encoder."
+    submodule_state = {
+        key.removeprefix(source_prefix): value
+        for key, value in model_state.items()
+        if key.startswith(source_prefix)
+    }
+    if not submodule_state:
+        raise KeyError(f"{checkpoint_path} has no weights under {source_prefix!r}")
+
+    encoder = getattr(model, f"{modality}_encoder")
+    teacher = getattr(model, f"{modality}_teacher")
+    encoder.load_state_dict(submodule_state, strict=True)
+    teacher.load_state_dict(encoder.state_dict(), strict=True)
+    teacher.eval()
+    for parameter in teacher.parameters():
+        parameter.requires_grad_(False)
+
+    print(
+        f"Loaded {len(submodule_state)} {modality}_encoder tensors from {checkpoint_path} "
+        "and synced the EMA teacher"
+    )
+    return {
+        "path": str(checkpoint_path),
+        "loaded_tensors": len(submodule_state),
+        "checkpoint_stage": checkpoint.get("metadata", {}).get("stage"),
+    }
 
 
 class _BridgeBagCollator:

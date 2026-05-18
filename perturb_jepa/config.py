@@ -145,6 +145,7 @@ class DataConfig:
     image_patch_mask_prob: float = 0.0
     rna_normalize: bool = True
     technical_summary: str = "mode"
+    bag_sample_tech_col: str | None = None
 
     def __post_init__(self) -> None:
         valid_strategies = {

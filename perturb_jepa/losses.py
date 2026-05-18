@@ -412,10 +412,12 @@ def bridge_loss(
     elif "image_shared" in outputs and "image_teacher_shared" in outputs:
         terms["image_jepa"] = cosine_jepa_loss(outputs["image_shared"], outputs["image_teacher_shared"])
     if "rna_shared" in outputs and "image_shared" in outputs:
+        rna_alignment = outputs.get("rna_retrieval", outputs["rna_shared"])
+        image_alignment = outputs.get("image_retrieval", outputs["image_shared"])
         if bio_keys is not None or positive_mask is not None or positive_weights is not None:
             terms["align"] = multi_positive_info_nce_loss(
-                outputs["rna_shared"],
-                outputs["image_shared"],
+                rna_alignment,
+                image_alignment,
                 bio_keys=bio_keys,
                 positive_mask=positive_mask,
                 positive_weights=positive_weights,
@@ -423,13 +425,13 @@ def bridge_loss(
             )
         elif hierarchy_labels:
             terms["align"] = multi_resolution_info_nce_loss(
-                outputs["rna_shared"],
-                outputs["image_shared"],
+                rna_alignment,
+                image_alignment,
                 hierarchy_labels,
                 temperature=temperature,
             )
         else:
-            terms["align"] = info_nce_loss(outputs["rna_shared"], outputs["image_shared"], temperature=temperature)
+            terms["align"] = info_nce_loss(rna_alignment, image_alignment, temperature=temperature)
         if "rna_prototypes" in outputs and "image_prototypes" in outputs:
             terms["mmd"] = prototype_mmd_rbf_loss(outputs["rna_prototypes"], outputs["image_prototypes"])
             terms["sliced_wasserstein"] = prototype_sliced_wasserstein_loss(

@@ -1,2 +1,0 @@
-result_type,method,reason
-not available,all_baselines,"missing inputs: --rna-embeddings, --image-embeddings, --rna-metadata, --image-metadata"

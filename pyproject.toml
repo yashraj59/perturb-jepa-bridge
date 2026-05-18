@@ -53,6 +53,7 @@ perturb-jepa-build-bf-moa = "scripts.build_bf_moa_manifest:main"
 perturb-jepa-build-rna-manifest = "scripts.build_rna_manifest:main"
 perturb-jepa-build-image-manifest = "scripts.build_image_manifest:main"
 perturb-jepa-build-paired-manifest = "scripts.build_paired_manifest:main"
+perturb-jepa-prepare-scgenescope = "scripts.prepare_scgenescope_pairing:main"
 perturb-jepa-smoke-train = "scripts.train_smoke:main"
 perturb-jepa-train-synthetic = "scripts.train_synthetic:main"
 perturb-jepa-train-pretrain-rna = "scripts.train_pretrain_rna:main"
@@ -66,6 +67,7 @@ perturb-jepa-eval-learned-retrieval = "scripts.evaluate_retrieval:main"
 perturb-jepa-eval-counterfactual = "scripts.evaluate_counterfactual:main"
 perturb-jepa-eval-real-benchmark = "scripts.evaluate_real_benchmark:main"
 perturb-jepa-biology-validation = "scripts.run_biological_validation:main"
+perturb-jepa-audit-condition-batch = "scripts.audit_condition_batch_design:main"
 
 [dependency-groups]
 dev = [

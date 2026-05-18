@@ -1,2 +1,0 @@
-result_type,diagnostic,reason
-not available,leakage,"missing inputs: --rna-embeddings, --image-embeddings, --rna-metadata, --image-metadata"

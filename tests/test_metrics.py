@@ -1,5 +1,8 @@
 import numpy as np
+import pandas as pd
 
+from perturb_jepa.evaluation.batch_probe import batch_probe_metrics
+from perturb_jepa.evaluation.design_audit import condition_batch_confounding_report
 from perturb_jepa.evaluation.metrics import (
     distance_matrix_spearman,
     dose_response_monotonicity,
@@ -53,3 +56,39 @@ def test_dose_response_monotonicity_averages_groups():
     groups = ["drugA", "drugA", "drugB", "drugB"]
 
     assert dose_response_monotonicity(responses, doses, groups=groups, control=np.zeros(2)) == 0.5
+
+
+def test_batch_probe_detects_decodable_technical_labels():
+    embeddings = np.array(
+        [
+            [3.0, 0.0],
+            [3.1, 0.1],
+            [2.9, -0.1],
+            [-3.0, 0.0],
+            [-3.1, 0.1],
+            [-2.9, -0.1],
+        ]
+    )
+    metadata = pd.DataFrame({"batch": ["a", "a", "a", "b", "b", "b"]})
+
+    metrics = batch_probe_metrics(embeddings, metadata, n_splits=3)
+
+    assert metrics["batch_probe_n_classes"] == 2.0
+    assert metrics["batch_probe_cv_folds"] == 3.0
+    assert metrics["batch_probe_balanced_accuracy"] > metrics["batch_probe_majority_accuracy"]
+
+
+def test_condition_batch_confounding_report_flags_single_batch_conditions():
+    metadata = pd.DataFrame(
+        {
+            "split": ["train", "train", "train", "train"],
+            "condition_key": ["a", "a", "b", "b"],
+            "batch": ["x", "y", "z", "z"],
+        }
+    )
+
+    report = condition_batch_confounding_report(metadata)
+
+    assert report.loc[0, "condition_batches_min"] == 1.0
+    assert report.loc[0, "condition_batches_max"] == 2.0
+    assert report.loc[0, "single_batch_condition_fraction"] == 0.5

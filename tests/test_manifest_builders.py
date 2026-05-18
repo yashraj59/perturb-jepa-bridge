@@ -9,6 +9,7 @@ import pytest
 from scripts.build_image_manifest import build_image_manifest
 from scripts.build_paired_manifest import build_paired_manifest
 from scripts.build_rna_manifest import build_rna_manifest
+from perturb_jepa.data.images import image_array_to_chw_float
 
 
 def _args(**kwargs):
@@ -88,6 +89,14 @@ def test_image_manifest_normalizes_paths_and_allows_missing(tmp_path):
     assert manifest["image_exists"].tolist() == [True, False]
     assert output_csv.with_name("images_qc_summary.json").exists()
     assert output_csv.with_name("images_condition_qc.csv").exists()
+
+
+def test_image_array_loader_accepts_explicit_five_channel_arrays():
+    channel_first = np.zeros((5, 8, 8), dtype=np.uint8)
+    channel_last = np.zeros((8, 8, 5), dtype=np.uint8)
+
+    assert image_array_to_chw_float(channel_first, channels=5).shape == (5, 8, 8)
+    assert image_array_to_chw_float(channel_last, channels=5).shape == (5, 8, 8)
 
 
 def test_paired_manifest_pairs_only_four_field_biological_key(tmp_path):

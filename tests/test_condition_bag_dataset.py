@@ -94,6 +94,33 @@ def test_train_bags_randomly_subsample_and_eval_bags_are_deterministic():
     assert second_val == ["rna0", "rna1"]
 
 
+def test_train_bags_can_balance_samples_across_batches():
+    rna = np.arange(6 * 2, dtype=np.float32).reshape(6, 2)
+    metadata = pd.DataFrame(
+        {
+            "sample_id": [f"rna{i}" for i in range(6)],
+            "perturbation": ["drugA"] * 6,
+            "dose": ["10uM"] * 6,
+            "time": ["48h"] * 6,
+            "cell_line": ["U2OS"] * 6,
+            "batch": ["b1", "b1", "b2", "b2", "b3", "b3"],
+        }
+    )
+    train = RNAConditionBagDataset(
+        rna,
+        metadata,
+        rna_bag_size=3,
+        split="train",
+        seed=7,
+        balanced_sample_col="batch",
+    )
+
+    item = train[0]
+    selected_batches = {row["batch"] for row in item["cell_meta"]}
+
+    assert selected_batches == {"b1", "b2", "b3"}
+
+
 def test_condition_bags_can_use_medium_key_without_cell_line_matching():
     rna = np.arange(2 * 3, dtype=np.float32).reshape(2, 3)
     images = np.arange(2 * 1 * 2 * 2, dtype=np.float32).reshape(2, 1, 2, 2)

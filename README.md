@@ -46,6 +46,39 @@ four biological fields. `perturbation_type` is available only through the
 explicit `condition_key_with_type` column and is not part of the default
 biological identity.
 
+## Current Real-Data Path
+
+The maintained real-data path in this branch is scGeneScope condition-level
+bridging with precomputed scVI RNA embeddings and ViT-L Cell Painting embeddings.
+It uses `condition_key_scgenescope = perturbation`; batch, round, replicate,
+plate, well, and site remain diagnostic metadata only.
+
+Prepare the aligned condition-bag inputs:
+
+```bash
+python scripts/prepare_scgenescope_pairing.py \
+  --download \
+  --split-policy round1_train_val \
+  --rna-output data/processed/scgenescope_round1_train_val/rna_scvi_n200.h5ad \
+  --image-output data/processed/scgenescope_round1_train_val/image_vitl_manifest.csv \
+  --image-array-dir data/processed/scgenescope_round1_train_val/image_vitl_arrays \
+  --summary-output metrics/scgenescope_round1_train_val/condition_overlap.csv \
+  --json-output metrics/scgenescope_round1_train_val/prepare_summary.json
+```
+
+Train with:
+
+```bash
+python scripts/train_pretrain_rna.py --config configs/scgenescope_round1_train_val.yaml
+python scripts/train_pretrain_image.py --config configs/scgenescope_round1_train_val.yaml
+python scripts/train_bridge.py --config configs/scgenescope_round1_train_val.yaml
+```
+
+The latest retained result is summarized in
+`reports/scgenescope_round1_train_val_report.md`. The result is intentionally
+reported as a partial success: within-round retrieval improves, but held-out
+round transfer remains batch-dominated.
+
 ## Metadata-First Downloads
 
 The download script prints or runs explicit public download commands. Large

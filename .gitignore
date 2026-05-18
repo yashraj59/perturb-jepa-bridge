@@ -8,6 +8,15 @@ build/
 *.egg-info/
 .DS_Store
 checkpoints/
+logs/
+metrics/
+results/
+*.h5ad
+*.npy
+*.pt
+*.tar
+*.tar.gz
+*.zip
 
 # Raw public datasets are intentionally downloaded outside version control.
 data/raw/

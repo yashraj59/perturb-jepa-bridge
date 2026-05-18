@@ -12,9 +12,10 @@ from perturb_jepa.config import ExperimentConfig, ObjectiveScheduleConfig
 from perturb_jepa.data.conditions import MetadataVocab
 from perturb_jepa.losses import BridgeLossWeights, bridge_loss
 from perturb_jepa.models.image_encoder import patchify
+from perturb_jepa.training.checkpoint import save_checkpoint
 from perturb_jepa.training.objectives import weighted_bridge_total
 from scripts.evaluate_retrieval import _EvalBagCollator
-from scripts.train_bridge import _BridgeBagCollator
+from scripts.train_bridge import _BridgeBagCollator, _load_pretrained_encoder
 
 
 def _items() -> list[dict[str, object]]:
@@ -172,3 +173,32 @@ def test_real_batch_objective_schedule_changes_loss_weights():
     expected = config.loss.rna_mask * raw_terms["rna_mask"] + config.loss.image_mask * raw_terms["image_mask"]
     assert torch.allclose(total, expected)
     assert scheduled["weighted/align"].item() == pytest.approx(0.0)
+
+
+def test_pretrained_encoder_loader_syncs_student_and_teacher(tmp_path):
+    source = _small_config(_vocab()).build_model()
+    target = _small_config(_vocab()).build_model()
+    with torch.no_grad():
+        for index, parameter in enumerate(source.rna_encoder.parameters()):
+            parameter.fill_(0.01 * (index + 1))
+        for parameter in target.rna_encoder.parameters():
+            parameter.zero_()
+        for parameter in target.rna_teacher.parameters():
+            parameter.fill_(3.0)
+
+    checkpoint_path = tmp_path / "pretrain_rna.pt"
+    save_checkpoint(
+        checkpoint_path,
+        model=source,
+        metadata={"stage": "pretrain_rna"},
+    )
+
+    info = _load_pretrained_encoder(target, checkpoint_path, modality="rna", device=torch.device("cpu"))
+
+    assert info["checkpoint_stage"] == "pretrain_rna"
+    assert info["loaded_tensors"] > 0
+    for name, tensor in target.rna_encoder.state_dict().items():
+        assert torch.equal(tensor, source.rna_encoder.state_dict()[name])
+    for name, tensor in target.rna_teacher.state_dict().items():
+        assert torch.equal(tensor, target.rna_encoder.state_dict()[name])
+    assert all(not parameter.requires_grad for parameter in target.rna_teacher.parameters())

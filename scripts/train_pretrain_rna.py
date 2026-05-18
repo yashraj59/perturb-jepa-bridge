@@ -12,6 +12,7 @@ from torch.utils.data import DataLoader, TensorDataset
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from perturb_jepa.config import ExperimentConfig, OptimizerConfig
+from perturb_jepa.losses import masked_cosine_jepa_loss
 from perturb_jepa.training.checkpoint import save_checkpoint
 from perturb_jepa.training.real_data import (
     load_yaml_or_json_config,
@@ -89,7 +90,12 @@ def _run_real_rna_pretraining(
         max_genes=expression.shape[1],
     )
     model = config.build_model().to(device)
-    optimizer = config.build_optimizer(model.rna_encoder.parameters())
+    optimizer = config.build_optimizer(
+        [
+            *model.rna_encoder.parameters(),
+            *model.rna_jepa_predictor.parameters(),
+        ]
+    )
     gene_ids = torch.as_tensor(np.broadcast_to(gene_token_ids[None, :], expression.shape).copy(), dtype=torch.long)
     values = torch.as_tensor(expression, dtype=torch.float32)
     loader = DataLoader(TensorDataset(gene_ids, values), batch_size=int(batch_size), shuffle=True)
@@ -102,14 +108,28 @@ def _run_real_rna_pretraining(
             token_mask = make_token_mask(tuple(batch_values.shape), mask_prob, device=device)
             optimizer.zero_grad(set_to_none=True)
             output = model.rna_encoder(batch_gene_ids, batch_values, token_mask=token_mask)
+            with torch.no_grad(), model._set_eval_temporarily((model.rna_teacher,)):
+                teacher = model.rna_teacher(batch_gene_ids, batch_values, token_mask=None)
+            token_prediction = model.rna_jepa_predictor(output.token_embeddings)
             target_mask = token_mask if token_mask.any() else torch.ones_like(token_mask)
-            loss = torch.nn.functional.mse_loss(output.reconstruction[target_mask], batch_values[target_mask])
+            rna_mask_loss = torch.nn.functional.mse_loss(output.reconstruction[target_mask], batch_values[target_mask])
+            rna_jepa_loss = masked_cosine_jepa_loss(token_prediction, teacher.token_embeddings, token_mask)
+            loss = config.loss.rna_mask * rna_mask_loss + config.loss.jepa * rna_jepa_loss
             loss.backward()
             if config.training.grad_clip_norm is not None:
-                torch.nn.utils.clip_grad_norm_(model.rna_encoder.parameters(), config.training.grad_clip_norm)
+                torch.nn.utils.clip_grad_norm_(
+                    [*model.rna_encoder.parameters(), *model.rna_jepa_predictor.parameters()],
+                    config.training.grad_clip_norm,
+                )
             optimizer.step()
+            model.update_teachers(decay=config.training.ema_decay)
             if config.training.log_every > 0 and global_step % config.training.log_every == 0:
-                print(f"stage=pretrain_rna step={global_step} rna_mask={float(loss.detach().cpu()):.4f}")
+                print(
+                    f"stage=pretrain_rna step={global_step} "
+                    f"rna_mask={float(rna_mask_loss.detach().cpu()):.4f} "
+                    f"rna_jepa={float(rna_jepa_loss.detach().cpu()):.4f} "
+                    f"total={float(loss.detach().cpu()):.4f}"
+                )
             global_step += 1
             if global_step >= config.training.steps:
                 break

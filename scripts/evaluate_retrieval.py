@@ -23,6 +23,7 @@ from perturb_jepa.data.condition_bags import (
     summarize_technical_metadata,
 )
 from perturb_jepa.data.conditions import MetadataVocab
+from perturb_jepa.evaluation.batch_probe import batch_probe_metrics
 from perturb_jepa.evaluation.retrieval import cross_modal_retrieval_metrics
 from perturb_jepa.training.checkpoint import load_checkpoint
 from perturb_jepa.training.real_data import (
@@ -109,6 +110,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         {
             "method": "learned",
             **cross_modal_retrieval_metrics(rna_embeddings, image_embeddings, rna_metadata, image_metadata),
+            **batch_probe_metrics(rna_embeddings, rna_metadata, prefix="rna_embedding_batch_probe"),
+            **batch_probe_metrics(image_embeddings, image_metadata, prefix="image_embedding_batch_probe"),
         },
         {
             "method": "metadata_only",
@@ -265,8 +268,8 @@ def _embeddings_from_checkpoint(
                 image_bag_mask=batch["image_bag_mask"],
                 **batch["metadata"],
             )
-            rna_embeddings.append(outputs["rna_shared"].detach().cpu().numpy())
-            image_embeddings.append(outputs["image_shared"].detach().cpu().numpy())
+            rna_embeddings.append(outputs.get("rna_retrieval", outputs["rna_shared"]).detach().cpu().numpy())
+            image_embeddings.append(outputs.get("image_retrieval", outputs["image_shared"]).detach().cpu().numpy())
             rna_rows.extend(batch["rna_rows"])
             image_rows.extend(batch["image_rows"])
     rna_frame = pd.DataFrame(rna_rows)

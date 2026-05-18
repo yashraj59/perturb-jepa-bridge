@@ -1,6 +1,0 @@
-/home/ubuntu/perturb-jepa-bridge/perturb_jepa/training/real_data.py:215: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
-  combined = pd.concat(
-/home/ubuntu/perturb-jepa-bridge/perturb_jepa/models/rna_encoder.py:47: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
-  self.encoder = nn.TransformerEncoder(layer, num_layers=config.depth)
-/home/ubuntu/perturb-jepa-bridge/perturb_jepa/models/image_encoder.py:66: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
-  self.encoder = nn.TransformerEncoder(layer, num_layers=config.depth)

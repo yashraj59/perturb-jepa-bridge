@@ -10,6 +10,8 @@ from perturb_jepa.evaluation.baselines import (
     label_shuffle_retrieval_metrics,
     shuffle_labels,
 )
+from perturb_jepa.evaluation.batch_probe import batch_probe_metrics
+from perturb_jepa.evaluation.design_audit import condition_batch_confounding_report
 from perturb_jepa.evaluation.metrics import (
     centroid_by_condition,
     distance_matrix_spearman,
@@ -64,7 +66,9 @@ __all__ = [
     "ControlMeanBaseline",
     "PerturbationMeanBaseline",
     "average_precision_from_scores",
+    "batch_probe_metrics",
     "centroid_by_condition",
+    "condition_batch_confounding_report",
     "centroid_retrieval_metrics",
     "add_cell_line_transfer_status",
     "add_heldout_perturbation_status",

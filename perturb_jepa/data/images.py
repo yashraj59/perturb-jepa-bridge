@@ -110,8 +110,9 @@ def image_array_to_chw_float(array: np.ndarray, *, channels: int | None = None) 
     if image.ndim == 2:
         image = image[None, :, :]
     elif image.ndim == 3:
-        first_is_channel = image.shape[0] in {1, 2, 3, 4}
-        last_is_channel = image.shape[-1] in {1, 2, 3, 4}
+        expected_channels = {channels} if channels is not None else {1, 2, 3, 4}
+        first_is_channel = image.shape[0] in expected_channels
+        last_is_channel = image.shape[-1] in expected_channels
         if last_is_channel and not first_is_channel:
             image = np.moveaxis(image, -1, 0)
         elif first_is_channel and not last_is_channel:

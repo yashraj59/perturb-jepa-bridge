@@ -1,0 +1,75 @@
+name: scgenescope_scvi_vitl_round1_train_val
+model:
+  rna:
+    vocab_size: 200
+    dim: 256
+    depth: 4
+    heads: 8
+    max_genes: 200
+  image:
+    in_channels: 1
+    image_size: 80
+    patch_size: 8
+    dim: 256
+    depth: 4
+    heads: 8
+  perturbation:
+    num_perturbations: 64
+    num_types: 4
+    num_cell_lines: 4
+    num_batches: 64
+    dim: 128
+  shared_dim: 256
+  num_bag_prototypes: 8
+  adversary_scale: 2.0
+optimizer:
+  lr: 0.0003
+  weight_decay: 0.05
+training:
+  steps: 3000
+  batch_size: 16
+  device: cuda
+  seed: 13
+  ema_decay: 0.996
+  grad_clip_norm: 1.0
+  log_every: 50
+  objective_schedule:
+    enabled: true
+    reconstruction_warmup_steps: 500
+    reconstruction_anneal_steps: 1000
+    reconstruction_final_scale: 0.25
+    warmup_non_reconstruction_scale: 0.0
+loss:
+  temperature: 0.1
+  rna_mask: 1.0
+  image_mask: 1.0
+  jepa: 1.0
+  align: 1.0
+  mmd: 0.1
+  sliced_wasserstein: 0.05
+  perturbation_cls: 0.1
+  batch_adv: 0.1
+  counterfactual: 0.0
+  cycle: 0.1
+  response_bottleneck: 0.01
+data:
+  rna_anndata: data/processed/scgenescope_round1_train_val/rna_scvi_n200.h5ad
+  image_manifest: data/processed/scgenescope_round1_train_val/image_vitl_manifest.csv
+  image_root: .
+  condition_key: condition_key_scgenescope
+  split_col: split
+  train_split_value: train
+  eval_split_value: we_test
+  split_strategy: none
+  rna_bag_size: 32
+  image_bag_size: 32
+  min_rna_bag_size: 8
+  min_image_bag_size: 8
+  rna_mask_prob: 0.15
+  image_patch_mask_prob: 0.15
+  rna_normalize: false
+  max_cells: null
+  max_images: null
+  bag_sample_tech_col: batch
+synthetic:
+  batch_size: 4

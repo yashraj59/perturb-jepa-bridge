@@ -245,6 +245,7 @@ class PerturbJEPABridge(nn.Module):
                     "rna_prototypes": rna_aggregated.prototypes,
                     "rna_attention": rna_aggregated.attention,
                     "rna_shared": rna_shared,
+                    "rna_retrieval": rna_shared,
                     "rna_teacher_shared": rna_teacher_shared,
                     "rna_state": rna_state,
                     "rna_response": rna_response,
@@ -252,7 +253,7 @@ class PerturbJEPABridge(nn.Module):
                     "rna_state_perturbation_logits": self.state_perturbation_adversary(
                         gradient_reverse(rna_state, scale=self.config.adversary_scale)
                     ),
-                    "rna_batch_logits": self.batch_adversary(rna_state, scale=self.config.adversary_scale),
+                    "rna_batch_logits": self.batch_adversary(rna_shared, scale=self.config.adversary_scale),
                 }
             )
             shared_for_state = rna_shared
@@ -314,6 +315,7 @@ class PerturbJEPABridge(nn.Module):
                     "image_prototypes": image_aggregated.prototypes,
                     "image_attention": image_aggregated.attention,
                     "image_shared": image_shared,
+                    "image_retrieval": image_shared,
                     "image_teacher_shared": image_teacher_shared,
                     "image_state": image_state,
                     "image_response": image_response,
@@ -321,7 +323,7 @@ class PerturbJEPABridge(nn.Module):
                     "image_state_perturbation_logits": self.state_perturbation_adversary(
                         gradient_reverse(image_state, scale=self.config.adversary_scale)
                     ),
-                    "image_batch_logits": self.batch_adversary(image_state, scale=self.config.adversary_scale),
+                    "image_batch_logits": self.batch_adversary(image_shared, scale=self.config.adversary_scale),
                 }
             )
             shared_for_state = image_shared if shared_for_state is None else 0.5 * (shared_for_state + image_shared)

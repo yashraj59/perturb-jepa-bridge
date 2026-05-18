@@ -223,3 +223,6 @@ def test_learned_retrieval_cli_labels_oracle_and_trainfit_mean_prototypes(tmp_pa
         "mean_prototype_trainfit",
         "mean_prototype_oracle",
     }
+    learned = report.loc[report["method"].eq("learned")].iloc[0]
+    assert learned["rna_embedding_batch_probe_n_classes"] == 1.0
+    assert learned["image_embedding_batch_probe_n_classes"] == 1.0

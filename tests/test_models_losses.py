@@ -13,6 +13,8 @@ def test_bridge_forward_and_loss_are_finite():
     batch = make_synthetic_bridge_batch(batch_size=2)
     outputs = forward_batch(model, batch)
     assert outputs["rna_shared"].shape == outputs["image_shared"].shape
+    assert torch.equal(outputs["rna_retrieval"], outputs["rna_shared"])
+    assert torch.equal(outputs["image_retrieval"], outputs["image_shared"])
     assert outputs["rna_perturbation_logits"].shape[0] == batch.gene_ids.shape[0]
     assert outputs["rna_state_perturbation_logits"].shape[0] == batch.gene_ids.shape[0]
     assert outputs["image_batch_logits"].shape[0] == batch.images.shape[0]
@@ -115,3 +117,62 @@ def test_masked_jepa_loss_uses_only_masked_positions():
     assert masked.item() == 0.0
     assert unmasked.item() > masked.item()
     assert zero.item() == 0.0
+
+
+def test_batch_adversary_uses_retrieval_embedding(monkeypatch):
+    torch.manual_seed(0)
+    model = build_smoke_model()
+    recorded: list[torch.Tensor] = []
+    original_forward = model.batch_adversary.forward
+
+    def spy(x, *, scale=None):
+        recorded.append(x)
+        return original_forward(x, scale=scale)
+
+    monkeypatch.setattr(model.batch_adversary, "forward", spy)
+    outputs = forward_batch(model, make_synthetic_bridge_batch(batch_size=2))
+
+    assert len(recorded) == 2
+    assert torch.equal(recorded[0], outputs["rna_retrieval"])
+    assert torch.equal(recorded[1], outputs["image_retrieval"])
+
+
+def test_jepa_teacher_targets_are_unmasked_and_detached():
+    torch.manual_seed(0)
+    model = build_smoke_model()
+    model.eval()
+    batch = make_synthetic_bridge_batch(batch_size=2)
+
+    masked_outputs = model(
+        gene_ids=batch.gene_ids,
+        expression_values=batch.expression_values,
+        rna_token_mask=torch.ones_like(batch.rna_token_mask, dtype=torch.bool),
+        images=batch.images,
+        image_patch_mask=torch.ones_like(batch.image_patch_mask, dtype=torch.bool),
+        perturbation_id=batch.perturbation_id,
+        perturbation_type_id=batch.perturbation_type_id,
+        cell_line_id=batch.cell_line_id,
+        batch_id=batch.batch_id,
+        dose=batch.dose,
+        time=batch.time,
+    )
+    unmasked_outputs = model(
+        gene_ids=batch.gene_ids,
+        expression_values=batch.expression_values,
+        rna_token_mask=torch.zeros_like(batch.rna_token_mask, dtype=torch.bool),
+        images=batch.images,
+        image_patch_mask=torch.zeros_like(batch.image_patch_mask, dtype=torch.bool),
+        perturbation_id=batch.perturbation_id,
+        perturbation_type_id=batch.perturbation_type_id,
+        cell_line_id=batch.cell_line_id,
+        batch_id=batch.batch_id,
+        dose=batch.dose,
+        time=batch.time,
+    )
+
+    assert not masked_outputs["rna_teacher_tokens"].requires_grad
+    assert not masked_outputs["image_teacher_patches"].requires_grad
+    assert torch.allclose(masked_outputs["rna_teacher_tokens"], unmasked_outputs["rna_teacher_tokens"])
+    assert torch.allclose(masked_outputs["image_teacher_patches"], unmasked_outputs["image_teacher_patches"])
+    assert not torch.allclose(masked_outputs["rna_tokens"], unmasked_outputs["rna_tokens"])
+    assert not torch.allclose(masked_outputs["image_patches"], unmasked_outputs["image_patches"])

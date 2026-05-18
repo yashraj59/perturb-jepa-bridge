@@ -59,6 +59,14 @@ def _sample_ids(metadata: pd.DataFrame, sample_id_col: str | None) -> np.ndarray
     return metadata.index.astype(str).to_numpy()
 
 
+def _sample_groups(metadata: pd.DataFrame, balanced_sample_col: str | None) -> np.ndarray | None:
+    if balanced_sample_col is None or balanced_sample_col == "":
+        return None
+    if balanced_sample_col not in metadata.columns:
+        raise ValueError(f"balanced_sample_col {balanced_sample_col!r} is missing from metadata")
+    return metadata[balanced_sample_col].map(normalize_value).to_numpy(dtype=object)
+
+
 def _condition_indices(metadata: pd.DataFrame, min_bag_size: int) -> dict[str, np.ndarray]:
     if min_bag_size <= 0:
         raise ValueError("min_bag_size must be positive")
@@ -79,14 +87,62 @@ def _choose_indices(
     bag_size: int | None,
     split: SplitName,
     rng: np.random.Generator,
+    sample_groups: np.ndarray | None = None,
 ) -> np.ndarray:
     if bag_size is not None and bag_size <= 0:
         raise ValueError("bag_size must be positive")
     if bag_size is None or bag_size >= len(indices):
         return np.asarray(indices, dtype=np.int64)
     if split == "train":
+        if sample_groups is not None:
+            selected = _balanced_group_sample(indices, sample_groups, bag_size=bag_size, rng=rng)
+            if selected is not None:
+                return selected
         return np.sort(rng.choice(indices, size=bag_size, replace=False)).astype(np.int64, copy=False)
     return np.asarray(indices[:bag_size], dtype=np.int64)
+
+
+def _balanced_group_sample(
+    indices: np.ndarray,
+    sample_groups: np.ndarray,
+    *,
+    bag_size: int,
+    rng: np.random.Generator,
+) -> np.ndarray | None:
+    labels = np.asarray(sample_groups, dtype=object)[indices]
+    groups: dict[str, np.ndarray] = {}
+    for label in sorted({normalize_value(value) for value in labels}):
+        members = indices[labels == label]
+        if len(members) > 0:
+            groups[label] = rng.permutation(members).astype(np.int64, copy=False)
+    if len(groups) <= 1:
+        return None
+
+    group_names = list(rng.permutation(np.asarray(sorted(groups), dtype=object)))
+    selected: list[int] = []
+    cursors = {name: 0 for name in group_names}
+    while len(selected) < bag_size:
+        progressed = False
+        for name in group_names:
+            cursor = cursors[name]
+            members = groups[name]
+            if cursor >= len(members):
+                continue
+            selected.append(int(members[cursor]))
+            cursors[name] = cursor + 1
+            progressed = True
+            if len(selected) >= bag_size:
+                break
+        if not progressed:
+            break
+    if len(selected) < bag_size:
+        remaining = np.setdiff1d(indices, np.asarray(selected, dtype=np.int64), assume_unique=False)
+        if len(remaining) > 0:
+            needed = min(bag_size - len(selected), len(remaining))
+            selected.extend(int(value) for value in rng.choice(remaining, size=needed, replace=False))
+    if len(selected) != bag_size:
+        return None
+    return np.sort(np.asarray(selected, dtype=np.int64))
 
 
 def _records(frame: pd.DataFrame) -> list[dict[str, object]]:
@@ -167,6 +223,7 @@ class RNAConditionBagDataset(Dataset):
         seed: int | None = None,
         sample_id_col: str | None = None,
         condition_key_col: str = "condition_key",
+        balanced_sample_col: str | None = None,
     ) -> None:
         values = np.asarray(matrix, dtype=np.float32)
         if values.ndim != 2:
@@ -180,6 +237,7 @@ class RNAConditionBagDataset(Dataset):
         self.condition_key_col = condition_key_col
         self.metadata = _metadata_with_condition_ids(metadata, key_col=condition_key_col)
         self.sample_ids = _sample_ids(self.metadata, sample_id_col)
+        self.sample_groups = _sample_groups(self.metadata, balanced_sample_col)
         self.rna_bag_size = rna_bag_size
         self.split: SplitName = split
         self.rng = np.random.default_rng(seed)
@@ -200,6 +258,7 @@ class RNAConditionBagDataset(Dataset):
             bag_size=self.rna_bag_size,
             split=self.split,
             rng=self.rng,
+            sample_groups=self.sample_groups,
         )
         rows = self.metadata.iloc[selected]
         row = rows.iloc[0].to_dict()
@@ -233,6 +292,7 @@ class ImageConditionBagDataset(Dataset):
         resize: tuple[int, int] | None = None,
         transform: Callable[[np.ndarray], np.ndarray] | None = None,
         condition_key_col: str = "condition_key",
+        balanced_sample_col: str | None = None,
     ) -> None:
         if isinstance(images, pd.DataFrame) and metadata is None:
             metadata = images
@@ -252,6 +312,7 @@ class ImageConditionBagDataset(Dataset):
         if self.images is None and image_path_col not in self.metadata.columns:
             raise ValueError(f"{image_path_col!r} is required when images are loaded from paths")
         self.sample_ids = _sample_ids(self.metadata, sample_id_col)
+        self.sample_groups = _sample_groups(self.metadata, balanced_sample_col)
         self.image_bag_size = image_bag_size
         self.split: SplitName = split
         self.rng = np.random.default_rng(seed)
@@ -277,6 +338,7 @@ class ImageConditionBagDataset(Dataset):
             bag_size=self.image_bag_size,
             split=self.split,
             rng=self.rng,
+            sample_groups=self.sample_groups,
         )
         rows = self.metadata.iloc[selected]
         row = rows.iloc[0].to_dict()

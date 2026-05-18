@@ -1,9 +1,0 @@
-{
-  "baselines": [
-    {
-      "method": "all_baselines",
-      "reason": "missing inputs: --rna-embeddings, --image-embeddings, --rna-metadata, --image-metadata",
-      "result_type": "not available"
-    }
-  ]
-}

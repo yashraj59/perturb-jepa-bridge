@@ -13,6 +13,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from perturb_jepa.config import ExperimentConfig
 from perturb_jepa.data.images import ImageManifestCollator, ImageManifestDataset
+from perturb_jepa.losses import masked_cosine_jepa_loss
 from perturb_jepa.models.image_encoder import patchify
 from perturb_jepa.training.checkpoint import save_checkpoint
 from perturb_jepa.training.real_data import (
@@ -89,7 +90,12 @@ def _run_real_image_pretraining(
         image_size=image_size,
     )
     model = config.build_model().to(device)
-    optimizer = config.build_optimizer(model.image_encoder.parameters())
+    optimizer = config.build_optimizer(
+        [
+            *model.image_encoder.parameters(),
+            *model.image_jepa_predictor.parameters(),
+        ]
+    )
     collator = ImageManifestCollator(
         patch_size=config.model.image.patch_size,
         patch_mask_prob=0.15,
@@ -104,15 +110,29 @@ def _run_real_image_pretraining(
             patch_mask = batch.image_patch_mask.to(device)
             optimizer.zero_grad(set_to_none=True)
             output = model.image_encoder(images, patch_mask=patch_mask)
+            with torch.no_grad(), model._set_eval_temporarily((model.image_teacher,)):
+                teacher = model.image_teacher(images, patch_mask=None)
+            patch_prediction = model.image_jepa_predictor(output.patch_embeddings)
             target = patchify(images, config.model.image.patch_size)
             target_mask = patch_mask if patch_mask.any() else torch.ones_like(patch_mask)
-            loss = torch.nn.functional.mse_loss(output.patch_reconstruction[target_mask], target[target_mask])
+            image_mask_loss = torch.nn.functional.mse_loss(output.patch_reconstruction[target_mask], target[target_mask])
+            image_jepa_loss = masked_cosine_jepa_loss(patch_prediction, teacher.patch_embeddings, patch_mask)
+            loss = config.loss.image_mask * image_mask_loss + config.loss.jepa * image_jepa_loss
             loss.backward()
             if config.training.grad_clip_norm is not None:
-                torch.nn.utils.clip_grad_norm_(model.image_encoder.parameters(), config.training.grad_clip_norm)
+                torch.nn.utils.clip_grad_norm_(
+                    [*model.image_encoder.parameters(), *model.image_jepa_predictor.parameters()],
+                    config.training.grad_clip_norm,
+                )
             optimizer.step()
+            model.update_teachers(decay=config.training.ema_decay)
             if config.training.log_every > 0 and global_step % config.training.log_every == 0:
-                print(f"stage=pretrain_image step={global_step} image_mask={float(loss.detach().cpu()):.4f}")
+                print(
+                    f"stage=pretrain_image step={global_step} "
+                    f"image_mask={float(image_mask_loss.detach().cpu()):.4f} "
+                    f"image_jepa={float(image_jepa_loss.detach().cpu()):.4f} "
+                    f"total={float(loss.detach().cpu()):.4f}"
+                )
             global_step += 1
             if global_step >= config.training.steps:
                 break

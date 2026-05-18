@@ -1,0 +1,80 @@
+sci-Plex3 AnnData: 799,317 cells x 110,983 genes
+sci-Plex3 obs columns: ncounts, well, plate, cell_line, replicate, time, dose_value, pathway_level_1, pathway_level_2, perturbation, target, pathway, dose_unit, celltype, disease, cancer, tissue_type, organism, perturbation_type
+Synonyms applied:
+- rna: 2-methoxyestradiol (2-meoe2) -> 2-methoxyestradiol: 5009
+- rna: abexinostat (pci-24781) -> abexinostat: 4505
+- rna: ac480 (bms-599626) -> ac480: 3758
+- rna: ag-490 (tyrphostin b42) -> ag-490: 3924
+- rna: aicar (acadesine) -> aicar: 4004
+- rna: alisertib (mln8237) -> alisertib: 3513
+- rna: alvespimycin (17-dmag) hcl -> alvespimycin: 2089
+- rna: avagacestat (bms-708163) -> avagacestat: 3600
+- rna: barasertib (azd1152-hqpa) -> barasertib: 3789
+- rna: baricitinib (ly3009104, incb028050) -> baricitinib: 4315
+- rna: belinostat (pxd101) -> belinostat: 4808
+- rna: bisindolylmaleimide ix (ro 31-8220 mesylate) -> bisindolylmaleimide ix: 4411
+- rna: bosutinib (ski-606) -> bosutinib: 2756
+- rna: cediranib (azd2171) -> cediranib: 3411
+- rna: cerdulatinib (prt062070, prt2070) -> cerdulatinib: 4116
+- rna: crizotinib (pf-02341066) -> crizotinib: 3247
+- rna: dacinostat (laq824) -> dacinostat: 3609
+- rna: danusertib (pha-739358) -> danusertib: 4000
+- rna: enmd-2076 l-(+)-tartaric acid -> enmd-2076 l-: 3296
+- rna: entinostat (ms-275) -> entinostat: 3850
+- rna: enzastaurin (ly317615) -> enzastaurin: 3829
+- rna: fasudil (ha-1077) hcl -> fasudil: 6002
+- rna: fedratinib (sar302503, tg101348) -> fedratinib: 3284
+- rna: filgotinib (glpg0634) -> filgotinib: 4014
+- rna: fluorouracil (5-fluoracil, 5-fu) -> fluorouracil: 3795
+- rna: gandotinib (ly2784544) -> gandotinib: 3700
+- rna: givinostat (itf2357) -> givinostat: 3545
+- rna: glesatinib?(mgcd265) -> glesatinib?: 3652
+- rna: iniparib (bsi-201) -> iniparib: 5920
+- rna: ino-1001 (3-aminobenzamide) -> ino-1001: 3791
+- rna: itsa-1 (itsa1) -> itsa-1: 5485
+- rna: ivosidenib (ag-120) -> ivosidenib: 3318
+- rna: jnj-26854165 (serdemetan) -> jnj-26854165: 3877
+- rna: lapatinib (gw-572016) ditosylate -> lapatinib: 3360
+- rna: lenalidomide (cc-5013) -> lenalidomide: 3459
+- rna: linifanib (abt-869) -> linifanib: 3512
+- rna: luminespib (auy-922, nvp-auy922) -> luminespib: 2458
+- rna: mercaptopurine (6-mp) -> mercaptopurine: 3448
+- rna: mk-5108 (vx-689) -> mk-5108: 3466
+- rna: mocetinostat (mgcd0103) -> mocetinostat: 4595
+- rna: momelotinib (cyt387) -> momelotinib: 3808
+- rna: motesanib diphosphate (amg-706) -> motesanib diphosphate: 3726
+- rna: navitoclax (abt-263) -> navitoclax: 3332
+- rna: nilotinib (amn-107) -> nilotinib: 3465
+- rna: nintedanib (bibf 1120) -> nintedanib: 3367
+- rna: obatoclax mesylate (gx15-070) -> obatoclax mesylate: 3619
+- rna: panobinostat (lbh589) -> panobinostat: 3483
+- rna: patupilone (epo906, epothilone b) -> patupilone: 1822
+- rna: pelitinib (ekb-569) -> pelitinib: 3337
+- rna: pfi-1 (pf-6405761) -> pfi-1: 5948
+- rna: pracinostat (sb939) -> pracinostat: 4364
+- rna: quisinostat (jnj-26481585) 2hcl -> quisinostat: 3025
+- rna: regorafenib (bay 73-4506) -> regorafenib: 3384
+- rna: rigosertib (on-01910) -> rigosertib: 2445
+- rna: roscovitine (seliciclib,cyc202) -> roscovitine: 3591
+- rna: roxadustat (fg-4592) -> roxadustat: 5897
+- rna: rucaparib (ag-014699,pf-01367338) phosphate -> rucaparib: 5296
+- rna: ruxolitinib (incb018424) -> ruxolitinib: 6143
+- rna: s-ruxolitinib (incb018424) -> s-ruxolitinib: 4197
+- rna: selisistat (ex 527) -> selisistat: 5920
+- rna: srt2104 (gsk2245840) -> srt2104: 5942
+- rna: streptozotocin (stz) -> streptozotocin: 3703
+- rna: tacedinaline (ci994) -> tacedinaline: 4145
+- rna: tanespimycin (17-aag) -> tanespimycin: 2488
+- rna: tazemetostat (epz-6438) -> tazemetostat: 6036
+- rna: temsirolimus (cci-779, nsc 683864) -> temsirolimus: 3034
+- rna: tofacitinib (cp-690550) citrate -> tofacitinib: 4139
+- rna: tozasertib (vx-680, mk-0457) -> tozasertib: 4020
+- rna: trametinib (gsk1120212) -> trametinib: 3281
+- rna: tranylcypromine (2-pcpa) hcl -> tranylcypromine: 4291
+- rna: trichostatin a (tsa) -> trichostatin a: 3521
+- rna: tucidinostat (chidamide) -> tucidinostat: 5022
+- rna: valproic acid sodium salt (sodium valproate) -> valproic acid sodium salt: 4003
+- rna: vandetanib (zd6474) -> vandetanib: 3469
+- rna: veliparib (abt-888) -> veliparib: 3534
+- rna: ym155 (sepantronium bromide) -> ym155: 1007
+Only 0 shared compounds remain after dose/time selection; RNA compounds=['(+)-jq1', '2-methoxyestradiol', 'abexinostat', 'alisertib', 'at9283', 'aurora a inhibitor i', 'azacitidine', 'barasertib', 'belinostat', 'bisindolylmaleimide ix', 'bms-911543', 'dacinostat', 'danusertib', 'decitabine', 'divalproex sodium', 'eed226', 'ellagic acid', 'fasudil', 'flll32', 'g007-lk', 'hesperadin', 'iniparib', 'itsa-1', 'jnj-7706621', 'mc1568', 'mln8054', 'mocetinostat', 'ofloxacin', 'panobinostat', 'pci-34051', 'pfi-1', 'pha-680632', 'pracinostat', 'quisinostat', 'resveratrol', 'roxadustat', 'rucaparib', 'ruxolitinib', 'selisistat', 'srt2104', 'srt3025 hcl', 'tazemetostat', 'tmp195', 'tozasertib', 'tucidinostat', 'unc1999', 'zm 447439']; image compounds=['cbk200949', 'dmso']

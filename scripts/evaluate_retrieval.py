@@ -231,6 +231,7 @@ def _embeddings_from_checkpoint(
         min_rna_bag_size=1,
         split="test",
         seed=config.training.seed,
+        condition_key_col=config.data.condition_key,
     )
     image_bags = ImageConditionBagDataset(
         image_manifest,
@@ -241,6 +242,7 @@ def _embeddings_from_checkpoint(
         image_root=image_root,
         channels=config.model.image.in_channels,
         resize=resize_for_manifest(image_manifest, config.model.image.image_size),
+        condition_key_col=config.data.condition_key,
     )
     paired = PairedConditionBagDataset(rna_bags, image_bags)
     collate = _EvalBagCollator(gene_token_ids, vocab, device=device, strict_vocab=strict_vocab)

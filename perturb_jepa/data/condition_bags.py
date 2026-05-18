@@ -21,7 +21,13 @@ SplitName = Literal["train", "val", "test"]
 TechSummaryStrategy = Literal["mode", "first_non_na", "set"]
 
 
-def _metadata_with_condition_ids(frame: pd.DataFrame) -> pd.DataFrame:
+def _condition_id_from_row(row: Mapping[str, object], *, key_col: str) -> str:
+    if key_col in row:
+        return normalize_value(row.get(key_col))
+    return make_condition_id(row)
+
+
+def _metadata_with_condition_ids(frame: pd.DataFrame, *, key_col: str = "condition_key") -> pd.DataFrame:
     validate_metadata_columns(frame)
     metadata = frame.copy()
     for column in DEFAULT_METADATA_SCHEMA.all_biological_keys:
@@ -30,8 +36,16 @@ def _metadata_with_condition_ids(frame: pd.DataFrame) -> pd.DataFrame:
     for column in DEFAULT_METADATA_SCHEMA.technical_keys:
         if column in metadata.columns:
             metadata[column] = metadata[column].map(normalize_value)
-    metadata["bio_key"] = [make_bio_key(row) for row in metadata.to_dict(orient="records")]
-    metadata["condition_id"] = [make_condition_id(row) for row in metadata.to_dict(orient="records")]
+    has_key_col = key_col in metadata.columns
+    if has_key_col:
+        metadata[key_col] = metadata[key_col].map(normalize_value)
+    metadata["condition_id"] = [
+        _condition_id_from_row(row, key_col=key_col) for row in metadata.to_dict(orient="records")
+    ]
+    metadata["bio_key"] = [
+        str(row["condition_id"]) if has_key_col else make_bio_key(row)
+        for row in metadata.to_dict(orient="records")
+    ]
     return metadata
 
 
@@ -118,14 +132,24 @@ def summarize_technical_metadata(
     return summary
 
 
-def _condition_record(row: Mapping[str, object]) -> dict[str, object]:
+def _condition_record(row: Mapping[str, object], *, key_col: str = "condition_key") -> dict[str, object]:
     record = {
         column: normalize_value(row.get(column, "NA"))
         for column in DEFAULT_METADATA_SCHEMA.all_biological_keys
         if column in row or column in DEFAULT_METADATA_SCHEMA.biological_keys
     }
-    record["bio_key"] = make_bio_key(row)
-    record["condition_id"] = make_condition_id(row)
+    for column in (
+        "condition_key_coarse",
+        "condition_key_medium",
+        "condition_key_fine",
+        "condition_key_with_type",
+    ):
+        if column in row:
+            record[column] = normalize_value(row.get(column))
+    condition_id = normalize_value(row.get("condition_id", _condition_id_from_row(row, key_col=key_col)))
+    record["bio_key"] = condition_id
+    record["condition_id"] = condition_id
+    record["condition_key"] = condition_id
     return record
 
 
@@ -142,6 +166,7 @@ class RNAConditionBagDataset(Dataset):
         split: SplitName = "train",
         seed: int | None = None,
         sample_id_col: str | None = None,
+        condition_key_col: str = "condition_key",
     ) -> None:
         values = np.asarray(matrix, dtype=np.float32)
         if values.ndim != 2:
@@ -152,7 +177,8 @@ class RNAConditionBagDataset(Dataset):
             raise ValueError("split must be one of 'train', 'val', or 'test'")
 
         self.matrix = values
-        self.metadata = _metadata_with_condition_ids(metadata)
+        self.condition_key_col = condition_key_col
+        self.metadata = _metadata_with_condition_ids(metadata, key_col=condition_key_col)
         self.sample_ids = _sample_ids(self.metadata, sample_id_col)
         self.rna_bag_size = rna_bag_size
         self.split: SplitName = split
@@ -178,8 +204,8 @@ class RNAConditionBagDataset(Dataset):
         rows = self.metadata.iloc[selected]
         row = rows.iloc[0].to_dict()
         return {
-            "bio_key": make_bio_key(row),
-            "condition": _condition_record(row),
+            "bio_key": row["bio_key"],
+            "condition": _condition_record(row, key_col=self.condition_key_col),
             "condition_id": condition_id,
             "rna": self.matrix[selected].copy(),
             "sample_ids": self.sample_ids[selected].tolist(),
@@ -206,6 +232,7 @@ class ImageConditionBagDataset(Dataset):
         channels: int | None = None,
         resize: tuple[int, int] | None = None,
         transform: Callable[[np.ndarray], np.ndarray] | None = None,
+        condition_key_col: str = "condition_key",
     ) -> None:
         if isinstance(images, pd.DataFrame) and metadata is None:
             metadata = images
@@ -220,7 +247,8 @@ class ImageConditionBagDataset(Dataset):
             raise ValueError("split must be one of 'train', 'val', or 'test'")
 
         self.images = image_values
-        self.metadata = _metadata_with_condition_ids(metadata)
+        self.condition_key_col = condition_key_col
+        self.metadata = _metadata_with_condition_ids(metadata, key_col=condition_key_col)
         if self.images is None and image_path_col not in self.metadata.columns:
             raise ValueError(f"{image_path_col!r} is required when images are loaded from paths")
         self.sample_ids = _sample_ids(self.metadata, sample_id_col)
@@ -254,8 +282,8 @@ class ImageConditionBagDataset(Dataset):
         row = rows.iloc[0].to_dict()
         images = np.stack([self._load_image(index) for index in selected]).astype(np.float32, copy=False)
         return {
-            "bio_key": make_bio_key(row),
-            "condition": _condition_record(row),
+            "bio_key": row["bio_key"],
+            "condition": _condition_record(row, key_col=self.condition_key_col),
             "condition_id": condition_id,
             "image": images,
             "sample_ids": self.sample_ids[selected].tolist(),

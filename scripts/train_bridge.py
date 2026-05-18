@@ -256,6 +256,7 @@ def _run_real_bridge_training(
         min_rna_bag_size=config.data.min_rna_bag_size,
         split="train",
         seed=config.training.seed,
+        condition_key_col=config.data.condition_key,
     )
     image_bags = ImageConditionBagDataset(
         image_train_manifest,
@@ -266,6 +267,7 @@ def _run_real_bridge_training(
         image_root=image_root,
         channels=config.model.image.in_channels,
         resize=resize_for_manifest(image_manifest, config.model.image.image_size),
+        condition_key_col=config.data.condition_key,
     )
     paired = PairedConditionBagDataset(rna_bags, image_bags)
     if len(paired) == 0:

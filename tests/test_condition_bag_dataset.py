@@ -92,3 +92,37 @@ def test_train_bags_randomly_subsample_and_eval_bags_are_deterministic():
     assert first_train != second_train
     assert first_val == ["rna0", "rna1"]
     assert second_val == ["rna0", "rna1"]
+
+
+def test_condition_bags_can_use_medium_key_without_cell_line_matching():
+    rna = np.arange(2 * 3, dtype=np.float32).reshape(2, 3)
+    images = np.arange(2 * 1 * 2 * 2, dtype=np.float32).reshape(2, 1, 2, 2)
+    rna_metadata = _rna_metadata().iloc[:2].copy()
+    image_metadata = _image_metadata().iloc[:2].copy()
+    rna_metadata["cell_line"] = "A549"
+    image_metadata["cell_line"] = "U2OS"
+    rna_metadata["condition_key_medium"] = "drugA|10uM|48h"
+    image_metadata["condition_key_medium"] = "drugA|10uM|48h"
+
+    rna_dataset = RNAConditionBagDataset(
+        rna,
+        rna_metadata,
+        rna_bag_size=2,
+        min_rna_bag_size=1,
+        split="val",
+        condition_key_col="condition_key_medium",
+    )
+    image_dataset = ImageConditionBagDataset(
+        images,
+        image_metadata,
+        image_bag_size=1,
+        min_image_bag_size=1,
+        split="val",
+        condition_key_col="condition_key_medium",
+    )
+
+    item = PairedConditionBagDataset(rna_dataset, image_dataset)[0]
+
+    assert item["condition_id"] == "drugA|10uM|48h"
+    assert item["condition"]["condition_key"] == "drugA|10uM|48h"
+    assert item["condition"]["cell_line"] == "A549"

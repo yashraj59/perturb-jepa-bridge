@@ -1,221 +1,49 @@
 {
   "blockers": [
     {
-      "can_continue": "dry-run only",
-      "creates_or_downloads": "uv run python scripts/download_public_data.py --dataset sciplex3 --download-large or stage a normalized h5ad at data/processed/sciplex3/rna_normalized.h5ad",
-      "missing_file": "data/raw/SrivatsanTrapnell2020_sciplex3.h5ad"
-    },
-    {
-      "can_continue": "dry-run only; full images require user-supplied image root",
-      "creates_or_downloads": "uv run python scripts/download_public_data.py --dataset bf-moa",
-      "missing_file": "data/raw/bf_moa_data_tables.tar.gz"
+      "can_continue": "requires a BF-MoA image subset with at least six shared normalized compounds",
+      "details": "P015080 contains only cbk200949 and dmso; the A549 10uM/72h sci-Plex3 subset shares zero compounds with that plate",
+      "reason": "insufficient_compound_overlap"
     }
   ],
   "branch_name": "codex/leakage-safe-bridge-colab",
-  "command_used": "scripts/run_end_to_end_real_model.py --dry-run",
   "commands_run": [
-    {
-      "command": [
-        "/home/ubuntu/perturb-jepa-bridge/.venv/bin/python3",
-        "scripts/download_public_data.py",
-        "--dry-run",
-        "--dataset",
-        "all-metadata"
-      ],
-      "description": "Check public metadata download commands",
-      "returncode": 0,
-      "status": "completed"
-    },
-    {
-      "command": [
-        "uv",
-        "run",
-        "python",
-        "scripts/build_rna_manifest.py",
-        "--input-h5ad",
-        "data/raw/SrivatsanTrapnell2020_sciplex3.h5ad",
-        "--output-dir",
-        "data/processed/sciplex3"
-      ],
-      "description": "dry-run planned command",
-      "returncode": null,
-      "status": "planned"
-    },
-    {
-      "command": [
-        "uv",
-        "run",
-        "python",
-        "scripts/build_bf_moa_manifest.py",
-        "--data-tables",
-        "data/raw/bf_moa_data_tables.tar.gz",
-        "--output",
-        "data/interim/bf_moa_manifest_raw.csv",
-        "--image-root",
-        "data/raw/bf_moa_images"
-      ],
-      "description": "dry-run planned command",
-      "returncode": null,
-      "status": "planned"
-    },
-    {
-      "command": [
-        "uv",
-        "run",
-        "python",
-        "scripts/build_image_manifest.py",
-        "--input-manifest",
-        "data/interim/bf_moa_manifest_raw.csv",
-        "--output-manifest",
-        "data/processed/bf_moa/image_manifest.csv",
-        "--image-root",
-        "data/raw/bf_moa_images",
-        "--allow-missing-images"
-      ],
-      "description": "dry-run planned command",
-      "returncode": null,
-      "status": "planned"
-    },
-    {
-      "command": [
-        "uv",
-        "run",
-        "python",
-        "scripts/build_paired_manifest.py",
-        "--rna-metadata",
-        "data/processed/sciplex3/rna_metadata.csv",
-        "--image-manifest",
-        "data/processed/bf_moa/image_manifest.csv",
-        "--output-manifest",
-        "data/processed/paired/paired_manifest.csv"
-      ],
-      "description": "dry-run planned command",
-      "returncode": null,
-      "status": "planned"
-    },
-    {
-      "command": [
-        "uv",
-        "run",
-        "python",
-        "scripts/train_pretrain_rna.py",
-        "--config",
-        "configs/real/pretrain_rna_sciplex3.yaml",
-        "--max-cells",
-        "10000"
-      ],
-      "description": "dry-run planned command",
-      "returncode": null,
-      "status": "planned"
-    },
-    {
-      "command": [
-        "uv",
-        "run",
-        "python",
-        "scripts/train_pretrain_image.py",
-        "--config",
-        "configs/real/pretrain_image_bfmoa.yaml",
-        "--max-images",
-        "10000"
-      ],
-      "description": "dry-run planned command",
-      "returncode": null,
-      "status": "planned"
-    },
-    {
-      "command": [
-        "uv",
-        "run",
-        "python",
-        "scripts/train_bridge.py",
-        "--config",
-        "configs/real/bridge_sciplex3_bfmoa.yaml",
-        "--max-cells",
-        "10000",
-        "--max-images",
-        "10000"
-      ],
-      "description": "dry-run planned command",
-      "returncode": null,
-      "status": "planned"
-    },
-    {
-      "command": [
-        "uv",
-        "run",
-        "python",
-        "scripts/evaluate_real_benchmark.py",
-        "--help"
-      ],
-      "description": "dry-run planned command",
-      "returncode": null,
-      "status": "planned"
-    },
-    {
-      "command": [
-        "uv",
-        "run",
-        "python",
-        "scripts/run_biological_validation.py",
-        "--help"
-      ],
-      "description": "dry-run planned command",
-      "returncode": null,
-      "status": "planned"
-    },
-    {
-      "command": [
-        "/home/ubuntu/perturb-jepa-bridge/.venv/bin/python3",
-        "scripts/evaluate_real_benchmark.py",
-        "--dry-run",
-        "--output-dir",
-        "/home/ubuntu/perturb-jepa-bridge/results/evaluation",
-        "--baselines-dir",
-        "/home/ubuntu/perturb-jepa-bridge/results/baselines"
-      ],
-      "description": "Write unavailable evaluation scaffold",
-      "returncode": 0,
-      "status": "completed"
-    }
+    "uv run python scripts/train_smoke.py --steps 2",
+    "curl -L https://zenodo.org/records/13350497/files/SrivatsanTrapnell2020_sciplex3.h5ad?download=1 -o data/raw/SrivatsanTrapnell2020_sciplex3.h5ad",
+    "curl -L https://ndownloader.figshare.com/files/37984380 -o data/raw/bf_moa_data_tables.tar.gz",
+    "curl -sS https://api.figshare.com/v2/articles/21378906 -o data/raw/bf_moa_figshare.json",
+    "uv run python scripts/build_bf_moa_manifest.py --data-tables data/raw/bf_moa_data_tables.tar.gz --output data/processed/bf_moa_manifest_raw.csv --image-root data/raw/bf_moa_images",
+    "curl -L https://ndownloader.figshare.com/files/37986315 -o data/raw/P015080.tar.gz",
+    "tar -xzf data/raw/P015080.tar.gz -C data/raw/bf_moa_images",
+    "uv run python scripts/prepare_real_pairing.py"
   ],
   "config_paths": [
-    "configs/real/bridge_sciplex3_bfmoa.yaml",
-    "configs/real/counterfactual_rna_sciplex3.yaml",
-    "configs/real/full_train_medium_gpu.yaml",
-    "configs/real/full_train_small_gpu.yaml",
-    "configs/real/optical_pooled_screen.yaml",
-    "configs/real/paired_spatial_transcriptomics.yaml",
-    "configs/real/pretrain_image_bfmoa.yaml",
-    "configs/real/pretrain_image_jump.yaml",
-    "configs/real/pretrain_rna_perturbseq.yaml",
-    "configs/real/pretrain_rna_sciplex3.yaml",
-    "configs/real/weak_paired_well_level.yaml"
+    "configs/real_sciplex3_bfmoa.yaml"
   ],
-  "cuda_available": false,
+  "cuda_available": true,
   "dataset_paths": {
-    "bfmoa_manifest": "data/processed/bf_moa/image_manifest.csv",
-    "bfmoa_raw_manifest": "data/interim/bf_moa_manifest_raw.csv",
+    "bfmoa_figshare_record": "data/raw/bf_moa_figshare.json",
+    "bfmoa_images_plate": "data/raw/bf_moa_images/P015080",
+    "bfmoa_plate_archive": "data/raw/P015080.tar.gz",
+    "bfmoa_raw_manifest": "data/processed/bf_moa_manifest_raw.csv",
     "bfmoa_tables": "data/raw/bf_moa_data_tables.tar.gz",
-    "paired_manifest": "data/processed/paired/paired_manifest.csv",
-    "sciplex3_h5ad": "data/processed/sciplex3/rna_normalized.h5ad",
-    "sciplex3_metadata": "data/processed/sciplex3/rna_metadata.csv",
     "sciplex3_raw": "data/raw/SrivatsanTrapnell2020_sciplex3.h5ad"
   },
-  "dependency_lockfile_hash": "5b2d381d31c97abae95de7ee17eaff5a968336beacf982d377a14548d5d21070",
-  "git_commit_hash": "ee537b39077ca3023016786835c7271cedae24b9",
-  "os_platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.35",
-  "output_directories": {
-    "checkpoints": "checkpoints/real",
-    "reports": "reports",
-    "results": "results"
+  "file_sha256": {
+    "data/raw/P015080.tar.gz": "7d38b30c66cf668208cc8896b61e6a2065f82a90368c066d15cfe5259d770b9f",
+    "data/raw/SrivatsanTrapnell2020_sciplex3.h5ad": "603ed16c5e25401c8a7f5bb0b2b045179701017d65dcfc6aeea71722a66cd10a",
+    "data/raw/bf_moa_data_tables.tar.gz": "4149c7a737806b74d6ed3c9e971f68a388367a535072247d727c43b52920854f",
+    "data/raw/bf_moa_figshare.json": "fc7013e058f76efaac77965c7b7203bff196cc1ef960e3d45737fbf8f8b49e9c"
   },
-  "pairing_mode": "none",
-  "python_version": "3.11.15 (main, May 10 2026, 19:28:18) [Clang 22.1.3 ]",
+  "git_commit_hash": "ca69ebd5f54dbc28251269c94e284a8bef209fcb",
+  "output_files": [
+    "logs/prepare_real_pairing.log",
+    "metrics/REPORT.md"
+  ],
+  "pairing_mode": "condition_level_unpaired",
   "random_seed": 13,
-  "run_mode": "dry-run",
-  "status": "dry_run",
-  "timestamp": "2026-05-18T06:31:22.941568+00:00",
+  "run_mode": "single_smallest_bfmoa_plate",
+  "status": "blocked_insufficient_compound_overlap",
   "torch_version": "2.12.0+cu130",
   "uv_version": "uv 0.11.14 (x86_64-unknown-linux-gnu)"
 }

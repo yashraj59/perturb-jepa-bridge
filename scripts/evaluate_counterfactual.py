@@ -117,8 +117,14 @@ def _rna_predictions_from_checkpoint(
     checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
     config_dict = checkpoint.get("experiment_config") or {}
     max_genes = (((config_dict.get("model") or {}).get("rna") or {}).get("max_genes"))
+    rna_normalize = bool((config_dict.get("data") or {}).get("rna_normalize", True))
     adata = read_h5ad_subset(rna_path, max_cells=max_cells, seed=((config_dict.get("training") or {}).get("seed", 0)))
-    expression, _ = prepare_expression_matrix(adata.X, n_top_genes=n_top_genes, max_genes=max_genes)
+    expression, _ = prepare_expression_matrix(
+        adata.X,
+        n_top_genes=n_top_genes,
+        max_genes=max_genes,
+        normalize=rna_normalize,
+    )
     metadata = pd.DataFrame(adata.obs).reset_index(drop=True)
     checkpoint_metadata = checkpoint.get("metadata") or {}
     if "metadata_vocab" not in checkpoint_metadata:

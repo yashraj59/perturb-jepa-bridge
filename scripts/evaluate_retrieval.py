@@ -179,6 +179,7 @@ def _embeddings_from_checkpoint(
         adata.X,
         n_top_genes=n_top_genes,
         max_genes=config.model.rna.max_genes,
+        normalize=config.data.rna_normalize,
     )
     rna_metadata = pd.DataFrame(adata.obs).reset_index(drop=False).rename(columns={"index": "sample_id"})
     rna_metadata["_matrix_index"] = np.arange(len(rna_metadata))

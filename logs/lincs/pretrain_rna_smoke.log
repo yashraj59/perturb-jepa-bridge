@@ -1,0 +1,5 @@
+/home/ubuntu/perturb-jepa-bridge/perturb_jepa/models/rna_encoder.py:47: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(layer, num_layers=config.depth)
+/home/ubuntu/perturb-jepa-bridge/perturb_jepa/models/image_encoder.py:66: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  self.encoder = nn.TransformerEncoder(layer, num_layers=config.depth)
+stage=pretrain_rna step=0 rna_mask=1.7857

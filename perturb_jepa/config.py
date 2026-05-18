@@ -143,6 +143,7 @@ class DataConfig:
     min_image_bag_size: int = 1
     rna_mask_prob: float = 0.0
     image_patch_mask_prob: float = 0.0
+    rna_normalize: bool = True
     technical_summary: str = "mode"
 
     def __post_init__(self) -> None:

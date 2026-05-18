@@ -57,6 +57,7 @@ def main(argv: list[str] | None = None) -> int:
             n_top_genes=args.n_top_genes or raw_get(raw_config, ("data", "n_top_genes")),
             batch_size=args.batch_size or raw_get(raw_config, ("training", "batch_size"), 32),
             mask_prob=args.mask_prob,
+            normalize=config.data.rna_normalize,
             checkpoint_out=args.checkpoint_out,
         )
     return 0
@@ -70,6 +71,7 @@ def _run_real_rna_pretraining(
     n_top_genes: int | None,
     batch_size: int,
     mask_prob: float,
+    normalize: bool,
     checkpoint_out: Path | None,
 ) -> None:
     seed_everything(config.training.seed)
@@ -79,6 +81,7 @@ def _run_real_rna_pretraining(
         adata.X,
         n_top_genes=n_top_genes,
         max_genes=config.model.rna.max_genes,
+        normalize=normalize,
     )
     config = override_bridge_config_for_real_data(
         config,

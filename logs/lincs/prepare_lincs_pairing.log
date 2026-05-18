@@ -1,0 +1,38 @@
+/tmp/uv-python/cpython-3.11.15-linux-x86_64-gnu/lib/python3.11/functools.py:909: ImplicitModificationWarning: Transforming to str index.
+  return dispatch(args[0].__class__)(*args, **kw)
+ perturbation          compound dose  n_l1000_profiles  n_cell_painting_profiles                                                                                                          moa
+BRD-A00147595     balaglitazone 10uM                 1                         4                                                             Insulin sensitizer|PPAR receptor partial agonist
+BRD-A00218260      flutrimazole 10uM                 1                         4                                                                                 Sterol demethylase inhibitor
+BRD-A00376169               kbg 10uM                 1                         4                                                                                         Neprilysin inhibitor
+BRD-A00546892         biperiden 10uM                 1                         4                                                                            Acetylcholine receptor antagonist
+BRD-A00938334      drospirenone 10uM                 1                         4                                                                        Mineralocorticoid receptor antagonist
+BRD-A01636364       bupivacaine 10uM                 1                         4                                                                                       Sodium channel blocker
+BRD-A01787639        naftopidil 10uM                 1                         4                                                                               Adrenergic receptor antagonist
+BRD-A02006392      nitrendipine 10uM                 1                         5                                                                                      Calcium channel blocker
+BRD-A02367930 ethinyl-estradiol 10uM                 1                         4 Estrogen receptor agonist|DNA directed DNA polymerase stimunlant|Estrogenic component in oral contraceptives
+BRD-A02990301        lofexidine 10uM                 1                         4                                                                                  Adrenergic receptor agonist
+BRD-A03061970        alizapride 10uM                 1                         4                                                                                 Dopamine receptor antagonist
+BRD-A03216249       mepivacaine 10uM                 1                         4                                                             Potassium channel blocker|Sodium channel blocker
+BRD-A03249105       fulvestrant 10uM                 1                         4                                                                                 Estrogen receptor antagonist
+BRD-A03506276             xl888 10uM                 1                         5                                                                                                HSP inhibitor
+BRD-A03623303        metoprolol 10uM                 1                         5                                                                               Adrenergic receptor antagonist
+BRD-A04352665         maraviroc 10uM                 1                         5                                                                             CC chemokine receptor antagonist
+BRD-A04553218    chlorphenamine 10uM                 1                         5                                                                                Histamine receptor antagonist
+BRD-A05186015         bupropion 10uM                 1                         5                                                                                    Dopamine uptake inhibitor
+BRD-A05334458       lisofylline 10uM                 1                         5                                                               Interleukin receptor antagonist|STAT inhibitor
+BRD-A05457250         BAY-K8644 10uM                 1                         5                                                                                    Calcium channel activator
+BRD-A05523972       telmesteine 10uM                 1                         5                                                                                              Mucolytic agent
+BRD-A05821830         docetaxel 10uM                 1                         5                                                                                            Tubulin inhibitor
+BRD-A06916187           cpi-613 10uM                 1                         5                                                                             pyruvate dehydrogenase inhibitor
+BRD-A06935312      fusidic-acid 10uM                 1                         5                                                                    Bacterial 30S ribosomal subunit inhibitor
+BRD-A07395371           esmolol 10uM                 1                         5                                                                               Adrenergic receptor antagonist
+BRD-A07440155         labetalol 10uM                 1                         5                                                                               Adrenergic receptor antagonist
+BRD-A07563059        bopindolol 10uM                 1                         5                                                                               Adrenergic receptor antagonist
+BRD-A07704283    isofloxythepin 10uM                 1                         5                                                                                 Dopamine receptor antagonist
+BRD-A07815743          kakonein 10uM                 1                         5                                                       GABA receptor antagonist|Serotonin receptor antagonist
+BRD-A07986123        galeterone 10uM                 1                         5                                                                                  Androgen receptor modulator
+Shared LINCS conditions: 1384
+Shared perturbations: 1384
+Wrote L1000 AnnData: data/processed/lincs/l1000_a549_10uM_24h.h5ad
+Wrote Cell Painting profile manifest: data/processed/lincs/cell_painting_manifest_10uM_48h_profiles.csv
+Wrote summary: metrics/lincs/compound_intersection.csv

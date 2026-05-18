@@ -63,6 +63,7 @@ def main(argv: list[str] | None = None) -> int:
             n_top_genes=args.n_top_genes or raw_get(raw_config, ("data", "n_top_genes")),
             batch_size=args.batch_size or raw_get(raw_config, ("training", "batch_size"), 32),
             control_values=[value.strip() for value in args.control_values.split(",") if value.strip()],
+            normalize=config.data.rna_normalize,
             checkpoint_out=args.checkpoint_out,
         )
     return 0
@@ -140,6 +141,7 @@ def _run_real_rna_counterfactual(
     n_top_genes: int | None,
     batch_size: int,
     control_values: list[str],
+    normalize: bool,
     checkpoint_out: Path | None,
 ) -> None:
     seed_everything(config.training.seed)
@@ -149,6 +151,7 @@ def _run_real_rna_counterfactual(
         adata.X,
         n_top_genes=n_top_genes,
         max_genes=config.model.rna.max_genes,
+        normalize=normalize,
     )
     metadata = pd.DataFrame(adata.obs).reset_index(drop=True)
     pairs, vocab = _control_treated_pairs(expression, metadata, control_values)

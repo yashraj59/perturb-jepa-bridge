@@ -1,0 +1,35 @@
+name: real-full-train-small-gpu
+data:
+  rna_anndata: data/processed/sciplex3/rna_normalized.h5ad
+  image_manifest: data/processed/bf_moa/image_manifest.csv
+  image_root: data/raw/bf_moa_images
+  max_cells: 10000
+  max_images: 10000
+  max_condition_bags: 512
+  n_top_genes: 1024
+  rna_bag_size: 32
+  image_bag_size: 32
+  split_strategy: heldout_perturbation
+  heldout_fraction: 0.2
+model:
+  rna:
+    dim: 64
+    depth: 2
+    heads: 4
+    max_genes: 1024
+  image:
+    image_size: 96
+    patch_size: 16
+    dim: 64
+    depth: 2
+    heads: 4
+  shared_dim: 64
+  num_bag_prototypes: 4
+training:
+  seed: 13
+  device: cuda
+  steps: 500
+  batch_size: 4
+  log_every: 25
+optimizer:
+  lr: 0.0003

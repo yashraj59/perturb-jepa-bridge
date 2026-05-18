@@ -1,0 +1,24 @@
+name: real-optical-pooled-screen
+data:
+  image_manifest: data/processed/optical_pooled/image_manifest.csv
+  image_root: data/raw/optical_pooled_images
+  max_images: 50000
+  split_strategy: heldout_perturbation
+  heldout_fraction: 0.2
+pairing:
+  tier: tier3_optical_pooled_image_to_genotype
+  key_type: cell
+model:
+  image:
+    in_channels: 5
+    image_size: 128
+    patch_size: 16
+    dim: 128
+    depth: 4
+    heads: 8
+training:
+  seed: 13
+  device: cpu
+  steps: 2000
+  batch_size: 16
+  log_every: 50

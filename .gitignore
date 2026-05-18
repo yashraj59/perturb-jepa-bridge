@@ -3,7 +3,11 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.venv/
+build/
+*.egg-info/
 .DS_Store
+checkpoints/
 
 # Raw public datasets are intentionally downloaded outside version control.
 data/raw/

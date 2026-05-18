@@ -1,0 +1,221 @@
+{
+  "blockers": [
+    {
+      "can_continue": "dry-run only",
+      "creates_or_downloads": "uv run python scripts/download_public_data.py --dataset sciplex3 --download-large or stage a normalized h5ad at data/processed/sciplex3/rna_normalized.h5ad",
+      "missing_file": "data/raw/SrivatsanTrapnell2020_sciplex3.h5ad"
+    },
+    {
+      "can_continue": "dry-run only; full images require user-supplied image root",
+      "creates_or_downloads": "uv run python scripts/download_public_data.py --dataset bf-moa",
+      "missing_file": "data/raw/bf_moa_data_tables.tar.gz"
+    }
+  ],
+  "branch_name": "codex/leakage-safe-bridge-colab",
+  "command_used": "scripts/run_end_to_end_real_model.py --dry-run",
+  "commands_run": [
+    {
+      "command": [
+        "/home/ubuntu/perturb-jepa-bridge/.venv/bin/python3",
+        "scripts/download_public_data.py",
+        "--dry-run",
+        "--dataset",
+        "all-metadata"
+      ],
+      "description": "Check public metadata download commands",
+      "returncode": 0,
+      "status": "completed"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "scripts/build_rna_manifest.py",
+        "--input-h5ad",
+        "data/raw/SrivatsanTrapnell2020_sciplex3.h5ad",
+        "--output-dir",
+        "data/processed/sciplex3"
+      ],
+      "description": "dry-run planned command",
+      "returncode": null,
+      "status": "planned"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "scripts/build_bf_moa_manifest.py",
+        "--data-tables",
+        "data/raw/bf_moa_data_tables.tar.gz",
+        "--output",
+        "data/interim/bf_moa_manifest_raw.csv",
+        "--image-root",
+        "data/raw/bf_moa_images"
+      ],
+      "description": "dry-run planned command",
+      "returncode": null,
+      "status": "planned"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "scripts/build_image_manifest.py",
+        "--input-manifest",
+        "data/interim/bf_moa_manifest_raw.csv",
+        "--output-manifest",
+        "data/processed/bf_moa/image_manifest.csv",
+        "--image-root",
+        "data/raw/bf_moa_images",
+        "--allow-missing-images"
+      ],
+      "description": "dry-run planned command",
+      "returncode": null,
+      "status": "planned"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "scripts/build_paired_manifest.py",
+        "--rna-metadata",
+        "data/processed/sciplex3/rna_metadata.csv",
+        "--image-manifest",
+        "data/processed/bf_moa/image_manifest.csv",
+        "--output-manifest",
+        "data/processed/paired/paired_manifest.csv"
+      ],
+      "description": "dry-run planned command",
+      "returncode": null,
+      "status": "planned"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "scripts/train_pretrain_rna.py",
+        "--config",
+        "configs/real/pretrain_rna_sciplex3.yaml",
+        "--max-cells",
+        "10000"
+      ],
+      "description": "dry-run planned command",
+      "returncode": null,
+      "status": "planned"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "scripts/train_pretrain_image.py",
+        "--config",
+        "configs/real/pretrain_image_bfmoa.yaml",
+        "--max-images",
+        "10000"
+      ],
+      "description": "dry-run planned command",
+      "returncode": null,
+      "status": "planned"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "scripts/train_bridge.py",
+        "--config",
+        "configs/real/bridge_sciplex3_bfmoa.yaml",
+        "--max-cells",
+        "10000",
+        "--max-images",
+        "10000"
+      ],
+      "description": "dry-run planned command",
+      "returncode": null,
+      "status": "planned"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "scripts/evaluate_real_benchmark.py",
+        "--help"
+      ],
+      "description": "dry-run planned command",
+      "returncode": null,
+      "status": "planned"
+    },
+    {
+      "command": [
+        "uv",
+        "run",
+        "python",
+        "scripts/run_biological_validation.py",
+        "--help"
+      ],
+      "description": "dry-run planned command",
+      "returncode": null,
+      "status": "planned"
+    },
+    {
+      "command": [
+        "/home/ubuntu/perturb-jepa-bridge/.venv/bin/python3",
+        "scripts/evaluate_real_benchmark.py",
+        "--dry-run",
+        "--output-dir",
+        "/home/ubuntu/perturb-jepa-bridge/results/evaluation",
+        "--baselines-dir",
+        "/home/ubuntu/perturb-jepa-bridge/results/baselines"
+      ],
+      "description": "Write unavailable evaluation scaffold",
+      "returncode": 0,
+      "status": "completed"
+    }
+  ],
+  "config_paths": [
+    "configs/real/bridge_sciplex3_bfmoa.yaml",
+    "configs/real/counterfactual_rna_sciplex3.yaml",
+    "configs/real/full_train_medium_gpu.yaml",
+    "configs/real/full_train_small_gpu.yaml",
+    "configs/real/optical_pooled_screen.yaml",
+    "configs/real/paired_spatial_transcriptomics.yaml",
+    "configs/real/pretrain_image_bfmoa.yaml",
+    "configs/real/pretrain_image_jump.yaml",
+    "configs/real/pretrain_rna_perturbseq.yaml",
+    "configs/real/pretrain_rna_sciplex3.yaml",
+    "configs/real/weak_paired_well_level.yaml"
+  ],
+  "cuda_available": false,
+  "dataset_paths": {
+    "bfmoa_manifest": "data/processed/bf_moa/image_manifest.csv",
+    "bfmoa_raw_manifest": "data/interim/bf_moa_manifest_raw.csv",
+    "bfmoa_tables": "data/raw/bf_moa_data_tables.tar.gz",
+    "paired_manifest": "data/processed/paired/paired_manifest.csv",
+    "sciplex3_h5ad": "data/processed/sciplex3/rna_normalized.h5ad",
+    "sciplex3_metadata": "data/processed/sciplex3/rna_metadata.csv",
+    "sciplex3_raw": "data/raw/SrivatsanTrapnell2020_sciplex3.h5ad"
+  },
+  "dependency_lockfile_hash": "5b2d381d31c97abae95de7ee17eaff5a968336beacf982d377a14548d5d21070",
+  "git_commit_hash": "ee537b39077ca3023016786835c7271cedae24b9",
+  "os_platform": "Linux-6.8.0-90-generic-x86_64-with-glibc2.35",
+  "output_directories": {
+    "checkpoints": "checkpoints/real",
+    "reports": "reports",
+    "results": "results"
+  },
+  "pairing_mode": "none",
+  "python_version": "3.11.15 (main, May 10 2026, 19:28:18) [Clang 22.1.3 ]",
+  "random_seed": 13,
+  "run_mode": "dry-run",
+  "status": "dry_run",
+  "timestamp": "2026-05-18T06:31:22.941568+00:00",
+  "torch_version": "2.12.0+cu130",
+  "uv_version": "uv 0.11.14 (x86_64-unknown-linux-gnu)"
+}

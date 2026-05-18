@@ -1,0 +1,13 @@
+/home/ubuntu/perturb-jepa-bridge/perturb_jepa/training/real_data.py:215: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+  combined = pd.concat(
+train_expression (1606, 978)
+eval_expression (277, 978)
+train split counts
+perturbation_type
+compound    1106
+control      500
+eval split counts
+perturbation_type
+compound    277
+dmso train rows 500
+heldout perturbations 277

@@ -11,6 +11,7 @@ requires-python = ">=3.10"
 dependencies = [
   "numpy>=1.24",
   "pandas>=2.0",
+  "pyyaml>=6.0",
   "torch>=2.1",
 ]
 
@@ -29,8 +30,15 @@ perturb-jepa-download = "scripts.download_public_data:main"
 perturb-jepa-build-bf-moa = "scripts.build_bf_moa_manifest:main"
 perturb-jepa-smoke-train = "scripts.train_smoke:main"
 perturb-jepa-train-synthetic = "scripts.train_synthetic:main"
+perturb-jepa-train-pretrain-rna = "scripts.train_pretrain_rna:main"
+perturb-jepa-train-pretrain-image = "scripts.train_pretrain_image:main"
+perturb-jepa-train-bridge = "scripts.train_bridge:main"
+perturb-jepa-train-counterfactual = "scripts.train_counterfactual:main"
+perturb-jepa-train-finetune = "scripts.train_finetune:main"
 perturb-jepa-eval-expression = "scripts.evaluate_expression_baselines:main"
 perturb-jepa-eval-retrieval = "scripts.evaluate_retrieval_baselines:main"
+perturb-jepa-eval-learned-retrieval = "scripts.evaluate_retrieval:main"
+perturb-jepa-eval-counterfactual = "scripts.evaluate_counterfactual:main"
 
 [tool.setuptools]
 packages = [
@@ -39,6 +47,7 @@ packages = [
   "perturb_jepa.models",
   "perturb_jepa.training",
   "perturb_jepa.evaluation",
+  "perturb_jepa.baselines",
   "scripts",
 ]
 

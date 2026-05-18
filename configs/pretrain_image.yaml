@@ -1,0 +1,74 @@
+name: pretrain-image
+data:
+  image_manifest: null
+  split_col: split
+  train_split_value: train
+  condition_key: condition_key
+  condition_key_with_type: condition_key_with_type
+  rna_bag_size: 128
+  image_bag_size: 128
+  min_rna_bag_size: 16
+  min_image_bag_size: 16
+  biological_keys:
+    - perturbation
+    - dose
+    - time
+    - cell_line
+  technical_keys:
+    - batch
+    - plate
+    - run
+    - well
+    - site
+    - z_plane
+    - sequencing_lane
+    - library_id
+  leakage_guard_columns: [perturbation, dose, time, cell_line, batch, plate, well]
+model:
+  shared_dim: 256
+  num_bag_prototypes: 8
+  rna:
+    vocab_size: 128
+    dim: 128
+    depth: 1
+    heads: 4
+    max_genes: 64
+  image:
+    in_channels: 3
+    image_size: 32
+    patch_size: 8
+    dim: 128
+    depth: 1
+    heads: 4
+  perturbation:
+    num_perturbations: 16
+    num_types: 3
+    num_cell_lines: 4
+    num_batches: 4
+    dim: 128
+    descriptor_dim: 0
+optimizer:
+  name: adamw
+  lr: 0.001
+  weight_decay: 0.01
+training:
+  batch_size: 32
+  steps: 2
+  device: cpu
+  seed: 0
+  ema_decay: 0.996
+  grad_clip_norm: 1.0
+  log_every: 1
+loss:
+  temperature: 0.07
+synthetic:
+  batch_size: 4
+  genes: 32
+  vocab_size: 128
+  image_channels: 3
+  image_size: 32
+  patch_size: 8
+  num_perturbations: 16
+  num_types: 3
+  num_cell_lines: 4
+  num_batches: 4

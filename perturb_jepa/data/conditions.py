@@ -73,6 +73,28 @@ class MetadataVocab:
             batch_to_id=_category_map(collect("batch")),
         )
 
+    @classmethod
+    def from_dict(cls, value: Mapping[str, Mapping[str, int]]) -> "MetadataVocab":
+        """Restore exact category-id mappings from checkpoint metadata."""
+
+        def mapping(name: str) -> dict[str, int]:
+            raw = value.get(name)
+            if raw is None:
+                raise KeyError(f"metadata vocab is missing {name!r}")
+            restored = {normalize_value(key): int(index) for key, index in raw.items()}
+            if restored.get("unknown") != 0:
+                raise ValueError(f"metadata vocab mapping {name!r} must reserve 'unknown' at id 0")
+            if len(set(restored.values())) != len(restored):
+                raise ValueError(f"metadata vocab mapping {name!r} contains duplicate ids")
+            return restored
+
+        return cls(
+            perturbation_to_id=mapping("perturbation_to_id"),
+            perturbation_type_to_id=mapping("perturbation_type_to_id"),
+            cell_line_to_id=mapping("cell_line_to_id"),
+            batch_to_id=mapping("batch_to_id"),
+        )
+
     @property
     def num_perturbations(self) -> int:
         return len(self.perturbation_to_id)
@@ -97,25 +119,45 @@ class MetadataVocab:
             "num_batches": self.num_batches,
         }
 
-    def _lookup(self, mapping: Mapping[str, int], value: object) -> int:
-        return mapping.get(normalize_value(value), 0)
+    def to_dict(self) -> dict[str, dict[str, int]]:
+        """Serialize exact category-id mappings for checkpoint reuse."""
 
-    def encode_row(self, row: Mapping[str, object]) -> dict[str, int | float]:
         return {
-            "perturbation_id": self._lookup(self.perturbation_to_id, row.get("perturbation", "unknown")),
+            "perturbation_to_id": dict(self.perturbation_to_id),
+            "perturbation_type_to_id": dict(self.perturbation_type_to_id),
+            "cell_line_to_id": dict(self.cell_line_to_id),
+            "batch_to_id": dict(self.batch_to_id),
+        }
+
+    def _lookup(self, mapping: Mapping[str, int], value: object, *, strict: bool) -> int:
+        key = normalize_value(value)
+        if key in mapping:
+            return mapping[key]
+        if strict:
+            raise KeyError(f"metadata category {key!r} is not present in saved vocab")
+        return 0
+
+    def encode_row(self, row: Mapping[str, object], *, strict: bool = False) -> dict[str, int | float]:
+        return {
+            "perturbation_id": self._lookup(
+                self.perturbation_to_id,
+                row.get("perturbation", "unknown"),
+                strict=strict,
+            ),
             "perturbation_type_id": self._lookup(
                 self.perturbation_type_to_id,
                 row.get("perturbation_type", "unknown"),
+                strict=strict,
             ),
-            "cell_line_id": self._lookup(self.cell_line_to_id, row.get("cell_line", "unknown")),
-            "batch_id": self._lookup(self.batch_to_id, row.get("batch", "unknown")),
+            "cell_line_id": self._lookup(self.cell_line_to_id, row.get("cell_line", "unknown"), strict=strict),
+            "batch_id": self._lookup(self.batch_to_id, row.get("batch", "unknown"), strict=strict),
             "dose": parse_metadata_float(row.get("dose", "NA")),
             "time": parse_metadata_float(row.get("time", "NA")),
         }
 
-    def encode_frame(self, frame: pd.DataFrame) -> pd.DataFrame:
+    def encode_frame(self, frame: pd.DataFrame, *, strict: bool = False) -> pd.DataFrame:
         encoded = frame.copy()
-        rows = [self.encode_row(row) for row in encoded.to_dict(orient="records")]
+        rows = [self.encode_row(row, strict=strict) for row in encoded.to_dict(orient="records")]
         encoded_values = pd.DataFrame(rows, index=encoded.index)
         for column in encoded_values.columns:
             encoded[column] = encoded_values[column]

@@ -61,6 +61,7 @@ def loss_for_batch(
             image_patch_mask=batch.image_patch_mask,
             perturbation_id=batch.perturbation_id,
             batch_id=batch.batch_id,
+            temperature=(weights or BridgeLossWeights()).temperature,
             weights=weights,
         )
 
@@ -72,6 +73,7 @@ def loss_for_batch(
         image_patch_mask=batch.image_patch_mask,
         perturbation_id=batch.perturbation_id,
         batch_id=batch.batch_id,
+        temperature=(weights or BridgeLossWeights()).temperature,
         weights=BridgeLossWeights(),
     )
     raw_terms = {name: value for name, value in terms.items() if name != "total"}

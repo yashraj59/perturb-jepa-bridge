@@ -74,7 +74,8 @@ def test_scrna_token_dataset_normalizes_and_collates_metadata():
     dataset = SCRNATokenDataset(matrix, _obs_frame(), _var_frame(), gene_indices=[3, 1, 0])
 
     assert len(dataset) == 3
-    assert dataset.obs.loc["cell0", "condition_key"] == "drugA|compound|10uM|48h|U2OS"
+    assert dataset.obs.loc["cell0", "condition_key"] == "drugA|10uM|48h|U2OS"
+    assert dataset.obs.loc["cell0", "condition_key_with_type"] == "drugA|compound|10uM|48h|U2OS"
     assert dataset.gene_vocab.token_to_idx["G3"] == 3
     np.testing.assert_allclose(dataset[0].expression_values, library_size_log1p(matrix)[0, [3, 1, 0]])
 
@@ -82,7 +83,7 @@ def test_scrna_token_dataset_normalizes_and_collates_metadata():
     assert batch.gene_ids.shape == (2, 3)
     assert batch.expression_values.dtype == torch.float32
     assert batch.rna_token_mask.all()
-    assert batch.condition_key == ["drugA|compound|10uM|48h|U2OS", "drugB|compound|5uM|24h|A549"]
+    assert batch.condition_key == ["drugA|10uM|48h|U2OS", "drugB|5uM|24h|A549"]
     assert batch.obs_index == ["cell0", "cell2"]
     assert batch.dose.tolist() == [10.0, 5.0]
     assert batch.time.tolist() == [48.0, 24.0]
@@ -113,7 +114,7 @@ def test_image_manifest_dataset_loads_numpy_images_and_collates_patch_masks(tmp_
     assert batch.images.shape == (2, 3, 4, 4)
     assert batch.image_patch_mask.shape == (2, 4)
     assert batch.image_patch_mask.all()
-    assert batch.condition_key == ["drugA|compound|10uM|48h|U2OS", "drugB|compound|5uM|24h|A549"]
+    assert batch.condition_key == ["drugA|10uM|48h|U2OS", "drugB|5uM|24h|A549"]
     assert batch.dose.tolist() == [10.0, 5.0]
 
 
@@ -163,15 +164,15 @@ def test_shared_metadata_vocab_condition_bags_and_prototypes(tmp_path):
     assert rna[0].perturbation_id == images[0].perturbation_id
 
     bags = build_condition_bags(rna.obs)
-    assert bags.keys == ["drugA|compound|10uM|48h|U2OS", "drugB|compound|5uM|24h|A549"]
-    np.testing.assert_array_equal(bags["drugA|compound|10uM|48h|U2OS"], np.array([0, 1]))
+    assert bags.keys == ["drugA|10uM|48h|U2OS", "drugB|5uM|24h|A549"]
+    np.testing.assert_array_equal(bags["drugA|10uM|48h|U2OS"], np.array([0, 1]))
 
     prototypes = compute_condition_prototypes(
         matrix,
         rna.obs["condition_key"].tolist(),
     )
     assert prototypes.counts.tolist() == [2, 1]
-    np.testing.assert_allclose(prototypes.lookup(["drugA|compound|10uM|48h|U2OS"]), [[2.0, 0.0]])
+    np.testing.assert_allclose(prototypes.lookup(["drugA|10uM|48h|U2OS"]), [[2.0, 0.0]])
     np.testing.assert_array_equal(
         prototype_lookup_indices(rna.obs["condition_key"], prototypes.keys),
         np.array([0, 0, 1]),

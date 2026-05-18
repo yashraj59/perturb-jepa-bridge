@@ -27,6 +27,11 @@ def test_hierarchical_condition_keys_append_expected_levels():
     assert keyed["condition_key_coarse"].tolist() == ["drugA", "drugA", "drugB"]
     assert keyed["condition_key_medium"].tolist() == ["drugA|10uM|48h", "drugA|10uM|72h", "drugB|5uM|48h"]
     assert keyed["condition_key_fine"].tolist() == [
+        "drugA|10uM|48h|U2OS",
+        "drugA|10uM|72h|U2OS",
+        "drugB|5uM|48h|A549",
+    ]
+    assert keyed["condition_key_with_type"].tolist() == [
         "drugA|compound|10uM|48h|U2OS",
         "drugA|compound|10uM|72h|U2OS",
         "drugB|compound|5uM|48h|A549",

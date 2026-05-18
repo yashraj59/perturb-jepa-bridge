@@ -39,4 +39,4 @@ def test_add_condition_key_uses_declared_columns():
         }
     )
     keyed = add_condition_key(frame)
-    assert keyed.loc[0, "condition_key"] == "x|compound|1uM|24h|A549"
+    assert keyed.loc[0, "condition_key"] == "x|1uM|24h|A549"

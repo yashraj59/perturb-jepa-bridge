@@ -27,6 +27,7 @@ def default_bridge_config() -> PerturbJEPABridgeConfig:
             dim=32,
         ),
         shared_dim=32,
+        num_bag_prototypes=4,
     )
 
 
@@ -100,6 +101,7 @@ class KendallUncertaintyConfig:
 @dataclass(frozen=True)
 class TrainingConfig:
     steps: int = 2
+    batch_size: int = 4
     device: str = "cpu"
     seed: int = 0
     ema_decay: float = 0.996
@@ -124,12 +126,54 @@ class SyntheticBatchConfig:
 
 
 @dataclass(frozen=True)
+class DataConfig:
+    rna_anndata: str | None = None
+    image_manifest: str | None = None
+    image_root: str | None = None
+    condition_key: str = "condition_key"
+    split_col: str = "split"
+    train_split_value: str = "train"
+    eval_split_value: str | None = None
+    split_strategy: str = "none"
+    heldout_values: tuple[str, ...] = ()
+    heldout_fraction: float = 0.2
+    rna_bag_size: int = 128
+    image_bag_size: int = 128
+    min_rna_bag_size: int = 1
+    min_image_bag_size: int = 1
+    rna_mask_prob: float = 0.0
+    image_patch_mask_prob: float = 0.0
+    technical_summary: str = "mode"
+
+    def __post_init__(self) -> None:
+        valid_strategies = {
+            "none",
+            "random_grouped",
+            "heldout_batch",
+            "heldout_perturbation",
+            "heldout_dose_time",
+            "heldout_cell_line",
+            "heldout_moa",
+        }
+        if self.split_strategy not in valid_strategies:
+            raise ValueError(f"split_strategy must be one of {sorted(valid_strategies)}")
+        if not 0.0 <= self.rna_mask_prob <= 1.0:
+            raise ValueError("rna_mask_prob must be between 0 and 1")
+        if not 0.0 <= self.image_patch_mask_prob <= 1.0:
+            raise ValueError("image_patch_mask_prob must be between 0 and 1")
+        if self.heldout_fraction <= 0.0 or self.heldout_fraction >= 1.0:
+            raise ValueError("heldout_fraction must be between 0 and 1")
+        object.__setattr__(self, "heldout_values", tuple(self.heldout_values))
+
+
+@dataclass(frozen=True)
 class ExperimentConfig:
     name: str = "synthetic-smoke"
     model: PerturbJEPABridgeConfig = field(default_factory=default_bridge_config)
     optimizer: OptimizerConfig = field(default_factory=OptimizerConfig)
     training: TrainingConfig = field(default_factory=TrainingConfig)
     loss: BridgeLossWeights = field(default_factory=BridgeLossWeights)
+    data: DataConfig = field(default_factory=DataConfig)
     synthetic: SyntheticBatchConfig = field(default_factory=SyntheticBatchConfig)
 
     @classmethod
@@ -144,6 +188,7 @@ class ExperimentConfig:
             optimizer=_dataclass_from_mapping(OptimizerConfig, data.get("optimizer", {})),
             training=_dataclass_from_mapping(TrainingConfig, data.get("training", {})),
             loss=_dataclass_from_mapping(BridgeLossWeights, data.get("loss", {})),
+            data=_dataclass_from_mapping(DataConfig, data.get("data", {})),
             synthetic=_dataclass_from_mapping(SyntheticBatchConfig, data.get("synthetic", {})),
         )
 
@@ -214,6 +259,26 @@ def _dataclass_from_mapping(cls: type[Any], data: Mapping[str, Any], *, default:
         )
     if cls is KendallUncertaintyConfig and "term_names" in kwargs:
         kwargs["term_names"] = tuple(kwargs["term_names"])
+    if cls is DataConfig:
+        if "split_key" in merged and "split_col" not in kwargs:
+            kwargs["split_col"] = merged["split_key"]
+        if "heldout_values" in kwargs and isinstance(kwargs["heldout_values"], str):
+            kwargs["heldout_values"] = tuple(
+                value.strip() for value in kwargs["heldout_values"].split(",") if value.strip()
+            )
+        elif "heldout_values" in kwargs:
+            kwargs["heldout_values"] = tuple(kwargs["heldout_values"] or ())
+    if cls is BridgeLossWeights:
+        alias_map = {
+            "contrastive_weight": "align",
+            "mmd_weight": "mmd",
+            "sliced_wasserstein_weight": "sliced_wasserstein",
+            "batch_adv_weight": "batch_adv",
+            "perturbation_cls_weight": "perturbation_cls",
+        }
+        for alias, target in alias_map.items():
+            if alias in merged and target not in kwargs:
+                kwargs[target] = merged[alias]
     return cls(**kwargs)
 
 
@@ -231,6 +296,7 @@ def _bridge_config_from_dict(data: Mapping[str, Any]) -> PerturbJEPABridgeConfig
             default=default.perturbation,
         ),
         shared_dim=int(data.get("shared_dim", default.shared_dim)),
+        num_bag_prototypes=int(data.get("num_bag_prototypes", default.num_bag_prototypes)),
         dropout=float(data.get("dropout", default.dropout)),
         adversary_scale=float(data.get("adversary_scale", default.adversary_scale)),
     )

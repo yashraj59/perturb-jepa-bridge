@@ -1,0 +1,43 @@
+# F024 Heldout Action Descriptor Support Audit
+
+## Decision
+`F024_HELDOUT_ACTION_DESCRIPTOR_SUPPORT_LIMITS_ACTION_GENERALIZATION`
+
+## Purpose
+F023 found that source geometry explains much of the old positive floor, while correct action still has a small but measurable advantage over wrong action. This audit checks whether held-out perturbation descriptors have train support or whether exact held-out action dimensions are unsupported.
+
+## Key Metrics
+- mean support fraction: `0.500000`
+- mean full-minus-wrong transition gain: `0.003291`
+- mean full-minus-source transition gain: `0.001415`
+- fraction of held-out action groups with positive action gain > 0.001: `0.533333`
+
+## Support Summary
+```tsv
+perturbation_id	seed_count	mean_support_fraction	min_supported_active_dim_count	max_unsupported_active_dim_count	mean_min_active_dim_train_support
+9	5	0.5	1	1	0.0
+10	5	0.5	1	1	0.0
+11	5	0.5	1	1	0.0
+
+```
+
+## Metric Summary
+```tsv
+perturbation_id	seed_count	mean_full_transition	mean_source_transition	mean_wrong_transition	mean_full_delta	mean_source_delta	mean_wrong_delta	mean_full_recall	mean_source_recall	mean_wrong_recall	mean_full_minus_source_transition	mean_full_minus_wrong_transition	mean_full_minus_source_delta	mean_full_minus_wrong_delta
+9	5	-0.0067551372079699	-0.004835511332047249	-0.008899641818718175	0.3154944815225499	0.3140555581921366	0.2719771913654598	0.6666666666666667	0.6666666666666666	0.711111111111111	-0.001919625875922651	0.002144504610748275	0.0014389233304132943	0.04351729015709008
+10	5	0.01643201147520599	0.010919095292887907	0.005495839583076154	0.48136408554227544	0.4142602738560065	0.39143322026431215	0.7777777777777778	0.7555555555555555	0.7333333333333333	0.005512916182318081	0.010936171892129833	0.06710381168626897	0.08993086527796328
+11	5	0.02416744236437815	0.02351481667035125	0.027374984616468024	0.5576868420201758	0.5546183443524653	0.5912361119758638	0.9111111111111111	0.9333333333333332	0.9333333333333332	0.0006526256940268977	-0.0032075422520898714	0.0030684976677105126	-0.033549269955687924
+
+```
+
+## Combined Summary
+```tsv
+perturbation_id	seed_count	mean_support_fraction	min_supported_active_dim_count	max_unsupported_active_dim_count	mean_min_active_dim_train_support	mean_full_transition	mean_source_transition	mean_wrong_transition	mean_full_delta	mean_source_delta	mean_wrong_delta	mean_full_recall	mean_source_recall	mean_wrong_recall	mean_full_minus_source_transition	mean_full_minus_wrong_transition	mean_full_minus_source_delta	mean_full_minus_wrong_delta
+9	5	0.5	1	1	0.0	-0.0067551372079699	-0.004835511332047249	-0.008899641818718175	0.3154944815225499	0.3140555581921366	0.2719771913654598	0.6666666666666667	0.6666666666666666	0.711111111111111	-0.001919625875922651	0.002144504610748275	0.0014389233304132943	0.04351729015709008
+10	5	0.5	1	1	0.0	0.01643201147520599	0.010919095292887907	0.005495839583076154	0.48136408554227544	0.4142602738560065	0.39143322026431215	0.7777777777777778	0.7555555555555555	0.7333333333333333	0.005512916182318081	0.010936171892129833	0.06710381168626897	0.08993086527796328
+11	5	0.5	1	1	0.0	0.02416744236437815	0.02351481667035125	0.027374984616468024	0.5576868420201758	0.5546183443524653	0.5912361119758638	0.9111111111111111	0.9333333333333332	0.9333333333333332	0.0006526256940268977	-0.0032075422520898714	0.0030684976677105126	-0.033549269955687924
+
+```
+
+## Interpretation
+This audit uses condition/action labels only to diagnose descriptor coverage and per-action scoring. It does not promote a model and does not use metadata as a candidate input.

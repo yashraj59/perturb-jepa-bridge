@@ -288,6 +288,14 @@ def _bridge_config_from_dict(data: Mapping[str, Any]) -> PerturbJEPABridgeConfig
     default = default_bridge_config()
     if not data:
         return default
+    program_assignment = data.get(
+        "counterfactual_rna_program_assignment",
+        default.counterfactual_rna_program_assignment,
+    )
+    if isinstance(program_assignment, str):
+        program_assignment = tuple(int(value.strip()) for value in program_assignment.split(",") if value.strip())
+    else:
+        program_assignment = tuple(int(value) for value in (program_assignment or ()))
 
     return PerturbJEPABridgeConfig(
         rna=_dataclass_from_mapping(RNAEncoderConfig, data.get("rna", {}), default=default.rna),
@@ -301,4 +309,35 @@ def _bridge_config_from_dict(data: Mapping[str, Any]) -> PerturbJEPABridgeConfig
         num_bag_prototypes=int(data.get("num_bag_prototypes", default.num_bag_prototypes)),
         dropout=float(data.get("dropout", default.dropout)),
         adversary_scale=float(data.get("adversary_scale", default.adversary_scale)),
+        bag_aggregator=str(data.get("bag_aggregator", default.bag_aggregator)),
+        rna_condition_readout=str(data.get("rna_condition_readout", default.rna_condition_readout)),
+        rna_pseudobulk_normalize=bool(data.get("rna_pseudobulk_normalize", default.rna_pseudobulk_normalize)),
+        image_condition_readout=str(data.get("image_condition_readout", default.image_condition_readout)),
+        image_raw_normalize=bool(data.get("image_raw_normalize", default.image_raw_normalize)),
+        counterfactual_rna_residual=bool(data.get("counterfactual_rna_residual", default.counterfactual_rna_residual)),
+        counterfactual_rna_program_factorized=bool(
+            data.get("counterfactual_rna_program_factorized", default.counterfactual_rna_program_factorized)
+        ),
+        counterfactual_rna_num_programs=int(
+            data.get("counterfactual_rna_num_programs", default.counterfactual_rna_num_programs)
+        ),
+        counterfactual_rna_program_assignment=program_assignment,
+        counterfactual_rna_within_program_residual=bool(
+            data.get("counterfactual_rna_within_program_residual", default.counterfactual_rna_within_program_residual)
+        ),
+        counterfactual_rna_program_conditioned=bool(
+            data.get("counterfactual_rna_program_conditioned", default.counterfactual_rna_program_conditioned)
+        ),
+        counterfactual_rna_program_metadata_context=bool(
+            data.get(
+                "counterfactual_rna_program_metadata_context",
+                default.counterfactual_rna_program_metadata_context,
+            )
+        ),
+        counterfactual_rna_program_decoder_depth=int(
+            data.get(
+                "counterfactual_rna_program_decoder_depth",
+                default.counterfactual_rna_program_decoder_depth,
+            )
+        ),
     )

@@ -17,6 +17,7 @@ class ImageEncoderConfig:
     mlp_ratio: int = 4
     dropout: float = 0.1
     max_patches: int = 1024
+    pooling: str = "cls"
 
     @property
     def patch_dim(self) -> int:
@@ -90,8 +91,15 @@ class ImageEncoder(nn.Module):
         encoded = self.norm(self.encoder(tokens))
         image_patches = encoded[:, 1:]
         reconstruction = self.reconstruction_head(image_patches)
+        if self.config.pooling == "cls":
+            image_embedding = encoded[:, 0]
+        elif self.config.pooling == "mean_patches":
+            image_embedding = image_patches.mean(dim=1)
+        else:
+            raise ValueError(f"unsupported image pooling mode: {self.config.pooling}")
+
         return ImageEncoderOutput(
             patch_embeddings=image_patches,
-            image_embedding=encoded[:, 0],
+            image_embedding=image_embedding,
             patch_reconstruction=reconstruction,
         )

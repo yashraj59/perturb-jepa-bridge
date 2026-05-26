@@ -1,0 +1,129 @@
+{
+  "data": {
+    "bag_sample_tech_col": null,
+    "condition_key": "condition_key",
+    "eval_split_value": null,
+    "heldout_fraction": 0.2,
+    "heldout_values": [],
+    "image_bag_size": 128,
+    "image_manifest": null,
+    "image_patch_mask_prob": 0.0,
+    "image_root": null,
+    "min_image_bag_size": 1,
+    "min_rna_bag_size": 1,
+    "rna_anndata": null,
+    "rna_bag_size": 128,
+    "rna_mask_prob": 0.0,
+    "rna_normalize": true,
+    "split_col": "split",
+    "split_strategy": "none",
+    "technical_summary": "mode",
+    "train_split_value": "train"
+  },
+  "loss": {
+    "align": 0.0,
+    "batch_adv": 0.0,
+    "counterfactual": 0.0,
+    "cross_correlation": 0.0,
+    "cycle": 0.0,
+    "image_mask": 0.0,
+    "jepa": 0.0,
+    "mmd": 0.0,
+    "perturbation_cls": 0.0,
+    "response_bottleneck": 0.0,
+    "rna_mask": 0.0,
+    "shared_covariance": 0.0,
+    "shared_variance": 0.0,
+    "sliced_wasserstein": 0.0,
+    "state_perturbation_adv": 0.0,
+    "temperature": 0.1
+  },
+  "model": {
+    "adversary_scale": 0.5,
+    "bag_aggregator": "mean",
+    "dropout": 0.0,
+    "image": {
+      "depth": 1,
+      "dim": 4,
+      "dropout": 0.1,
+      "heads": 4,
+      "image_size": 16,
+      "in_channels": 1,
+      "max_patches": 1024,
+      "mlp_ratio": 4,
+      "patch_size": 4,
+      "pooling": "cls"
+    },
+    "image_condition_readout": "raw_linear_pooled",
+    "image_raw_normalize": false,
+    "num_bag_prototypes": 1,
+    "perturbation": {
+      "descriptor_dim": 0,
+      "dim": 4,
+      "dropout": 0.1,
+      "num_batches": 2,
+      "num_cell_lines": 2,
+      "num_perturbations": 4,
+      "num_types": 2
+    },
+    "rna": {
+      "depth": 1,
+      "dim": 4,
+      "dropout": 0.1,
+      "heads": 4,
+      "max_genes": 128,
+      "mlp_ratio": 4,
+      "pooling": "cls",
+      "vocab_size": 128
+    },
+    "rna_condition_readout": "raw_linear_pseudobulk",
+    "rna_pseudobulk_normalize": false,
+    "shared_dim": 3
+  },
+  "name": "synth_micro-step0",
+  "optimizer": {
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08,
+    "lr": 0.001,
+    "name": "adamw",
+    "weight_decay": 0.0
+  },
+  "synthetic": {
+    "batch_size": 4,
+    "genes": 32,
+    "image_channels": 3,
+    "image_size": 32,
+    "num_batches": 4,
+    "num_cell_lines": 4,
+    "num_perturbations": 16,
+    "num_types": 3,
+    "patch_size": 8,
+    "vocab_size": 128
+  },
+  "training": {
+    "batch_size": 8,
+    "device": "cpu",
+    "ema_decay": 0.996,
+    "grad_clip_norm": 1.0,
+    "log_every": 0,
+    "objective_schedule": {
+      "enabled": false,
+      "reconstruction_anneal_steps": 0,
+      "reconstruction_final_scale": 1.0,
+      "reconstruction_warmup_steps": 0,
+      "warmup_non_reconstruction_scale": 0.0
+    },
+    "seed": 1,
+    "steps": 50,
+    "uncertainty_weighting": {
+      "enabled": false,
+      "initial_log_variance": 0.0,
+      "loss_scale": 0.5,
+      "regularizer_scale": 0.5,
+      "term_names": []
+    }
+  }
+}

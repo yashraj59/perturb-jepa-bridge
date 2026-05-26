@@ -1,0 +1,20 @@
+{
+  "adapter_contract_updated_for_fixed_dose": true,
+  "code_readme_found": true,
+  "croissant_field_count": 5,
+  "croissant_found": true,
+  "dataset_payload_download_attempted": false,
+  "diagnostic_label": "F089_SCGENESCOPE_SUPPLEMENT_METADATA_RECOVERED_ADAPTER_UPDATED",
+  "download_error": "",
+  "full_imaging_download_gb_from_readme": 186.0,
+  "github_repo_from_readme": "https://github.com/altoslabs/scGeneScope.git",
+  "model_promoted": false,
+  "replicate_split_contract_found": true,
+  "scrna_download_gb_from_readme": 80.0,
+  "single_plate_download_mb_from_readme": 173.0,
+  "supplement_bytes": 2056507,
+  "supplement_downloaded": true,
+  "supplement_url": "https://proceedings.neurips.cc/paper_files/paper/2025/file/ce02df43d66626bb7087ec699e20c7ea-Supplemental-Datasets_and_Benchmarks_Track.zip",
+  "treatment_target_field_found": true,
+  "zip_entry_count": 281
+}

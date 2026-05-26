@@ -1,0 +1,195 @@
+{
+  "diagnostic_label": "F003_ACTION_CONDITION_HETEROGENEITY_AUDIT_COMPLETED",
+  "groups": {
+    "batch_id": [
+      {
+        "batch_id": 0,
+        "delta_cosine": 0.44344351835908036,
+        "delta_rank": 6.223953143601441,
+        "median_rank": 2.0,
+        "recall_at_1": 0.3333333333333333,
+        "rows": 9,
+        "teacher_delta_norm_mean": 0.370919975294976,
+        "transition_improvement": 0.009645409171516536
+      },
+      {
+        "batch_id": 1,
+        "delta_cosine": 0.3441561242454514,
+        "delta_rank": 5.764109980254042,
+        "median_rank": 3.0,
+        "recall_at_1": 0.3333333333333333,
+        "rows": 9,
+        "teacher_delta_norm_mean": 0.42628555809336655,
+        "transition_improvement": -0.010528766293355949
+      },
+      {
+        "batch_id": 2,
+        "delta_cosine": 0.4062879074796594,
+        "delta_rank": 5.372229984025793,
+        "median_rank": 1.0,
+        "recall_at_1": 0.5555555555555556,
+        "rows": 9,
+        "teacher_delta_norm_mean": 0.4782999278560294,
+        "transition_improvement": 0.01786907667042164
+      }
+    ],
+    "cell_line_id": [
+      {
+        "cell_line_id": 0,
+        "delta_cosine": 0.3078099786687264,
+        "delta_rank": 5.667048779521612,
+        "median_rank": 2.0,
+        "recall_at_1": 0.4444444444444444,
+        "rows": 9,
+        "teacher_delta_norm_mean": 0.3910147300390867,
+        "transition_improvement": 0.0023626130159473987
+      },
+      {
+        "cell_line_id": 1,
+        "delta_cosine": 0.4356511409978175,
+        "delta_rank": 5.4552723046971865,
+        "median_rank": 2.0,
+        "recall_at_1": 0.3333333333333333,
+        "rows": 9,
+        "teacher_delta_norm_mean": 0.3713550655596053,
+        "transition_improvement": -0.013635426080643522
+      },
+      {
+        "cell_line_id": 2,
+        "delta_cosine": 0.4504264304176473,
+        "delta_rank": 6.1980532046607735,
+        "median_rank": 1.0,
+        "recall_at_1": 0.6666666666666666,
+        "rows": 9,
+        "teacher_delta_norm_mean": 0.51313566564568,
+        "transition_improvement": 0.02825853261327835
+      }
+    ],
+    "condition_key": [
+      {
+        "condition_key": "pert=10|dose=1|cell=0",
+        "delta_cosine": 0.6354361747411553,
+        "delta_rank": 1.8367777683754378,
+        "median_rank": 1.0,
+        "recall_at_1": 1.0,
+        "rows": 3,
+        "teacher_delta_norm_mean": 0.36335866230707986,
+        "transition_improvement": 0.02592160906949677
+      },
+      {
+        "condition_key": "pert=10|dose=1|cell=1",
+        "delta_cosine": 0.35009911631635826,
+        "delta_rank": 1.6108633675813528,
+        "median_rank": 1.0,
+        "recall_at_1": 1.0,
+        "rows": 3,
+        "teacher_delta_norm_mean": 0.3676397260562106,
+        "transition_improvement": -0.002612095271916267
+      },
+      {
+        "condition_key": "pert=10|dose=1|cell=2",
+        "delta_cosine": 0.3427850864057651,
+        "delta_rank": 1.9694010148282537,
+        "median_rank": 1.0,
+        "recall_at_1": 1.0,
+        "rows": 3,
+        "teacher_delta_norm_mean": 0.39677519378726306,
+        "transition_improvement": 0.004306396736574403
+      },
+      {
+        "condition_key": "pert=11|dose=1|cell=0",
+        "delta_cosine": 0.46819585321423834,
+        "delta_rank": 1.9202713910779152,
+        "median_rank": 1.0,
+        "recall_at_1": 1.0,
+        "rows": 3,
+        "teacher_delta_norm_mean": 0.4623120809748147,
+        "transition_improvement": 0.025431298410719266
+      },
+      {
+        "condition_key": "pert=11|dose=1|cell=1",
+        "delta_cosine": 0.6334772654758644,
+        "delta_rank": 1.894811290819541,
+        "median_rank": 1.0,
+        "recall_at_1": 1.0,
+        "rows": 3,
+        "teacher_delta_norm_mean": 0.3100772147603061,
+        "transition_improvement": 0.00622413415056459
+      },
+      {
+        "condition_key": "pert=11|dose=1|cell=2",
+        "delta_cosine": 0.7656415347267312,
+        "delta_rank": 1.9784917933088864,
+        "median_rank": 1.0,
+        "recall_at_1": 1.0,
+        "rows": 3,
+        "teacher_delta_norm_mean": 0.6381084352543692,
+        "transition_improvement": 0.10531249778176288
+      },
+      {
+        "condition_key": "pert=9|dose=1|cell=0",
+        "delta_cosine": -0.18020209194921455,
+        "delta_rank": 1.987921362150457,
+        "median_rank": 1.0,
+        "recall_at_1": 1.0,
+        "rows": 3,
+        "teacher_delta_norm_mean": 0.3473734468353655,
+        "transition_improvement": -0.04426506843237384
+      },
+      {
+        "condition_key": "pert=9|dose=1|cell=1",
+        "delta_cosine": 0.32337704120122984,
+        "delta_rank": 1.9847169133861136,
+        "median_rank": 1.0,
+        "recall_at_1": 1.0,
+        "rows": 3,
+        "teacher_delta_norm_mean": 0.43634825586229914,
+        "transition_improvement": -0.04451831712057889
+      },
+      {
+        "condition_key": "pert=9|dose=1|cell=2",
+        "delta_cosine": 0.24285267012044573,
+        "delta_rank": 1.9897492216106125,
+        "median_rank": 1.0,
+        "recall_at_1": 1.0,
+        "rows": 3,
+        "teacher_delta_norm_mean": 0.5045233678954077,
+        "transition_improvement": -0.02484329667850223
+      }
+    ],
+    "perturbation_id": [
+      {
+        "delta_cosine": 0.12867587312415363,
+        "delta_rank": 6.412697131321277,
+        "median_rank": 1.0,
+        "perturbation_id": 9,
+        "recall_at_1": 0.5555555555555556,
+        "rows": 9,
+        "teacher_delta_norm_mean": 0.42941502353102406,
+        "transition_improvement": -0.03787556074381832
+      },
+      {
+        "delta_cosine": 0.4427734591544262,
+        "delta_rank": 6.119174157719924,
+        "median_rank": 1.0,
+        "perturbation_id": 10,
+        "recall_at_1": 1.0,
+        "rows": 9,
+        "teacher_delta_norm_mean": 0.3759245273835179,
+        "transition_improvement": 0.009205303511384969
+      },
+      {
+        "delta_cosine": 0.6224382178056113,
+        "delta_rank": 6.1466508365902275,
+        "median_rank": 1.0,
+        "perturbation_id": 11,
+        "recall_at_1": 0.8888888888888888,
+        "rows": 9,
+        "teacher_delta_norm_mean": 0.47016591032983,
+        "transition_improvement": 0.04565597678101558
+      }
+    ]
+  },
+  "negative_or_zero_action_groups": 1,
+  "positive_action_groups": 2
+}

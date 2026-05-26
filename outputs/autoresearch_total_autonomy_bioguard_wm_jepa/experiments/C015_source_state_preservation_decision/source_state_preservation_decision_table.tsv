@@ -1,0 +1,10 @@
+metric	value	floor_gap
+current_exact_source_state_nested_recall	0.4801587301587302	-0.001322751322751281
+fresh_exact_source_state_nested_recall	0.4470899470899471	-0.03439153439153436
+current_teacher_source_neighborhood_recall	0.3981481481481481	-0.08333333333333337
+fresh_teacher_source_neighborhood_recall	0.41402116402116407	-0.06746031746031739
+current_online_source_neighborhood_recall	0.4576719576719577	-0.02380952380952378
+fresh_online_source_neighborhood_recall	0.4186507936507936	-0.06283068783068785
+online_minus_teacher_purity_gain	0.19554673721340377	0.0
+online_minus_teacher_cell_line_eta_gain	0.2627565796506147	0.0
+online_minus_teacher_residual_cell_line_eta	0.5674014843858441	0.0

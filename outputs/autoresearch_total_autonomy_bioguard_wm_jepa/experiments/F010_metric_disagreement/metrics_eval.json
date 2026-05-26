@@ -1,0 +1,22 @@
+{
+  "current_seed_fixed_composite_weight_0_1": {
+    "endpoint": 0.2658730158730158,
+    "gain": 0.10119047619047618,
+    "improved_triplet_fraction": 0.8214285714285714,
+    "selected": 0.36706349206349204
+  },
+  "diagnostic_label": "F010_RECALL_GATE_SEED_UNSTABLE_CONTINUOUS_METRICS_DISAGREE",
+  "fresh_minus_protected_delta_cosine_gap": 0.14246551103214994,
+  "fresh_minus_protected_recall_gap": -0.14814814814814814,
+  "fresh_minus_protected_transition_gap": 0.01609457176923376,
+  "fresh_seed_fixed_composite_weight_0_5": {
+    "endpoint": 0.2764550264550264,
+    "gain": 0.09523809523809523,
+    "improved_triplet_fraction": 0.8214285714285714,
+    "selected": 0.3716931216931216
+  },
+  "train_support_recall_corr": 0.2430491885713277,
+  "train_support_transition_corr": 0.7144558692653457,
+  "train_triplet_delta_recall_corr": 0.21892459422753394,
+  "train_triplet_transition_recall_corr": 0.3439908524220931
+}

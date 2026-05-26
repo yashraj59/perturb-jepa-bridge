@@ -83,3 +83,54 @@ class MultiPrototypeBagAggregator(nn.Module):
             bag_embedding=bag_embedding,
             attention=attention,
         )
+
+
+class MeanBagAggregator(nn.Module):
+    """Parameter-free mean pooling with the multi-prototype output contract."""
+
+    def __init__(
+        self,
+        input_dim: int,
+        *,
+        output_dim: int | None = None,
+        num_prototypes: int = 1,
+        dropout: float = 0.0,
+    ) -> None:
+        super().__init__()
+        if num_prototypes <= 0:
+            raise ValueError("num_prototypes must be positive")
+        self.input_dim = input_dim
+        self.output_dim = output_dim or input_dim
+        if self.output_dim != self.input_dim:
+            raise ValueError("MeanBagAggregator requires output_dim to match input_dim")
+        self.num_prototypes = num_prototypes
+        self.bag_norm = nn.LayerNorm(self.output_dim)
+        self.dropout = nn.Dropout(dropout)
+
+    def forward(
+        self,
+        embeddings: torch.Tensor,
+        mask: torch.Tensor | None = None,
+    ) -> MultiPrototypeBagAggregatorOutput:
+        if embeddings.ndim != 3:
+            raise ValueError("embeddings must have shape [batch, instances, dim]")
+        batch, instances, dim = embeddings.shape
+        if dim != self.input_dim:
+            raise ValueError(f"expected input_dim={self.input_dim}, got {dim}")
+        if mask is not None and mask.shape != (batch, instances):
+            raise ValueError(f"mask must have shape {(batch, instances)}")
+
+        if mask is None:
+            weights = torch.full((batch, instances), 1.0 / float(instances), device=embeddings.device, dtype=embeddings.dtype)
+        else:
+            valid = mask.to(device=embeddings.device, dtype=embeddings.dtype)
+            weights = valid / valid.sum(dim=1, keepdim=True).clamp_min(torch.finfo(valid.dtype).eps)
+        pooled = torch.einsum("bn,bnd->bd", weights, self.dropout(embeddings))
+        pooled = self.bag_norm(pooled)
+        prototypes = pooled[:, None, :].expand(batch, self.num_prototypes, self.output_dim)
+        attention = weights[:, None, :].expand(batch, self.num_prototypes, instances)
+        return MultiPrototypeBagAggregatorOutput(
+            prototypes=prototypes,
+            bag_embedding=pooled,
+            attention=attention,
+        )

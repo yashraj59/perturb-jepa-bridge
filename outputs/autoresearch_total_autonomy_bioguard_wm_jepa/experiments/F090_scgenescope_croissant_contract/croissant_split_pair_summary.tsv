@@ -1,0 +1,5 @@
+split	manifest_rows	sum	count
+alternate_test	16	4	4
+test	8	4	4
+train	8	4	4
+validation	8	4	4

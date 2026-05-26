@@ -1,0 +1,62 @@
+{
+  "diagnostic_label": "C001_REPRESENTATION_ERROR_AUDIT_COMPLETED",
+  "global_metrics": {
+    "floor_error_effective_rank": 12.055665232761019,
+    "floor_error_norm_mean": 0.4013157539111305,
+    "source_online_teacher_cosine": 0.9475131487454985,
+    "source_teacher_effective_rank": 11.29641460308943,
+    "target_online_teacher_cosine": 0.9467306503177498,
+    "target_teacher_effective_rank": 12.267061812031356,
+    "teacher_delta_effective_rank": 11.781895734223935,
+    "teacher_delta_norm_mean": 0.4251684870814574,
+    "ztech_delta_norm_mean": 0.6449273434966672
+  },
+  "highest_action_floor_error_norm": 0.36805847963176014,
+  "highest_transition_action": "11",
+  "lowest_action_floor_error_norm": 0.491173709156478,
+  "lowest_transition_action": "9",
+  "rows": [
+    {
+      "delta_cosine": 0.12867587312415363,
+      "floor_error_norm": 0.491173709156478,
+      "floor_error_vs_teacher_delta_cosine": -0.6956075886472527,
+      "floor_error_vs_ztech_delta_abs_corr": 0.2839338150687294,
+      "perturbation_id": "9",
+      "recall_at_1": 0.5555555555555556,
+      "rows": 9,
+      "source_online_teacher_cosine": 0.9480701856053556,
+      "target_online_teacher_cosine": 0.957949443346576,
+      "teacher_delta_norm": 0.42941502353102406,
+      "transition_improvement": -0.03787556074381832,
+      "ztech_delta_norm": 0.6307059312066186
+    },
+    {
+      "delta_cosine": 0.4427734591544262,
+      "floor_error_norm": 0.34471507294515374,
+      "floor_error_vs_teacher_delta_cosine": -0.6626000231616508,
+      "floor_error_vs_ztech_delta_abs_corr": 0.26520494295775027,
+      "perturbation_id": "10",
+      "recall_at_1": 1.0,
+      "rows": 9,
+      "source_online_teacher_cosine": 0.9419214538585022,
+      "target_online_teacher_cosine": 0.9525799512995476,
+      "teacher_delta_norm": 0.3759245273835179,
+      "transition_improvement": 0.009205303511384969,
+      "ztech_delta_norm": 0.6916063025156348
+    },
+    {
+      "delta_cosine": 0.6224382178056113,
+      "floor_error_norm": 0.36805847963176014,
+      "floor_error_vs_teacher_delta_cosine": -0.6712731678190027,
+      "floor_error_vs_ztech_delta_abs_corr": 0.041811930099281976,
+      "perturbation_id": "11",
+      "recall_at_1": 0.8888888888888888,
+      "rows": 9,
+      "source_online_teacher_cosine": 0.9525478067726377,
+      "target_online_teacher_cosine": 0.9296625563071262,
+      "teacher_delta_norm": 0.47016591032983,
+      "transition_improvement": 0.04565597678101558,
+      "ztech_delta_norm": 0.6124697967677484
+    }
+  ]
+}

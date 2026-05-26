@@ -1,0 +1,2 @@
+oracle_safe_nonzero_rows	oracle_safe_nonzero_seeds	continuous_fail_fraction	train_broken_fail_fraction	near_tie_erosion_fail_fraction	q10_fail_fraction	all_f039_constraints_pass_fraction
+34	5	0.0	0.47058823529411764	1.0	0.5882352941176471	0.0

@@ -1,0 +1,32 @@
+{
+  "batch_confounding": 0,
+  "biological_noise_std": 0.08,
+  "cells_per_condition": 8,
+  "control_perturbation_id": 0,
+  "count_depth": 40.0,
+  "decoder_seed": 1729,
+  "doses": [
+    0.0,
+    1.0
+  ],
+  "dropout_base": -1.0,
+  "genes": 128,
+  "heldout_batches": [],
+  "heldout_doses": [],
+  "heldout_perturbations": [],
+  "image_channels": 1,
+  "image_size": 16,
+  "latent_dim": 16,
+  "name": "synth_micro",
+  "num_batches": 2,
+  "num_cell_lines": 2,
+  "num_perturbations": 4,
+  "num_programs": 8,
+  "overdispersion": 0.25,
+  "patch_size": 4,
+  "seed": 1,
+  "tech_dim": 4,
+  "technical_noise_std": 0.05,
+  "train_fraction": 0.7,
+  "val_fraction": 0.15
+}

@@ -1,0 +1,17 @@
+# Phase Closure Report 019
+
+## Trigger
+`E008_NESTED_HIGH_SUPPORT_CALIBRATION_FAILED_TRAIN_ONLY`
+
+## Interpretation
+Phase 8 v3 ended as a candidate-phase closure, not a project stop. The protected floor remains active and no residual was promoted.
+
+## Rows
+| experiment | decision | transition improvement | residual scale |
+| --- | --- | ---: | ---: |
+| E003 | E003_CONDITION_BLEND_REJECTED_KEEP_FULL_FLOOR | 0.005662 | 0.000000 |
+| E004 | E004_SUPPORT_AWARE_BLEND_DISCARDED_HELDOUT_BELOW_FLOOR | 0.006526 | 0.100000 |
+| E005 | E005_PREDICTED_SUPPORT_SCORE_AUDIT_COMPLETED | 0.005662 | 0.000000 |
+| E006 | E006_ORACLE_SUPPORT_GATE_HAS_CAPACITY_CALIBRATION_FAILURE | 0.006882 | 0.500000 |
+| E007 | E007_HIGH_SUPPORT_CALIBRATION_DISCARDED_HELDOUT_BELOW_FLOOR | 0.005997 | 0.100000 |
+| E008 | E008_NESTED_HIGH_SUPPORT_CALIBRATION_FAILED_TRAIN_ONLY | 0.005662 | 0.000000 |

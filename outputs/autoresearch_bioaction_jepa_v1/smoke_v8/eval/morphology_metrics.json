@@ -1,0 +1,17 @@
+{
+  "image_to_rna_map": 0.20497022041738963,
+  "image_to_rna_median_rank": 12.5,
+  "image_to_rna_recall@1": 0.125,
+  "image_to_rna_recall@10": 0.40625,
+  "image_to_rna_recall@5": 0.21875,
+  "image_to_rna_same_perturbation_enrichment@10": 0.8500000000000001,
+  "latent/image_collapse_fraction_dims_below_0.05": 0.125,
+  "latent/image_effective_rank": 4.166558265686035,
+  "latent/image_std_mean": 0.12896424531936646,
+  "rna_to_image_map": 0.24243505166139917,
+  "rna_to_image_median_rank": 14.5,
+  "rna_to_image_recall@1": 0.125,
+  "rna_to_image_recall@10": 0.375,
+  "rna_to_image_recall@5": 0.28125,
+  "rna_to_image_same_perturbation_enrichment@10": 1.1
+}

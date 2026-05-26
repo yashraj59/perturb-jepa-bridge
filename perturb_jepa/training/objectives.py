@@ -29,6 +29,11 @@ BRIDGE_LOSS_TERM_WEIGHTS = {
     "counterfactual_image": "counterfactual",
     "cycle": "cycle",
     "response_bottleneck": "response_bottleneck",
+    "rna_shared_variance": "shared_variance",
+    "image_shared_variance": "shared_variance",
+    "rna_shared_covariance": "shared_covariance",
+    "image_shared_covariance": "shared_covariance",
+    "shared_cross_correlation": "cross_correlation",
 }
 
 

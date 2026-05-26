@@ -1,0 +1,14 @@
+{
+  "decision": "F008_SPLIT_GEOMETRY_UNSTABLE_REDESIGN_BENCHMARK_BEFORE_MORE_CANDIDATES",
+  "diagnostic_label": "F008_TRAIN_ONLY_HELDOUT_SET_GEOMETRY_AUDIT_COMPLETED",
+  "lowest_transition_triplet": "2,5,8",
+  "mean_recall_at_1": 0.26587301587301587,
+  "mean_transition_improvement": 0.02369199178214143,
+  "min_recall_at_1": 0.1111111111111111,
+  "min_transition_improvement": -0.019145637759237916,
+  "negative_transition_triplets": 4,
+  "q10_transition_improvement": 0.00598432327235421,
+  "recall_below_protected_floor_triplets": 55,
+  "support_transition_corr": 0.7144558692653459,
+  "triplets": 56
+}

@@ -1,0 +1,2 @@
+seed	train_gene_set_size	combo_seen2_train_frac	train_conditions	val_conditions	test_conditions	exact_train_combo	unseen_single	test_combo_seen0	test_combo_seen1	test_combo_seen2	test_unseen_single
+1	0.75	0.75	138	30	116	14	37	9	52	18	37

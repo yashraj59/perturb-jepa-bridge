@@ -1,0 +1,12 @@
+{
+  "benchmark_name": "synthetic_genetic_anchor_lite_multiseed_v1",
+  "diagnostic_label": "F014_MULTISEED_V1_BENCHMARK_ACTIVATED_FOR_SEARCH",
+  "full_action_ridge_delta_cosine_mean": 0.45151513636166707,
+  "full_action_ridge_recall_mean": 0.33333333333333337,
+  "full_action_ridge_transition_mean": 0.011281438877204748,
+  "model_promoted": false,
+  "old_benchmark_mutated": false,
+  "primary_delta_cosine_gate": 0.3943880553384362,
+  "primary_transition_gate": 0.0032213672056209536,
+  "secondary_recall_gate": 0.25564378902443324
+}

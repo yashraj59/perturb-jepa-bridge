@@ -1,0 +1,11 @@
+{
+  "architecture_search_allowed_before_registry": false,
+  "diagnostic_label": "F012_BENCHMARK_REDESIGN_REQUIRED_BEFORE_MORE_ARCHITECTURE",
+  "fresh_max_recall": 0.3333333333333333,
+  "fresh_mean_delta_cosine": 0.46490329127840113,
+  "fresh_mean_recall": 0.2962962962962963,
+  "fresh_mean_transition_improvement": 0.012686321967457375,
+  "proposed_benchmark_name": "synthetic_genetic_anchor_lite_multiseed_v1",
+  "seed0_recall": 0.481481,
+  "source_state_training_allowed": false
+}

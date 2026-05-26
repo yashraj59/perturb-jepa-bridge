@@ -1,0 +1,7 @@
+split	baseline	rna_to_image_recall@1	rna_to_image_recall@5	image_to_rna_recall@1	image_to_rna_recall@5	rna_to_image_median_rank	rna_latent_r2_from_raw_rna	image_latent_r2_from_raw_image
+train	true_z_bio_oracle	1.0	1.0	1.0	1.0	1.0	0.9999999998435414	0.9999972622121408
+train	ridge_raw_rna_to_image	1.0	1.0	1.0	1.0	1.0	0.9999999998435414	0.9999972622121408
+val	true_z_bio_oracle	1.0	1.0	1.0	1.0	1.0	0.2369323127798717	0.9896703762506193
+val	ridge_raw_rna_to_image	0.46875	0.75	0.46875	0.84375	2.0	0.2369323127798717	0.9896703762506193
+test	true_z_bio_oracle	1.0	1.0	1.0	1.0	1.0	0.2770568163115533	0.9882352084668805
+test	ridge_raw_rna_to_image	0.21875	0.5	0.34375	0.78125	5.0	0.2770568163115533	0.9882352084668805

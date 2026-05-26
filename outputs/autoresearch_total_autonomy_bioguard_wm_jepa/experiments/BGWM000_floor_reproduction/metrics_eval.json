@@ -1,0 +1,17 @@
+{
+  "absolute_target_cosine": 0.9087927245462672,
+  "delta_cosine": 0.39796251669473043,
+  "delta_magnitude_ratio": 0.7744371112179363,
+  "delta_prediction_effective_rank": 10.283476977293052,
+  "delta_prediction_spectral_entropy": 1.7229253141211776,
+  "delta_teacher_effective_rank": 11.781895734223935,
+  "source_as_target_bio_cosine_to_teacher": 0.9031308180300731,
+  "source_improvement_hinge_violation_fraction": 0.7407407407407407,
+  "transition_source_cosine_improvement": 0.005661906516194076,
+  "transition_to_target_map": 0.39993427495606143,
+  "transition_to_target_median_rank": 2.0,
+  "transition_to_target_recall@1": 0.48148148148148145,
+  "transition_to_target_recall@10": 0.9259259259259259,
+  "transition_to_target_recall@5": 0.8148148148148148,
+  "transition_to_target_same_perturbation_enrichment@10": 1.0222222222222224
+}

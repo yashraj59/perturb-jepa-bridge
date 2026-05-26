@@ -1,0 +1,57 @@
+{
+  "available_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "benchmark_name": "synthetic_genetic_anchor_lite_multiseed_v1",
+  "diagnostic_label": "F018_TRAIN_ONLY_RISK_PROXY_DISCARDED_HELDOUT_BELOW_FLOOR",
+  "gates": {
+    "primary_delta_cosine_gate": 0.3943880553384362,
+    "primary_transition_gate": 0.0032213672056209536,
+    "secondary_recall_gate": 0.25564378902443324
+  },
+  "heldout_summary": [
+    {
+      "alpha": 0.35,
+      "candidate": "pooled_full_ridge",
+      "mean_active_fraction": 0.725925925925926,
+      "mean_condition_recall_at_1": 0.3333333333333333,
+      "mean_delta_cosine": 0.47143952364044744,
+      "mean_delta_cosine_gap": 0.01992438727878043,
+      "mean_delta_rank": 10.533204546808584,
+      "mean_magnitude_ratio": 0.6989888221583094,
+      "mean_recall_gap": 0.0,
+      "mean_transition_gap": 0.0033640604045363518,
+      "mean_transition_improvement": 0.014645499281741099,
+      "min_condition_recall_at_1": 0.2962962962962963,
+      "min_delta_cosine": 0.4051888463292762,
+      "min_delta_cosine_gap": 0.005005763929576856,
+      "min_recall_gap": -0.1111111111111111,
+      "min_transition_gap": 0.0016896395566159197,
+      "min_transition_improvement": 0.0038881799709657955,
+      "seed_count": 5
+    }
+  ],
+  "leakage_controls": "risk proxy selected on train-only perturbation-group folds; eval labels are scoring-only; no condition_key or exact target-key feature is used as input",
+  "model_promoted": false,
+  "selected_rule": {
+    "alpha": 0.35,
+    "candidate": "pooled_full_ridge",
+    "direction": "ge",
+    "feature": "support_gain",
+    "mean_active_fraction": 0.8,
+    "mean_delta_cosine_gap": 0.013311639572739665,
+    "mean_oracle_overlap_fraction": 0.513888888888889,
+    "mean_recall_gap": 0.011111111111111108,
+    "mean_transition_gap": 0.0020471398540877245,
+    "mean_unsafe_active_fraction": 0.28611111111111115,
+    "min_delta_cosine_gap": -0.036031497545519375,
+    "min_recall_gap": -0.11111111111111116,
+    "min_transition_gap": -0.0026232637098723005,
+    "selection_label": "F018_TRAIN_ONLY_RISK_PROXY_SELECTS_NONZERO_RULE",
+    "threshold": -0.024370889608110912
+  }
+}

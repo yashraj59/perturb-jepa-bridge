@@ -1,0 +1,13 @@
+dataset	seed	eval_split	bio_key_count	cross_batch_replicate_count_per_bio_key_mean	bio_keys_with_1_batch_only	bio_keys_with_2plus_batches	bio_keys_with_3plus_batches	eval_target_count	eval_targets_with_cross_batch_train_anchor	eval_targets_with_only_same_batch_anchor	eval_targets_with_no_bio_anchor	fraction_of_eval_targets_with_cross_batch_train_anchor	fraction_of_eval_targets_with_only_same_batch_anchor	fraction_of_eval_targets_with_no_bio_anchor
+synth_micro	0	test	16	2.0	0	16	0	24	24	0	0	1.0	0.0	0.0
+synth_micro	1	test	16	2.0	0	16	0	24	24	0	0	1.0	0.0	0.0
+synth_micro	2	test	16	2.0	0	16	0	24	24	0	0	1.0	0.0	0.0
+synth_heldout_perturbation_lite	0	test_heldout_perturbation	108	3.0	0	108	108	81	0	0	81	0.0	0.0	1.0
+synth_heldout_perturbation_lite	1	test_heldout_perturbation	108	3.0	0	108	108	81	0	0	81	0.0	0.0	1.0
+synth_heldout_perturbation_lite	2	test_heldout_perturbation	108	3.0	0	108	108	81	0	0	81	0.0	0.0	1.0
+synth_dose_extrapolation_lite	0	test_heldout_dose	180	3.0	0	180	180	198	0	0	198	0.0	0.0	1.0
+synth_dose_extrapolation_lite	1	test_heldout_dose	180	3.0	0	180	180	198	0	0	198	0.0	0.0	1.0
+synth_dose_extrapolation_lite	2	test_heldout_dose	180	3.0	0	180	180	198	0	0	198	0.0	0.0	1.0
+synth_batch_confound_lite	0	test	108	1.1666666666666667	99	9	9	99	0	99	0	0.0	1.0	0.0
+synth_batch_confound_lite	1	test	108	1.1666666666666667	99	9	9	99	0	99	0	0.0	1.0	0.0
+synth_batch_confound_lite	2	test	108	1.1666666666666667	99	9	9	99	0	99	0	0.0	1.0	0.0

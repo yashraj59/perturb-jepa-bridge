@@ -1,0 +1,33 @@
+{
+  "current_seed": {
+    "oracle_fraction_triplets_at_or_above_floor": 0.48214285714285715,
+    "oracle_mean_condition_recall_at_1": 0.4993386243386243,
+    "oracle_mean_delta_score_weight": 0.38571428571428573,
+    "oracle_mean_median_rank": 1.5714285714285714,
+    "oracle_min_condition_recall_at_1": 0.3333333333333333,
+    "oracle_minus_selected_mean_recall": 0.04166666666666663,
+    "seed": "current_seed",
+    "selected_fraction_triplets_at_or_above_floor": 0.30357142857142855,
+    "selected_mean_condition_recall_at_1": 0.4576719576719577,
+    "selected_mean_delta_score_weight": 0.5732142857142858,
+    "selected_mean_median_rank": 1.7142857142857142,
+    "selected_min_condition_recall_at_1": 0.2962962962962963
+  },
+  "diagnostic_label": "C014_ORACLE_CAPACITY_CURRENT_ONLY_FRESH_BELOW_FLOOR",
+  "fresh_seed": {
+    "oracle_fraction_triplets_at_or_above_floor": 0.21428571428571427,
+    "oracle_mean_condition_recall_at_1": 0.451058201058201,
+    "oracle_mean_delta_score_weight": 0.4178571428571428,
+    "oracle_mean_median_rank": 1.8035714285714286,
+    "oracle_min_condition_recall_at_1": 0.2962962962962963,
+    "oracle_minus_selected_mean_recall": 0.032407407407407385,
+    "seed": "fresh_seed",
+    "selected_fraction_triplets_at_or_above_floor": 0.10714285714285714,
+    "selected_mean_condition_recall_at_1": 0.4186507936507936,
+    "selected_mean_delta_score_weight": 0.7383928571428571,
+    "selected_mean_median_rank": 1.9285714285714286,
+    "selected_min_condition_recall_at_1": 0.2962962962962963
+  },
+  "interpretation": "Diagnostic-only oracle over C013 train-only outer grids; oracle choices are not deployable model-selection rules.",
+  "protected_condition_recall_floor": 0.48148148148148145
+}

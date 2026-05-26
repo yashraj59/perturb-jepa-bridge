@@ -1,0 +1,2 @@
+label	row_cosine_mean	row_cosine_min	residual_mean_norm	residual_cell_line_eta_squared	residual_cell_line_centroid_accuracy	residual_same_cell_pairwise_cosine_gap
+g002_seed2	0.9141283358739027	0.8725037043586157	0.4113194439939082	0.5472735689895137	1.0	0.04884193102733225

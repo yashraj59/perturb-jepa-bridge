@@ -1,0 +1,10 @@
+{
+  "global_mean_transition_null_available": 1.0,
+  "latent/transition_pred_std_mean": 0.01397965382784605,
+  "source_as_target_transition_null_available": 1.0,
+  "teacher/pred_norm_mean": 0.6263842582702637,
+  "teacher/pred_target_cosine": 0.537657618522644,
+  "teacher/target_norm_mean": 1.0362731218338013,
+  "transition_joint_cosine_to_teacher": 0.537657618522644,
+  "transition_source_cosine_improvement": -0.2463495284318924
+}

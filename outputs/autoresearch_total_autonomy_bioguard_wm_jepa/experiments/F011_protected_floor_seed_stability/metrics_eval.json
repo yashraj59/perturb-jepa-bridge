@@ -1,0 +1,12 @@
+{
+  "diagnostic_label": "F011_RECALL_FLOOR_SEED_SPECIFIC_CONTINUOUS_METRICS_STABLE",
+  "fresh_condition_recall_max": 0.3333333333333333,
+  "fresh_condition_recall_mean": 0.2962962962962963,
+  "fresh_delta_cosine_mean": 0.46490329127840113,
+  "fresh_seed_count": 4,
+  "fresh_transition_improvement_mean": 0.012686321967457375,
+  "seed0_condition_recall_at_1": 0.481481,
+  "seed0_delta_cosine": 0.397963,
+  "seed0_minus_fresh_recall_mean": 0.1851847037037037,
+  "seed0_transition_improvement": 0.005662
+}

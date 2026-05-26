@@ -1,0 +1,55 @@
+{
+  "action_rows": [
+    {
+      "delta_cosine": -0.12418887098464342,
+      "median_rank": 2.0,
+      "perturbation_id": "9",
+      "recall_at_1": 0.2222222222222222,
+      "rows": 9,
+      "transition_improvement": -0.05389685182575331
+    },
+    {
+      "delta_cosine": 0.18654971345687316,
+      "median_rank": 1.0,
+      "perturbation_id": "10",
+      "recall_at_1": 0.6666666666666666,
+      "rows": 9,
+      "transition_improvement": -0.00677564318289128
+    },
+    {
+      "delta_cosine": 0.49476255084632026,
+      "median_rank": 1.0,
+      "perturbation_id": "11",
+      "recall_at_1": 0.8888888888888888,
+      "rows": 9,
+      "transition_improvement": 0.02027929890988299
+    }
+  ],
+  "diagnostic_label": "D001_PROTOTYPE_TRANSITION_DIAGNOSTIC_COMPLETED",
+  "eval_metrics": {
+    "absolute_target_cosine": 0.889666419330486,
+    "delta_cosine": 0.18570779777285,
+    "delta_magnitude_ratio": 0.6705337317146716,
+    "delta_prediction_effective_rank": 5.769193156049417,
+    "delta_prediction_spectral_entropy": 1.4368028686486314,
+    "delta_teacher_effective_rank": 11.781895734223935,
+    "source_as_target_bio_cosine_to_teacher": 0.9031308180300731,
+    "source_improvement_hinge_violation_fraction": 0.7407407407407407,
+    "transition_source_cosine_improvement": -0.0134643986995872,
+    "transition_to_target_map": 0.3983989993303718,
+    "transition_to_target_median_rank": 2.0,
+    "transition_to_target_recall@1": 0.4444444444444444,
+    "transition_to_target_recall@10": 0.9259259259259259,
+    "transition_to_target_recall@5": 0.6666666666666666,
+    "transition_to_target_same_perturbation_enrichment@10": 1.0777777777777777
+  },
+  "eval_prototype_coverage": {
+    "0": 3,
+    "1": 6,
+    "2": 3,
+    "3": 10,
+    "4": 2,
+    "5": 3
+  },
+  "prototype_count": 6
+}

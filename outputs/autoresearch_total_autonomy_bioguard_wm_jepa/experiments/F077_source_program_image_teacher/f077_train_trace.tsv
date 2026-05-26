@@ -1,0 +1,10 @@
+policy	benchmark	seed	program_dim	final_loss	final_prediction_target_cosine_train	final_mse	final_relational_loss	relational_weight	final_active_std_dims	steps	device_used
+extrapolative_index	synth_program_aligned_extrapolative_holdout_lite	34	4	0.17252744734287262	0.8539867997169495	0.06923816353082657	0.09216751158237457	0.25	24.0	100.0	cpu
+extrapolative_index	synth_program_aligned_extrapolative_holdout_lite	35	4	0.15872958302497864	0.86324143409729	0.07342036813497543	0.07316141575574875	0.25	24.0	100.0	cpu
+extrapolative_index	synth_program_aligned_extrapolative_holdout_lite	36	4	0.24549344182014465	0.7920607328414917	0.07124599069356918	0.13595172762870789	0.25	24.0	100.0	cpu
+random_perturbation	synth_program_aligned_random_holdout_lite	34	4	0.11680826544761658	0.901265561580658	0.08184393495321274	0.05584411323070526	0.25	24.0	100.0	cpu
+random_perturbation	synth_program_aligned_random_holdout_lite	35	4	0.1482408493757248	0.873062252998352	0.07515548914670944	0.07011394202709198	0.25	24.0	100.0	cpu
+random_perturbation	synth_program_aligned_random_holdout_lite	36	4	0.21199637651443481	0.8188890218734741	0.06787972897291183	0.10991115123033524	0.25	24.0	100.0	cpu
+stratified_program	synth_program_aligned_stratified_holdout_lite	34	4	0.17341291904449463	0.8499018549919128	0.06845387816429138	0.0795234888792038	0.25	24.0	100.0	cpu
+stratified_program	synth_program_aligned_stratified_holdout_lite	35	4	0.1649283766746521	0.8568624258041382	0.07547443360090256	0.07204184681177139	0.25	24.0	100.0	cpu
+stratified_program	synth_program_aligned_stratified_holdout_lite	36	4	0.23926985263824463	0.7970821261405945	0.07827091962099075	0.12972307205200195	0.25	24.0	100.0	cpu

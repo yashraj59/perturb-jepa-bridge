@@ -1,0 +1,11 @@
+{
+  "adapter_contract_valid": true,
+  "batch_column": "batch",
+  "control_column": "Group",
+  "dose_fixed_or_manifest_supplied": true,
+  "mapping_mismatches": {},
+  "missing_fields": [],
+  "replicate_split_mapping_valid": true,
+  "required_fields_present": true,
+  "target_column": "Treatment"
+}

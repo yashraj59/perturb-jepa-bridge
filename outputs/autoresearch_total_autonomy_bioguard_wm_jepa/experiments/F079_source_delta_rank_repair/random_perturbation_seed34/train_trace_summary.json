@@ -1,0 +1,12 @@
+{
+  "device_used": "cpu",
+  "final_active_delta_std_dims": 24.0,
+  "final_delta_cosine_train": 0.828064501285553,
+  "final_loss": 0.2890028655529022,
+  "final_prediction_source_cosine_train": 0.9360159039497375,
+  "final_prediction_target_cosine_train": 0.9512547254562378,
+  "final_relational_loss": 0.02004353143274784,
+  "final_source_improvement_hinge": 0.006097884848713875,
+  "relational_weight": 0.2,
+  "steps": 120.0
+}

@@ -1,0 +1,14 @@
+{
+  "best_rule": {
+    "delta_score_weight": 0.1,
+    "mean_condition_median_rank": 2.3035714285714284,
+    "mean_condition_recall_at_1": 0.36706349206349204,
+    "mean_condition_recall_at_5": 0.763888888888889,
+    "mean_perturbation_recall_at_1": 0.42857142857142855,
+    "min_condition_recall_at_1": 0.18518518518518517,
+    "min_perturbation_recall_at_1": 0.25925925925925924
+  },
+  "delta_condition_recall_at_1": 0.3187830687830688,
+  "diagnostic_label": "C006_COMPOSITE_RETRIEVAL_PARTIALLY_REPAIRS_CONDITION_RECALL_BELOW_FLOOR",
+  "endpoint_condition_recall_at_1": 0.26587301587301587
+}

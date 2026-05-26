@@ -1,0 +1,47 @@
+{
+  "cosine_transition_corr": 0.8313420972514692,
+  "diagnostic_label": "C002_LATENT_DELTA_MANIFOLD_SUPPORT_AUDIT_COMPLETED",
+  "distance_transition_corr": 0.3191982502588004,
+  "lowest_transition_action": "9",
+  "rows": [
+    {
+      "delta_cosine": 0.12867587312415363,
+      "eval_delta_norm": 0.25035235546648194,
+      "eval_perturbation_id": "9",
+      "nearest_train_action_by_cosine": "8",
+      "nearest_train_action_by_l2": "8",
+      "nearest_train_delta_cosine": 0.5900927697240829,
+      "nearest_train_delta_l2": 0.21569137802092223,
+      "nearest_train_delta_norm": 0.2230368314800771,
+      "recall_at_1": 0.5555555555555556,
+      "rows": 9,
+      "transition_improvement": -0.03787556074381832
+    },
+    {
+      "delta_cosine": 0.4427734591544262,
+      "eval_delta_norm": 0.18102398270906872,
+      "eval_perturbation_id": "10",
+      "nearest_train_action_by_cosine": "8",
+      "nearest_train_action_by_l2": "8",
+      "nearest_train_delta_cosine": 0.6924755705682734,
+      "nearest_train_delta_l2": 0.16308797223372143,
+      "nearest_train_delta_norm": 0.2230368314800771,
+      "recall_at_1": 1.0,
+      "rows": 9,
+      "transition_improvement": 0.009205303511384969
+    },
+    {
+      "delta_cosine": 0.6224382178056113,
+      "eval_delta_norm": 0.26743905348051844,
+      "eval_perturbation_id": "11",
+      "nearest_train_action_by_cosine": "7",
+      "nearest_train_action_by_l2": "4",
+      "nearest_train_delta_cosine": 0.6771700611944148,
+      "nearest_train_delta_l2": 0.24944347824000496,
+      "nearest_train_delta_norm": 0.26237113119526656,
+      "recall_at_1": 0.8888888888888888,
+      "rows": 9,
+      "transition_improvement": 0.04565597678101558
+    }
+  ]
+}

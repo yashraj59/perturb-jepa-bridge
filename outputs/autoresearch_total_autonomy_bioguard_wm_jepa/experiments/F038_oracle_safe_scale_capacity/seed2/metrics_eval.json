@@ -1,0 +1,21 @@
+{
+  "floor_delta_cosine": 0.932261923188985,
+  "floor_recall_at_1": 1.0,
+  "floor_transition_improvement": 0.2724394655216964,
+  "identity_violation": 0.0,
+  "leakage_flag": 0.0,
+  "oracle_broken_count": 0.0,
+  "oracle_delta_cosine": 0.9413673822776514,
+  "oracle_delta_rank": 7.227778049797348,
+  "oracle_gap_delta_cosine": 0.009105459088666334,
+  "oracle_gap_recall": 0.0,
+  "oracle_gap_transition": 0.0027377116017948677,
+  "oracle_magnitude_ratio": 1.00800662103219,
+  "oracle_mean_margin_change": 0.008531051743584595,
+  "oracle_nonzero": true,
+  "oracle_recall_at_1": 1.0,
+  "oracle_repaired_count": 0.0,
+  "oracle_safe_scale": 0.5,
+  "oracle_transition_improvement": 0.27517717712349127,
+  "seed": 2
+}

@@ -1,0 +1,2 @@
+neural_low_rank_equivalence_pass	eval_transition_improvement	eval_delta_cosine	eval_recall@1	eval_delta_rank	max_abs_eval_delta_diff	train_transition_improvement
+1.0	0.004628782762532128	0.3877486915378234	0.4074074074074074	6.768098152426574	1.031481629415465e-07	0.07402903750429772

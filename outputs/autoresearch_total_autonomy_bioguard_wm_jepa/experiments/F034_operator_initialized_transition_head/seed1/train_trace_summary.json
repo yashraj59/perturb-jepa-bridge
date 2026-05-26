@@ -1,0 +1,21 @@
+{
+  "base_action_negative_loss": 0.017669091001152992,
+  "base_delta_direction_loss": 0.08337175846099854,
+  "base_image_to_rna_loss": 0.01728464663028717,
+  "base_loss": 0.21368111670017242,
+  "base_mean_negative_transition_cosine": 0.77274489402771,
+  "base_mean_positive_transition_cosine": 0.9425914287567139,
+  "base_pca_anchor_loss": 0.36450663208961487,
+  "base_rna_to_image_loss": 0.00886311661452055,
+  "base_source_improvement_hinge": 5.5604265071451664e-05,
+  "base_transition_loss": 0.0700187236070633,
+  "base_variance_loss": 0.0,
+  "head_delta_loss": 0.014239668846130371,
+  "head_endpoint_loss": 0.007355749607086182,
+  "head_floor_delta_hinge": 0.0,
+  "head_floor_endpoint_hinge": 0.0,
+  "head_loss": 0.02116694487631321,
+  "head_residual_norm": 0.0010068498086184263,
+  "head_residual_scale": 1.0221915245056152,
+  "seed": 1
+}

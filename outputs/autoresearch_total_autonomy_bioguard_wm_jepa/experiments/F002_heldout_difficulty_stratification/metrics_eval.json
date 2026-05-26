@@ -1,0 +1,35 @@
+{
+  "bins": [
+    {
+      "delta_cosine": 0.33118147411667986,
+      "delta_rank": 5.7412355169892235,
+      "difficulty_bin": "low",
+      "median_rank": 1.0,
+      "recall_at_1": 0.5555555555555556,
+      "rows": 9,
+      "teacher_delta_norm_mean": 0.3176771350391349,
+      "transition_improvement": -0.013527912701674872
+    },
+    {
+      "delta_cosine": 0.35958267810997147,
+      "delta_rank": 5.561218068395517,
+      "difficulty_bin": "mid",
+      "median_rank": 3.0,
+      "recall_at_1": 0.1111111111111111,
+      "rows": 9,
+      "teacher_delta_norm_mean": 0.3981306941573044,
+      "transition_improvement": -0.010625600900736843
+    },
+    {
+      "delta_cosine": 0.5031233978575398,
+      "delta_rank": 5.9038711452782,
+      "difficulty_bin": "high",
+      "median_rank": 1.0,
+      "recall_at_1": 0.5555555555555556,
+      "rows": 9,
+      "teacher_delta_norm_mean": 0.5596976320479325,
+      "transition_improvement": 0.041139233150993944
+    }
+  ],
+  "diagnostic_label": "F002_HELDOUT_DIFFICULTY_STRATIFICATION_COMPLETED"
+}

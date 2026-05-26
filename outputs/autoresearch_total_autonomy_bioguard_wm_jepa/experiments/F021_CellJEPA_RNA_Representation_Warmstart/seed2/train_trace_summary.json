@@ -1,0 +1,212 @@
+{
+  "device_used": "cpu",
+  "final_jepa_loss": 0.02554982900619507,
+  "final_loss": 26.404165267944336,
+  "final_reconstruction_loss": 854.3351440429688,
+  "final_weighted_jepa_to_rec_ratio": 29.906095504760742,
+  "model_config": {
+    "depth": 1,
+    "dim": 24,
+    "dropout": 0.1,
+    "ema_momentum": 0.99,
+    "expressed_gene_subsample": 96,
+    "heads": 4,
+    "mask_prob": 0.15,
+    "mask_value": -1.0,
+    "max_genes": 384,
+    "mlp_ratio": 2,
+    "num_expression_bins": 50,
+    "pooling": "mean_tokens",
+    "predictor_hidden_dim": 64,
+    "use_quantile_binning": true,
+    "vocab_size": 384,
+    "w_jepa": 1000.0,
+    "w_rec": 0.001
+  },
+  "trace": [
+    {
+      "jepa_loss": 0.9652173519134521,
+      "loss": 966.05078125,
+      "reconstruction_loss": 833.4383544921875,
+      "step": 0.0,
+      "weighted_jepa_to_rec_ratio": 1158.11474609375
+    },
+    {
+      "jepa_loss": 0.8794392347335815,
+      "loss": 880.3668212890625,
+      "reconstruction_loss": 927.5973510742188,
+      "step": 1.0,
+      "weighted_jepa_to_rec_ratio": 948.0828857421875
+    },
+    {
+      "jepa_loss": 0.7741370797157288,
+      "loss": 774.9862060546875,
+      "reconstruction_loss": 849.0946044921875,
+      "step": 2.0,
+      "weighted_jepa_to_rec_ratio": 911.7206420898438
+    },
+    {
+      "jepa_loss": 0.6880013942718506,
+      "loss": 688.91455078125,
+      "reconstruction_loss": 913.132568359375,
+      "step": 3.0,
+      "weighted_jepa_to_rec_ratio": 753.4517822265625
+    },
+    {
+      "jepa_loss": 0.5883897542953491,
+      "loss": 589.1892700195312,
+      "reconstruction_loss": 799.5291137695312,
+      "step": 4.0,
+      "weighted_jepa_to_rec_ratio": 735.9203491210938
+    },
+    {
+      "jepa_loss": 0.504502534866333,
+      "loss": 505.38616943359375,
+      "reconstruction_loss": 883.6218872070312,
+      "step": 5.0,
+      "weighted_jepa_to_rec_ratio": 570.9484252929688
+    },
+    {
+      "jepa_loss": 0.4411093592643738,
+      "loss": 441.9759521484375,
+      "reconstruction_loss": 866.614501953125,
+      "step": 6.0,
+      "weighted_jepa_to_rec_ratio": 509.0029602050781
+    },
+    {
+      "jepa_loss": 0.38381755352020264,
+      "loss": 384.73773193359375,
+      "reconstruction_loss": 920.172607421875,
+      "step": 7.0,
+      "weighted_jepa_to_rec_ratio": 417.11474609375
+    },
+    {
+      "jepa_loss": 0.3147832751274109,
+      "loss": 315.6335754394531,
+      "reconstruction_loss": 850.3165283203125,
+      "step": 8.0,
+      "weighted_jepa_to_rec_ratio": 370.19537353515625
+    },
+    {
+      "jepa_loss": 0.2601553201675415,
+      "loss": 261.064697265625,
+      "reconstruction_loss": 909.35498046875,
+      "step": 9.0,
+      "weighted_jepa_to_rec_ratio": 286.0877380371094
+    },
+    {
+      "jepa_loss": 0.2173762321472168,
+      "loss": 218.27626037597656,
+      "reconstruction_loss": 900.0262451171875,
+      "step": 10.0,
+      "weighted_jepa_to_rec_ratio": 241.52210998535156
+    },
+    {
+      "jepa_loss": 0.18562138080596924,
+      "loss": 186.54116821289062,
+      "reconstruction_loss": 919.7884521484375,
+      "step": 11.0,
+      "weighted_jepa_to_rec_ratio": 201.80877685546875
+    },
+    {
+      "jepa_loss": 0.16255784034729004,
+      "loss": 163.3897705078125,
+      "reconstruction_loss": 831.9169921875,
+      "step": 12.0,
+      "weighted_jepa_to_rec_ratio": 195.40150451660156
+    },
+    {
+      "jepa_loss": 0.14579057693481445,
+      "loss": 146.6014862060547,
+      "reconstruction_loss": 810.9144897460938,
+      "step": 13.0,
+      "weighted_jepa_to_rec_ratio": 179.78538513183594
+    },
+    {
+      "jepa_loss": 0.12777888774871826,
+      "loss": 128.62887573242188,
+      "reconstruction_loss": 849.9913330078125,
+      "step": 14.0,
+      "weighted_jepa_to_rec_ratio": 150.32962036132812
+    },
+    {
+      "jepa_loss": 0.09795999526977539,
+      "loss": 98.80091857910156,
+      "reconstruction_loss": 840.9241333007812,
+      "step": 15.0,
+      "weighted_jepa_to_rec_ratio": 116.49087524414062
+    },
+    {
+      "jepa_loss": 0.08483719825744629,
+      "loss": 85.68938446044922,
+      "reconstruction_loss": 852.187744140625,
+      "step": 16.0,
+      "weighted_jepa_to_rec_ratio": 99.55223083496094
+    },
+    {
+      "jepa_loss": 0.07862478494644165,
+      "loss": 79.43647003173828,
+      "reconstruction_loss": 811.6823120117188,
+      "step": 17.0,
+      "weighted_jepa_to_rec_ratio": 96.86644744873047
+    },
+    {
+      "jepa_loss": 0.061899006366729736,
+      "loss": 62.79074478149414,
+      "reconstruction_loss": 891.7396850585938,
+      "step": 18.0,
+      "weighted_jepa_to_rec_ratio": 69.41375732421875
+    },
+    {
+      "jepa_loss": 0.05755734443664551,
+      "loss": 58.41669464111328,
+      "reconstruction_loss": 859.3525390625,
+      "step": 19.0,
+      "weighted_jepa_to_rec_ratio": 66.9775619506836
+    },
+    {
+      "jepa_loss": 0.041310250759124756,
+      "loss": 42.055423736572266,
+      "reconstruction_loss": 745.1759643554688,
+      "step": 20.0,
+      "weighted_jepa_to_rec_ratio": 55.4369010925293
+    },
+    {
+      "jepa_loss": 0.034779131412506104,
+      "loss": 35.66085433959961,
+      "reconstruction_loss": 881.7221069335938,
+      "step": 21.0,
+      "weighted_jepa_to_rec_ratio": 39.444549560546875
+    },
+    {
+      "jepa_loss": 0.02954047918319702,
+      "loss": 30.309019088745117,
+      "reconstruction_loss": 768.539306640625,
+      "step": 22.0,
+      "weighted_jepa_to_rec_ratio": 38.437171936035156
+    },
+    {
+      "jepa_loss": 0.02765899896621704,
+      "loss": 28.413406372070312,
+      "reconstruction_loss": 754.4069213867188,
+      "step": 23.0,
+      "weighted_jepa_to_rec_ratio": 36.66323471069336
+    },
+    {
+      "jepa_loss": 0.02554982900619507,
+      "loss": 26.404165267944336,
+      "reconstruction_loss": 854.3351440429688,
+      "step": 24.0,
+      "weighted_jepa_to_rec_ratio": 29.906095504760742
+    }
+  ],
+  "train_config": {
+    "batch_size": 32,
+    "device": "cpu",
+    "lr": 0.001,
+    "max_train_genes": 128,
+    "seed": 2,
+    "steps": 25,
+    "weight_decay": 0.0001
+  }
+}

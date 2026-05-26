@@ -1,0 +1,12 @@
+{
+  "context_contract_validated": true,
+  "context_length_eval": 3,
+  "context_length_train": 3,
+  "rollout_steps": 1,
+  "token_layout": [
+    "source_control_z_bio",
+    "ridge_floor_predicted_z_bio",
+    "learned_residual_query_token"
+  ],
+  "use_uncertainty_token": false
+}

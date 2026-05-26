@@ -1,0 +1,10 @@
+{
+  "image_to_rna_map": 0.21844247951626447,
+  "image_to_rna_recall@1": 0.09375,
+  "image_to_rna_recall@10": 0.5625,
+  "image_to_rna_recall@5": 0.46875,
+  "rna_to_image_map": 0.18229011913090887,
+  "rna_to_image_recall@1": 0.0625,
+  "rna_to_image_recall@10": 0.4375,
+  "rna_to_image_recall@5": 0.21875
+}

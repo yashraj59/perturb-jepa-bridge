@@ -1,0 +1,23 @@
+{
+  "adapter_contract_valid": true,
+  "all_dry_run_condition_pairs_ready": true,
+  "alternate_test_pair_count": 4,
+  "batch_column": "batch",
+  "condition_pair_count": 16,
+  "control_column": "Group",
+  "diagnostic_label": "F090_SCGENESCOPE_CROISSANT_CONTRACT_VALIDATED_READY_FOR_FEATURE_SIZE_GATE",
+  "dose_fixed_or_manifest_supplied": true,
+  "manifest_row_count": 40,
+  "mapping_mismatches": {},
+  "missing_fields": [],
+  "model_promoted": false,
+  "payload_download_attempted": false,
+  "ready_condition_pair_count": 16,
+  "replicate_split_mapping_valid": true,
+  "required_fields_present": true,
+  "split_count": 4,
+  "target_column": "Treatment",
+  "test_pair_count": 4,
+  "train_pair_count": 4,
+  "validation_pair_count": 4
+}

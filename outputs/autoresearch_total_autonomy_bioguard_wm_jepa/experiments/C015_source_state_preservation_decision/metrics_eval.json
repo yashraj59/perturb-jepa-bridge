@@ -1,0 +1,17 @@
+{
+  "current_exact_minus_online_headroom": 0.0224867724867725,
+  "current_exact_source_state_nested_recall": 0.4801587301587302,
+  "current_online_floor_gap": -0.02380952380952378,
+  "current_online_source_neighborhood_recall": 0.4576719576719577,
+  "current_teacher_source_neighborhood_recall": 0.3981481481481481,
+  "diagnostic_label": "C015_DO_NOT_REOPEN_TRAINING_SOURCE_STATE_PRESERVATION_INSUFFICIENT",
+  "fresh_exact_minus_online_headroom": 0.028439153439153486,
+  "fresh_exact_source_state_nested_recall": 0.4470899470899471,
+  "fresh_online_floor_gap": -0.06283068783068785,
+  "fresh_online_source_neighborhood_recall": 0.4186507936507936,
+  "fresh_teacher_source_neighborhood_recall": 0.41402116402116407,
+  "online_minus_teacher_cell_line_eta_gain": 0.2627565796506147,
+  "online_minus_teacher_purity_gain": 0.19554673721340377,
+  "online_minus_teacher_residual_cell_line_eta": 0.5674014843858441,
+  "protected_condition_recall_floor": 0.48148148148148145
+}

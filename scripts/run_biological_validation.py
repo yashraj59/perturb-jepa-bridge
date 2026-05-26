@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+import sys
 
 import numpy as np
 import pandas as pd
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from perturb_jepa.evaluation.biology import run_biology_validation, write_validation_outputs
 

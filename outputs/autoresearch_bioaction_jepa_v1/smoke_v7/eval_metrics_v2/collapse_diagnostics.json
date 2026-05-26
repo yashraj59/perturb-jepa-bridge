@@ -1,0 +1,16 @@
+{
+  "latent/cosine_mean_pairwise": 0.8082796931266785,
+  "latent/image_collapse_fraction_dims_below_0.05": 0.125,
+  "latent/image_effective_rank": 4.172072410583496,
+  "latent/image_std_mean": 0.129500150680542,
+  "latent/joint_collapse_fraction_dims_below_0.05": 0.0,
+  "latent/joint_effective_rank": 6.251026153564453,
+  "latent/joint_std_mean": 0.11793456226587296,
+  "latent/rna_collapse_fraction_dims_below_0.05": 0.0,
+  "latent/rna_effective_rank": 6.449324607849121,
+  "latent/rna_std_mean": 0.19772717356681824,
+  "latent/transition_pred_std_mean": 0.10555034875869751,
+  "teacher/pred_norm_mean": 2.3879165649414062,
+  "teacher/pred_target_cosine": 0.1041378378868103,
+  "teacher/target_norm_mean": 1.0362998247146606
+}

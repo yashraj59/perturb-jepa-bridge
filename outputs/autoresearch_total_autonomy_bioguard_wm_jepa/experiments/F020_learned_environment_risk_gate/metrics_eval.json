@@ -1,0 +1,60 @@
+{
+  "available_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "benchmark_name": "synthetic_genetic_anchor_lite_multiseed_v1",
+  "diagnostic_label": "F020_OOF_LEARNED_RISK_SELECTS_FLOOR_FALLBACK",
+  "feature_names": [
+    "action_support",
+    "blend_delta_support",
+    "blend_minus_floor_norm",
+    "blend_to_floor_norm_ratio",
+    "floor_blend_delta_cosine",
+    "floor_delta_support",
+    "source_support",
+    "support_gain"
+  ],
+  "gates": {
+    "primary_delta_cosine_gate": 0.3943880553384362,
+    "primary_transition_gate": 0.0032213672056209536,
+    "secondary_recall_gate": 0.25564378902443324
+  },
+  "heldout_summary": [
+    {
+      "alpha": 0.0,
+      "candidate": "floor_fallback",
+      "mean_active_fraction": 0.0,
+      "mean_condition_recall_at_1": 0.3333333333333333,
+      "mean_delta_cosine": 0.45151513636166707,
+      "mean_delta_cosine_gap": 0.0,
+      "mean_delta_rank": 10.245808787907375,
+      "mean_magnitude_ratio": 0.7556432505625665,
+      "mean_recall_gap": 0.0,
+      "mean_transition_gap": 0.0,
+      "mean_transition_improvement": 0.011281438877204748,
+      "min_condition_recall_at_1": 0.25925925925925924,
+      "min_delta_cosine": 0.39796251669473043,
+      "min_delta_cosine_gap": 0.0,
+      "min_recall_gap": 0.0,
+      "min_transition_gap": 0.0,
+      "min_transition_improvement": 0.0004243423315500173,
+      "seed_count": 5,
+      "threshold": 0.0
+    }
+  ],
+  "leakage_controls": "linear risk model is fit and thresholded on train-only perturbation-fold labels; eval rows are scoring-only",
+  "model_promoted": false,
+  "selected_rule": {
+    "alpha": 0.0,
+    "candidate": "floor_fallback",
+    "mean_delta_cosine_gap": 0.0,
+    "mean_recall_gap": 0.0,
+    "mean_transition_gap": 0.0,
+    "selection_label": "F020_OOF_LEARNED_RISK_SELECTS_FLOOR_FALLBACK",
+    "threshold": 0.0
+  }
+}

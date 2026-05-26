@@ -1,0 +1,20 @@
+{
+  "criteria": {
+    "enough_cross_batch_biological_anchors_or_valid_substitute": true,
+    "identified_source_of_batch_leakage": true,
+    "measurable_biological_signal_not_fully_explained_by_batch": true,
+    "targeted_mechanism_beyond_increase_invariance_weight": true,
+    "updated_gates_with_exact_baselines": true
+  },
+  "decision_label": "PHASE2_AUDIT_COMPLETE_REOPEN",
+  "max_phase1_or_zero_step_representation_batch_probe_excess_over_majority": 0.6147586980920314,
+  "max_raw_or_pls_batch_probe_excess_over_majority": 0.6666666666666667,
+  "max_split_half_rna_to_image_same_bio_recall@1": 0.6388888888888888,
+  "min_eval_cross_batch_replicate_fraction": 1.0,
+  "min_heldout_cross_batch_train_anchor_fraction": 0.0,
+  "min_train_cross_batch_anchor_fraction": 1.0,
+  "recommended_next_step": "implement BioTech-JEPA Tier 1 only",
+  "reopen_architecture_search": true,
+  "valid_substitute_for_cross_batch_teacher": true,
+  "wallclock_minutes": 0.7691412331497607
+}

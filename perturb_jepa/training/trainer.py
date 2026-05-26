@@ -35,6 +35,16 @@ def forward_batch(model: PerturbJEPABridge, batch: SyntheticBridgeBatch) -> dict
     )
 
 
+def patchify_batch_images(images: torch.Tensor, patch_size: int) -> torch.Tensor:
+    if images.ndim == 4:
+        return patchify(images, patch_size)
+    if images.ndim == 5:
+        flat = images.reshape(-1, *images.shape[-3:])
+        patches = patchify(flat, patch_size)
+        return patches.reshape(*images.shape[:2], *patches.shape[1:])
+    raise ValueError("images must have shape [batch, channels, height, width] or [batch, bag, channels, height, width]")
+
+
 def move_batch_to_device(batch: SyntheticBridgeBatch, device: torch.device | str) -> SyntheticBridgeBatch:
     device = torch.device(device)
     return SyntheticBridgeBatch(**{field.name: getattr(batch, field.name).to(device) for field in fields(batch)})
@@ -48,9 +58,11 @@ def loss_for_batch(
     schedule: ObjectiveScheduleConfig | None = None,
     step: int = 0,
     uncertainty_weighting: KendallUncertaintyWeighting | None = None,
+    multi_positive_alignment: bool = False,
 ) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
     outputs = forward_batch(model, batch)
-    image_patches = patchify(batch.images, model.config.image.patch_size)
+    image_patches = patchify_batch_images(batch.images, model.config.image.patch_size)
+    bio_keys = _alignment_bio_keys(batch) if multi_positive_alignment else None
     schedule_enabled = schedule is not None and schedule.enabled
     if not schedule_enabled and uncertainty_weighting is None:
         return bridge_loss(
@@ -61,6 +73,7 @@ def loss_for_batch(
             image_patch_mask=batch.image_patch_mask,
             perturbation_id=batch.perturbation_id,
             batch_id=batch.batch_id,
+            bio_keys=bio_keys,
             temperature=(weights or BridgeLossWeights()).temperature,
             weights=weights,
         )
@@ -73,6 +86,7 @@ def loss_for_batch(
         image_patch_mask=batch.image_patch_mask,
         perturbation_id=batch.perturbation_id,
         batch_id=batch.batch_id,
+        bio_keys=bio_keys,
         temperature=(weights or BridgeLossWeights()).temperature,
         weights=BridgeLossWeights(),
     )
@@ -102,6 +116,7 @@ def train_step(
     step: int = 0,
     uncertainty_weighting: KendallUncertaintyWeighting | None = None,
     ema_decay: float = 0.996,
+    multi_positive_alignment: bool = False,
 ) -> dict[str, float]:
     model.train()
     optimizer.zero_grad(set_to_none=True)
@@ -112,6 +127,7 @@ def train_step(
         schedule=schedule,
         step=step,
         uncertainty_weighting=uncertainty_weighting,
+        multi_positive_alignment=multi_positive_alignment,
     )
     total.backward()
     optimizer.step()
@@ -131,6 +147,7 @@ class BridgeTrainer:
         ema_decay: float = 0.996,
         device: torch.device | str | None = None,
         grad_clip_norm: float | None = None,
+        multi_positive_alignment: bool = False,
     ) -> None:
         self.model = model
         self.optimizer = optimizer
@@ -140,6 +157,7 @@ class BridgeTrainer:
         self.ema_decay = float(ema_decay)
         self.device = torch.device(device) if device is not None else None
         self.grad_clip_norm = grad_clip_norm
+        self.multi_positive_alignment = bool(multi_positive_alignment)
         self.global_step = 0
         if self.device is not None:
             self.model.to(self.device)
@@ -162,6 +180,7 @@ class BridgeTrainer:
             schedule=self.schedule,
             step=self.global_step,
             uncertainty_weighting=self.uncertainty_weighting,
+            multi_positive_alignment=self.multi_positive_alignment,
         )
         total.backward()
         if self.grad_clip_norm is not None:
@@ -245,3 +264,14 @@ class BridgeTrainer:
         )
         self.load_state_dict(checkpoint.get("trainer_state", {}))
         return checkpoint
+
+
+def _alignment_bio_keys(batch: SyntheticBridgeBatch) -> dict[str, torch.Tensor]:
+    dose_code = torch.round(batch.dose.to(dtype=torch.float32) * 100.0).to(dtype=torch.long)
+    condition = batch.perturbation_id.to(dtype=torch.long) * 1_000_000
+    condition = condition + batch.cell_line_id.to(dtype=torch.long) * 10_000
+    condition = condition + dose_code
+    return {
+        "condition": condition,
+        "perturbation": batch.perturbation_id.to(dtype=torch.long),
+    }

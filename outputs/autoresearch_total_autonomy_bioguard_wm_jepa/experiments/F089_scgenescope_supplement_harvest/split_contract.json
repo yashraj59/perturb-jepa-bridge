@@ -1,0 +1,15 @@
+{
+  "batch_column": "batch",
+  "cell_id_column": "cell_id",
+  "control_column": "Group",
+  "dose_column": "not exposed in Croissant metadata; adapter treats dose as fixed unless a manifest provides concentration",
+  "replicate_to_split": {
+    "1": "alternate_test",
+    "2": "alternate_test",
+    "3": "train",
+    "4": "test",
+    "5": "validation"
+  },
+  "source": "scGeneScope Croissant metadata in NeurIPS supplemental archive",
+  "target_column": "Treatment"
+}

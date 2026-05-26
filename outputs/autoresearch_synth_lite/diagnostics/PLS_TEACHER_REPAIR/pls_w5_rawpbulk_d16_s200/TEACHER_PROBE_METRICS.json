@@ -1,0 +1,9 @@
+{
+  "teacher_batch_balanced_accuracy": 0.625,
+  "teacher_batch_majority_accuracy": 0.5,
+  "teacher_image_bio_latent_r2": 0.9826798644656304,
+  "teacher_image_to_rna_recall@1": 0.15625,
+  "teacher_rna_bio_latent_r2": 0.30935526549936776,
+  "teacher_rna_to_image_recall@1": 0.21875,
+  "teacher_rna_to_image_recall@5": 0.4375
+}

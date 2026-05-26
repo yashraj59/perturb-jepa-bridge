@@ -1,0 +1,13 @@
+{
+  "action_negative_loss": 0.012818683870136738,
+  "delta_direction_loss": 0.04434967041015625,
+  "image_to_rna_loss": 0.038374174386262894,
+  "loss": 0.1467561274766922,
+  "mean_negative_transition_cosine": 0.3837938904762268,
+  "mean_positive_transition_cosine": 0.9538708925247192,
+  "pca_anchor_loss": 0.18229082226753235,
+  "rna_to_image_loss": 0.005613824352622032,
+  "source_improvement_hinge": 0.0,
+  "transition_loss": 0.04899032786488533,
+  "variance_loss": 0.0005729447002522647
+}

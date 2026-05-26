@@ -1,0 +1,16 @@
+run	bag_aggregator	steps_completed	first_collapse_step	final_collapse	final_rna_min_std	final_image_min_std	final_rna_rank	final_image_rank	dominant_loss_step0	dominant_grad_step0	interpretation
+full_attention	attention	30	none	False	0.03387371823191643	0.04180159419775009	8.0	8.0	image_mask	rna_encoder	noncollapsed
+full_mean	mean	30	none	False	0.07088577747344971	0.06591279804706573	8.0	8.0	image_mask	rna_encoder	noncollapsed_mean_pooling_signal
+rna_reconstruction_only	attention	30	none	False	0.02133566327393055	0.04690124839544296	8.0	8.0	image_mask	rna_encoder	noncollapsed
+image_reconstruction_only	attention	30	none	False	0.040069740265607834	0.03647575154900551	8.0	8.0	image_mask	image_encoder	noncollapsed
+reconstruction_both	attention	30	none	False	0.02133566327393055	0.03647575154900551	8.0	8.0	image_mask	rna_encoder	noncollapsed
+jepa_only	attention	30	none	False	0.029083844274282455	0.026848748326301575	8.0	8.0	image_mask	jepa_predictors	noncollapsed
+align_only	attention	30	12	False	0.011356079019606113	0.012624138034880161	8.0	8.0	image_mask	image_encoder	near_collapse
+reconstruction_plus_jepa	attention	30	none	False	0.03444413095712662	0.04049130529165268	8.0	8.0	image_mask	rna_encoder	noncollapsed
+reconstruction_plus_align	attention	30	none	False	0.034026019275188446	0.029561152681708336	8.0	8.0	image_mask	rna_encoder	noncollapsed
+full_no_adversaries	attention	30	none	False	0.033803243190050125	0.041869040578603745	8.0	8.0	image_mask	rna_encoder	noncollapsed
+full_no_distribution	attention	30	none	False	0.014394856058061123	0.018611827865242958	8.0	8.0	image_mask	rna_encoder	near_collapse
+full_no_reconstruction	attention	30	none	False	0.016795102506875992	0.028725387528538704	8.0	8.0	image_mask	jepa_predictors	near_collapse
+full_no_jepa	attention	30	none	False	0.03111516684293747	0.038939427584409714	8.0	8.0	image_mask	rna_encoder	noncollapsed
+full_no_align	attention	30	none	False	0.030364707112312317	0.039081472903490067	8.0	8.0	image_mask	rna_encoder	noncollapsed
+mean_reconstruction_plus_align	mean	30	none	False	0.0572701022028923	0.04586387425661087	8.0	8.0	image_mask	rna_encoder	noncollapsed_mean_pooling_signal

@@ -1,0 +1,9 @@
+{
+  "delta_cosine_mean": 0.392427492102935,
+  "diagnostic_label": "F001_BOOTSTRAP_FLOOR_NOISE_AUDIT_COMPLETED",
+  "median_rank_mean": 2.83,
+  "recall_at_1_mean": 0.4294444444444444,
+  "transition_lcb": -0.014672797923001722,
+  "transition_mean": 0.00484938606522722,
+  "transition_ucb": 0.026342694201261115
+}

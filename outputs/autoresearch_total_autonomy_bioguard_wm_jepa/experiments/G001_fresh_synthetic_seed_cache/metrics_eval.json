@@ -1,0 +1,46 @@
+{
+  "best_composite_rule": {
+    "delta_score_weight": 0.5,
+    "mean_condition_median_rank": 2.1785714285714284,
+    "mean_condition_recall_at_1": 0.3716931216931217,
+    "mean_perturbation_recall_at_1": 0.4279100529100529,
+    "min_condition_recall_at_1": 0.2222222222222222
+  },
+  "diagnostic_label": "G001_FRESH_SYNTHETIC_SEED_CONFIRMS_COMPOSITE_PARTIAL_REPAIR_BELOW_FLOOR",
+  "endpoint_condition_recall_at_1": 0.27645502645502645,
+  "fresh_floor_metrics": {
+    "absolute_target_cosine": 0.9493106732336856,
+    "delta_cosine": 0.5404280277268804,
+    "delta_magnitude_ratio": 0.7933582487536444,
+    "delta_prediction_effective_rank": 9.937518308977577,
+    "delta_prediction_spectral_entropy": 1.6707494951040727,
+    "delta_teacher_effective_rank": 11.799061920978776,
+    "source_as_target_bio_cosine_to_teacher": 0.9275541949482579,
+    "source_improvement_hinge_violation_fraction": 0.6666666666666666,
+    "transition_source_cosine_improvement": 0.021756478285427833,
+    "transition_to_target_map": 0.44869660618571294,
+    "transition_to_target_median_rank": 2.0,
+    "transition_to_target_recall@1": 0.3333333333333333,
+    "transition_to_target_recall@10": 0.8518518518518519,
+    "transition_to_target_recall@5": 0.7407407407407407,
+    "transition_to_target_same_perturbation_enrichment@10": 0.9888888888888888
+  },
+  "fresh_seed": 1,
+  "protected_floor_metrics": {
+    "absolute_target_cosine": 0.9087927245462672,
+    "delta_cosine": 0.39796251669473043,
+    "delta_magnitude_ratio": 0.7744371112179363,
+    "delta_prediction_effective_rank": 10.283476977293052,
+    "delta_prediction_spectral_entropy": 1.7229253141211776,
+    "delta_teacher_effective_rank": 11.781895734223935,
+    "source_as_target_bio_cosine_to_teacher": 0.9031308180300731,
+    "source_improvement_hinge_violation_fraction": 0.7407407407407407,
+    "transition_source_cosine_improvement": 0.005661906516194076,
+    "transition_to_target_map": 0.39993427495606143,
+    "transition_to_target_median_rank": 2.0,
+    "transition_to_target_recall@1": 0.48148148148148145,
+    "transition_to_target_recall@10": 0.9259259259259259,
+    "transition_to_target_recall@5": 0.8148148148148148,
+    "transition_to_target_same_perturbation_enrichment@10": 1.0222222222222224
+  }
+}

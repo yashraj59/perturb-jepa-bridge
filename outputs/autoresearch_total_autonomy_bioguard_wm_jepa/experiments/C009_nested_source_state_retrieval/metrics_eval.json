@@ -1,0 +1,25 @@
+{
+  "constraint": "inner train-action folds select weight; outer folds score same-cell-line/source-state candidates only",
+  "current_seed": {
+    "delta_condition_recall_at_1": 0.4861111111111111,
+    "endpoint_condition_recall_at_1": 0.33664021164021163,
+    "selected_condition_median_rank": 1.6428571428571428,
+    "selected_condition_recall_at_1": 0.4801587301587302,
+    "selected_condition_recall_at_1_min": 0.2962962962962963,
+    "selected_delta_score_weight_mean": 0.5750000000000001,
+    "selected_delta_score_weight_nonzero_rate": 1.0,
+    "selected_perturbation_recall_at_1": 0.4801587301587302
+  },
+  "diagnostic_label": "C009_NESTED_SOURCE_STATE_RETRIEVAL_PARTIAL_REPAIR_BELOW_FLOOR",
+  "fresh_seed": {
+    "delta_condition_recall_at_1": 0.449074074074074,
+    "endpoint_condition_recall_at_1": 0.3247354497354497,
+    "selected_condition_median_rank": 1.8392857142857142,
+    "selected_condition_recall_at_1": 0.4470899470899471,
+    "selected_condition_recall_at_1_min": 0.2962962962962963,
+    "selected_delta_score_weight_mean": 0.71875,
+    "selected_delta_score_weight_nonzero_rate": 1.0,
+    "selected_perturbation_recall_at_1": 0.4470899470899471
+  },
+  "protected_condition_recall_floor": 0.48148148148148145
+}

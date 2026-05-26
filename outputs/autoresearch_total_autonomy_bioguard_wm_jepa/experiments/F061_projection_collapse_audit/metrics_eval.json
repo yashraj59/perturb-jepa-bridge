@@ -1,0 +1,18 @@
+{
+  "diagnostic_label": "F061_PROJECTION_KILLS_DELTA_WITHOUT_STABILIZING_TRANSITION",
+  "f058_broken_count": 0.0,
+  "f058_delta_gap": 0.0014084096179871979,
+  "f058_min_transition_gap": -0.0004991557837905614,
+  "f058_transition_gap": 8.574491295191879e-05,
+  "f059_train_heldout_delta_gap_corr": 0.9482234379374413,
+  "f059_train_heldout_transition_gap_corr": -0.8856101987205597,
+  "f060_broken_count": 0.0,
+  "f060_delta_gap": 0.0,
+  "f060_min_transition_gap": -2.0434207291752937e-05,
+  "f060_negative_transition_seed_count": 2.0,
+  "f060_transition_gap": 2.2426097806875028e-05,
+  "interpretation": "Pure positive floor-direction projection is too restrictive: it removes the delta-cosine improvement that made row-wise abstention promising, while still failing to give a nonnegative transition gap on every seed.",
+  "leakage_controls": "F061 reads only prior metric JSON artifacts and performs no fitting, selection, or held-out target reuse.",
+  "model_promoted": false,
+  "next_recommendation": "Do not continue pure floor-direction projection. The next candidate should either run an oracle diagnostic over a residual cone between unprojected and projected residuals, or pivot back to representation/data contract work if the oracle cone lacks capacity."
+}

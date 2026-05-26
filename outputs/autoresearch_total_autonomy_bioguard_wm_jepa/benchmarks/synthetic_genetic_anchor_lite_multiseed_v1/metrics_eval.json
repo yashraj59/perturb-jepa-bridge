@@ -1,0 +1,14 @@
+{
+  "benchmark_name": "synthetic_genetic_anchor_lite_multiseed_v1",
+  "full_action_ridge_delta_cosine_mean": 0.45151513636166707,
+  "full_action_ridge_delta_cosine_std": 0.05712708102323089,
+  "full_action_ridge_recall_mean": 0.33333333333333337,
+  "full_action_ridge_recall_std": 0.07768954430890011,
+  "full_action_ridge_transition_mean": 0.011281438877204748,
+  "full_action_ridge_transition_std": 0.008060071671583794,
+  "n_seeds": 5,
+  "status": "REGISTRY_BUILT_PROPOSED_GATES_NOT_ACTIVE",
+  "suggested_delta_cosine_floor_mean_minus_1std": 0.3943880553384362,
+  "suggested_recall_floor_mean_minus_1std_secondary": 0.25564378902443324,
+  "suggested_transition_floor_mean_minus_1std": 0.0032213672056209536
+}

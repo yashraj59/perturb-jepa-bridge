@@ -1,0 +1,98 @@
+{
+  "diagnostic_label": "F007_REPLICATE_CEILING_AUDIT_COMPLETED",
+  "lowest_floor_gain_action": "9",
+  "lowest_replicate_action": "10",
+  "mean_delta_replicate_cosine": 0.23703495681084752,
+  "rows": [
+    {
+      "cell_line_id": "0",
+      "condition_key": "pert=10|dose=1|cell=0",
+      "delta_replicate_cosine": -0.18933242777099368,
+      "floor_minus_source_target_cosine": 0.02592160906949681,
+      "perturbation_id": "10",
+      "rows": 3,
+      "target_replicate_cosine": 0.9741595836687319,
+      "teacher_delta_norm_mean": 0.36335866230707986
+    },
+    {
+      "cell_line_id": "1",
+      "condition_key": "pert=10|dose=1|cell=1",
+      "delta_replicate_cosine": 0.1828685873869633,
+      "floor_minus_source_target_cosine": -0.0026120952719164148,
+      "perturbation_id": "10",
+      "rows": 3,
+      "target_replicate_cosine": 0.9679220047594524,
+      "teacher_delta_norm_mean": 0.3676397260562106
+    },
+    {
+      "cell_line_id": "2",
+      "condition_key": "pert=10|dose=1|cell=2",
+      "delta_replicate_cosine": -0.016600968778068978,
+      "floor_minus_source_target_cosine": 0.004306396736574403,
+      "perturbation_id": "10",
+      "rows": 3,
+      "target_replicate_cosine": 0.9077559130127986,
+      "teacher_delta_norm_mean": 0.39677519378726306
+    },
+    {
+      "cell_line_id": "0",
+      "condition_key": "pert=11|dose=1|cell=0",
+      "delta_replicate_cosine": -0.01836611292326344,
+      "floor_minus_source_target_cosine": 0.025431298410719227,
+      "perturbation_id": "11",
+      "rows": 3,
+      "target_replicate_cosine": 0.9238478680065089,
+      "teacher_delta_norm_mean": 0.4623120809748147
+    },
+    {
+      "cell_line_id": "1",
+      "condition_key": "pert=11|dose=1|cell=1",
+      "delta_replicate_cosine": 0.6363316888219555,
+      "floor_minus_source_target_cosine": 0.006224134150564553,
+      "perturbation_id": "11",
+      "rows": 3,
+      "target_replicate_cosine": 0.9470765483054501,
+      "teacher_delta_norm_mean": 0.3100772147603061
+    },
+    {
+      "cell_line_id": "2",
+      "condition_key": "pert=11|dose=1|cell=2",
+      "delta_replicate_cosine": 0.38240033831615244,
+      "floor_minus_source_target_cosine": 0.10531249778176288,
+      "perturbation_id": "11",
+      "rows": 3,
+      "target_replicate_cosine": 0.858313793127822,
+      "teacher_delta_norm_mean": 0.6381084352543692
+    },
+    {
+      "cell_line_id": "0",
+      "condition_key": "pert=9|dose=1|cell=0",
+      "delta_replicate_cosine": 0.5136620641446185,
+      "floor_minus_source_target_cosine": -0.044265068432373766,
+      "perturbation_id": "9",
+      "rows": 3,
+      "target_replicate_cosine": 0.9486546820622065,
+      "teacher_delta_norm_mean": 0.3473734468353655
+    },
+    {
+      "cell_line_id": "1",
+      "condition_key": "pert=9|dose=1|cell=1",
+      "delta_replicate_cosine": 0.28844757425409556,
+      "floor_minus_source_target_cosine": -0.044518317120578854,
+      "perturbation_id": "9",
+      "rows": 3,
+      "target_replicate_cosine": 0.8560597626910181,
+      "teacher_delta_norm_mean": 0.43634825586229914
+    },
+    {
+      "cell_line_id": "2",
+      "condition_key": "pert=9|dose=1|cell=2",
+      "delta_replicate_cosine": 0.3539038678461682,
+      "floor_minus_source_target_cosine": -0.02484329667850227,
+      "perturbation_id": "9",
+      "rows": 3,
+      "target_replicate_cosine": 0.847110178979939,
+      "teacher_delta_norm_mean": 0.5045233678954077
+    }
+  ]
+}

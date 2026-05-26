@@ -1,0 +1,15 @@
+{
+  "adapter_contract_written": true,
+  "diagnostic_label": "F087_SCGENESCOPE_ADAPTER_CONTRACT_READY_DATA_NOT_LOCAL",
+  "image_record_count": 0,
+  "manifest_path": null,
+  "manifest_template_written": true,
+  "manifest_valid": false,
+  "message": "Local scGeneScope root does not exist; no data was downloaded.",
+  "model_promoted": false,
+  "paired_condition_count": 0,
+  "rna_record_count": 0,
+  "root": "data/raw/scgenescope",
+  "root_exists": false,
+  "split_count": 0
+}

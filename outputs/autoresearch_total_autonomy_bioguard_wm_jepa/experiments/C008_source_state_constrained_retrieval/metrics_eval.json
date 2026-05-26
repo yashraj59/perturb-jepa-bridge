@@ -1,0 +1,20 @@
+{
+  "constraint": "score only same cell_line_id/source-state candidates; diagnostic evaluation constraint only",
+  "current_best_rule": {
+    "delta_score_weight": 1.0,
+    "mean_condition_median_rank": 1.5714285714285714,
+    "mean_condition_recall_at_1": 0.4861111111111111,
+    "mean_perturbation_recall_at_1": 0.4861111111111111,
+    "min_condition_recall_at_1": 0.2962962962962963
+  },
+  "current_endpoint_condition_recall_at_1": 0.33664021164021163,
+  "diagnostic_label": "C008_SOURCE_STATE_CONSTRAINED_RETRIEVAL_REACHES_RECALL_FLOOR_DIAGNOSTIC",
+  "fresh_best_rule": {
+    "delta_score_weight": 0.8,
+    "mean_condition_median_rank": 1.8214285714285714,
+    "mean_condition_recall_at_1": 0.4517195767195767,
+    "mean_perturbation_recall_at_1": 0.4517195767195767,
+    "min_condition_recall_at_1": 0.2962962962962963
+  },
+  "protected_condition_recall_floor": 0.48148148148148145
+}

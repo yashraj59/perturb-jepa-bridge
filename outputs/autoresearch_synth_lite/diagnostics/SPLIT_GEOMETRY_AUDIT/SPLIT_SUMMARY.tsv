@@ -1,0 +1,4 @@
+split	cells	condition_bags	bag_size_min	bag_size_mean	bag_size_max	unique_condition_keys	unique_bag_keys	unique_perturbations	unique_doses	unique_cell_lines	unique_batches	condition_key_overlap_with_train	bag_key_overlap_with_train
+test	32	32	1.0	1.0	1.0	16	32	4	2	2	2	1.0	1.0
+train	192	32	6.0	6.0	6.0	16	32	4	2	2	2	1.0	1.0
+val	32	32	1.0	1.0	1.0	16	32	4	2	2	2	1.0	1.0

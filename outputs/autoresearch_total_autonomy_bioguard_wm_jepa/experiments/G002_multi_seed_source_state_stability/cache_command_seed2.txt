@@ -1,0 +1,1 @@
+/usr/local/bin/python scripts/cache_bioflow_teacher_latents.py --dataset synth_genetic_anchor_lite --eval-split test_heldout_perturbation --seed 2 --device cpu --batch-size 8 --bag-size 4 --output-dir outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/G002_multi_seed_source_state_stability/seed2_latent_cache

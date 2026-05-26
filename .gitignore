@@ -7,13 +7,16 @@ __pycache__/
 build/
 *.egg-info/
 .DS_Store
+.ipynb_checkpoints/
 checkpoints/
 logs/
 metrics/
 results/
 *.h5ad
 *.npy
+*.npz
 *.pt
+*.jsonl
 *.tar
 *.tar.gz
 *.zip

@@ -1,0 +1,4 @@
+baseline	display_name	source	metric_scope	mse	mse_std	pearson_de	pearson_de_std	top20_de_overlap	top20_de_overlap_note
+gears_published	GEARS published	Roohani, Huang, Leskovec, Nature Biotechnology 2024, Supplementary Table 6	Norman 2019, five GEARS simulation splits, published aggregate	0.216	0.053	0.556	0.03		not reported in GEARS Supplementary Table 6
+cpa_original_published	CPA Original published	Roohani, Huang, Leskovec, Nature Biotechnology 2024, Supplementary Table 6	Norman 2019, five GEARS simulation splits, published aggregate	0.354	0.049	0.44	0.036		not reported in GEARS Supplementary Table 6
+cpa_kg_published	CPA + KG published	Roohani, Huang, Leskovec, Nature Biotechnology 2024, Supplementary Table 6	Norman 2019, five GEARS simulation splits, published aggregate	0.333	0.046	0.504	0.029		not reported in GEARS Supplementary Table 6

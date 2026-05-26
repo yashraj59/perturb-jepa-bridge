@@ -1,0 +1,31 @@
+{
+  "active_gates_pass": true,
+  "benchmark": "synth_program_aligned_genetic_lite",
+  "diagnostic_label": "F057_ROWWISE_ABSTENTION_READY_FOR_TIER2_DESIGN",
+  "heldout_local_floor_preserved": true,
+  "leakage_controls": "F057 is read-only synthesis over F055/F056 train-only-selected held-out scoring rows; no new model fitting or scale selection.",
+  "mean_floor_delta_cosine": 0.8660205488281397,
+  "mean_floor_recall_at_1": 0.8641975308641975,
+  "mean_floor_transition_improvement": 0.3739623251677682,
+  "mean_rowwise_active_fraction": 0.3024691358024691,
+  "mean_rowwise_effective_scale": 0.015123456790123417,
+  "mean_selected_delta_cosine": 0.8676807377284308,
+  "mean_selected_gap_delta_cosine": 0.0016601889002909834,
+  "mean_selected_gap_recall": 0.0,
+  "mean_selected_gap_transition": 0.0009101236334985333,
+  "mean_selected_recall_at_1": 0.8641975308641975,
+  "mean_selected_transition_improvement": 0.37487244880126674,
+  "min_selected_gap_delta_cosine": 0.0003958989160558,
+  "min_selected_gap_recall": 0.0,
+  "min_selected_gap_transition": 0.0001722691457894,
+  "model_promoted": false,
+  "next_recommendation": "Design a promotion-ineligible Tier 2 amendment for row-wise abstention with more seeds, stricter artifact contracts, and eventually an external/Norman diagnostic only after synthetic gates remain clean.",
+  "seed_count": 6,
+  "source_experiments": [
+    "F055",
+    "F056"
+  ],
+  "std_selected_delta_cosine": 0.03284116064731825,
+  "std_selected_transition_improvement": 0.05088241923682617,
+  "total_broken_count": 0.0
+}

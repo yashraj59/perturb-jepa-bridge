@@ -1,0 +1,37 @@
+{
+  "diagnostic_label": "C016_ONLINE_LATENT_REPRESENTATION_HAS_REPAIR_SIGNAL",
+  "gates": {
+    "primary_delta_cosine_gate": 0.3943880553384362,
+    "primary_transition_gate": 0.0032213672056209536,
+    "secondary_recall_gate": 0.25564378902443324
+  },
+  "leakage_controls": "all ridge fits use train splits only; eval rows are scoring-only; online latent arrays are cached encoder outputs, not metadata keys",
+  "model_promoted": false,
+  "online_passes_active_gates": true,
+  "online_recall_gain_vs_teacher": 0.029629629629629617,
+  "online_summary": {
+    "mean_condition_recall_at_1": 0.36296296296296293,
+    "mean_delta_cosine": 0.42071838610194756,
+    "mean_delta_rank": 9.817765830151641,
+    "mean_magnitude_ratio": 0.7328974499663019,
+    "mean_transition_improvement": 0.007174368596514437,
+    "min_condition_recall_at_1": 0.2222222222222222,
+    "min_delta_cosine": 0.3024620813108767,
+    "min_transition_improvement": -0.0012388251049122363,
+    "seed_count": 5,
+    "space": "online_action_ridge_floor"
+  },
+  "online_transition_gain_vs_teacher": -0.00410707028069031,
+  "teacher_summary": {
+    "mean_condition_recall_at_1": 0.3333333333333333,
+    "mean_delta_cosine": 0.45151513636166707,
+    "mean_delta_rank": 10.245808787907375,
+    "mean_magnitude_ratio": 0.7556432505625665,
+    "mean_transition_improvement": 0.011281438877204748,
+    "min_condition_recall_at_1": 0.25925925925925924,
+    "min_delta_cosine": 0.39796251669473043,
+    "min_transition_improvement": 0.0004243423315500173,
+    "seed_count": 5,
+    "space": "teacher_action_ridge_floor"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "diagnostic_label": "F088_SCGENESCOPE_REMOTE_FEATURES_FOUND_BUT_TOO_LARGE_FOR_LOW_COMPUTE",
+  "download_attempted": false,
+  "large_payload_count": 26,
+  "light_manifest_candidate_count": 0,
+  "light_manifest_candidate_found": false,
+  "model_promoted": false,
+  "paired_feature_family_pair_count": 1,
+  "paired_feature_payloads_found": true,
+  "probe_path_count": 20,
+  "remote_api_accessible": true,
+  "remote_directory_count": 19,
+  "remote_entry_count": 47,
+  "remote_error_count": 0,
+  "remote_file_count": 28,
+  "smallest_image_feature_bytes": 11023900503,
+  "smallest_paired_feature_bytes": 13589664651,
+  "smallest_paired_feature_gb": 13.589664651,
+  "smallest_rna_feature_bytes": 2565764148
+}

@@ -1,0 +1,18 @@
+{
+  "action_negative_transition_gap": 0.010320671122301207,
+  "direct_delta_cosine": 0.1931524136791129,
+  "direct_delta_rank": 8.446496459288806,
+  "direct_magnitude_ratio": 0.8637088021116889,
+  "direct_recall_at_1": 0.7407407407407407,
+  "direct_transition_improvement": 0.05193819095378255,
+  "identity_violation": 0.0,
+  "image_target_effective_rank": 7.193856859600664,
+  "image_to_rna_recall_at_1": 0.8148148148148148,
+  "leakage_flag": 0.0,
+  "ridge_floor_delta_cosine": 0.8043211603593633,
+  "ridge_floor_delta_rank": 6.771451934265017,
+  "ridge_floor_recall_at_1": 1.0,
+  "ridge_floor_transition_improvement": 0.07875272394884514,
+  "rna_to_image_recall_at_1": 0.7407407407407407,
+  "target_effective_rank": 5.864110599831982
+}

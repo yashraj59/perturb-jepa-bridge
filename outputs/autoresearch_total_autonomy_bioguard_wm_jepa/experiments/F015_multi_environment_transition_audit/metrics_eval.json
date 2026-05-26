@@ -1,0 +1,111 @@
+{
+  "available_seeds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "baseline_summary": [
+    {
+      "baseline": "pooled_source_only_ridge",
+      "mean_condition_recall_at_1": 0.22222222222222224,
+      "mean_delta_cosine": 0.45051065821860625,
+      "mean_delta_rank": 9.905100888184375,
+      "mean_magnitude_ratio": 0.6303566122627159,
+      "mean_transition_improvement": 0.014092323244996619,
+      "min_condition_recall_at_1": 0.1111111111111111,
+      "min_transition_improvement": 0.0060462816283750566,
+      "seed_count": 5
+    },
+    {
+      "baseline": "pooled_full_ridge",
+      "mean_condition_recall_at_1": 0.22222222222222224,
+      "mean_delta_cosine": 0.4497570308229083,
+      "mean_delta_rank": 10.271098384346484,
+      "mean_magnitude_ratio": 0.6389509357181515,
+      "mean_transition_improvement": 0.01404860375998504,
+      "min_condition_recall_at_1": 0.07407407407407407,
+      "min_transition_improvement": 0.0039016646012234725,
+      "seed_count": 5
+    },
+    {
+      "baseline": "pooled_environment_centered_ridge",
+      "mean_condition_recall_at_1": 0.3259259259259259,
+      "mean_delta_cosine": 0.43151936596461127,
+      "mean_delta_rank": 10.47627968402534,
+      "mean_magnitude_ratio": 0.6634512472073449,
+      "mean_transition_improvement": 0.01183288389502632,
+      "min_condition_recall_at_1": 0.25925925925925924,
+      "min_transition_improvement": 0.0024654394219036225,
+      "seed_count": 5
+    },
+    {
+      "baseline": "per_seed_action_ridge_floor",
+      "mean_condition_recall_at_1": 0.3333333333333333,
+      "mean_delta_cosine": 0.45151513636166707,
+      "mean_delta_rank": 10.245808787907375,
+      "mean_magnitude_ratio": 0.7556432505625665,
+      "mean_transition_improvement": 0.011281438877204748,
+      "min_condition_recall_at_1": 0.25925925925925924,
+      "min_transition_improvement": 0.0004243423315500173,
+      "seed_count": 5
+    },
+    {
+      "baseline": "pooled_action_only_ridge",
+      "mean_condition_recall_at_1": 0.31851851851851853,
+      "mean_delta_cosine": 0.08043993328249559,
+      "mean_delta_rank": 1.860601841575414,
+      "mean_magnitude_ratio": 0.1406395414955354,
+      "mean_transition_improvement": 0.0008295936554870322,
+      "min_condition_recall_at_1": 0.2222222222222222,
+      "min_transition_improvement": -0.001949557002911567,
+      "seed_count": 5
+    },
+    {
+      "baseline": "leave_one_seed_out_full_ridge",
+      "mean_condition_recall_at_1": 0.18518518518518517,
+      "mean_delta_cosine": 0.3345189999081599,
+      "mean_delta_rank": 8.49033152116512,
+      "mean_magnitude_ratio": 1.0507550784024455,
+      "mean_transition_improvement": -0.017282973223257597,
+      "min_condition_recall_at_1": 0.1111111111111111,
+      "min_transition_improvement": -0.053226095736994314,
+      "seed_count": 5
+    }
+  ],
+  "benchmark_name": "synthetic_genetic_anchor_lite_multiseed_v1",
+  "best_non_floor_baseline": {
+    "baseline": "pooled_source_only_ridge",
+    "delta_gap_vs_per_seed_floor": -0.0010044781430608163,
+    "mean_condition_recall_at_1": 0.22222222222222224,
+    "mean_delta_cosine": 0.45051065821860625,
+    "mean_delta_rank": 9.905100888184375,
+    "mean_magnitude_ratio": 0.6303566122627159,
+    "mean_transition_improvement": 0.014092323244996619,
+    "min_condition_recall_at_1": 0.1111111111111111,
+    "min_transition_improvement": 0.0060462816283750566,
+    "recall_gap_vs_per_seed_floor": -0.11111111111111108,
+    "seed_count": 5,
+    "transition_gap_vs_per_seed_floor": 0.002810884367791871
+  },
+  "diagnostic_label": "F015_POOLED_ENVIRONMENT_TRANSITION_PASSES_GATES_BELOW_PER_SEED_FLOOR",
+  "gates": {
+    "primary_delta_cosine_gate": 0.3943880553384362,
+    "primary_transition_gate": 0.0032213672056209536,
+    "secondary_recall_gate": 0.25564378902443324
+  },
+  "leakage_controls": "all pooled/environment baselines use train splits only; eval rows are scoring-only; seed/environment labels are diagnostic grouping variables, not promoted biological shortcuts",
+  "model_promoted": false,
+  "per_seed_floor_summary": {
+    "baseline": "per_seed_action_ridge_floor",
+    "mean_condition_recall_at_1": 0.3333333333333333,
+    "mean_delta_cosine": 0.45151513636166707,
+    "mean_delta_rank": 10.245808787907375,
+    "mean_magnitude_ratio": 0.7556432505625665,
+    "mean_transition_improvement": 0.011281438877204748,
+    "min_condition_recall_at_1": 0.25925925925925924,
+    "min_transition_improvement": 0.0004243423315500173,
+    "seed_count": 5
+  }
+}

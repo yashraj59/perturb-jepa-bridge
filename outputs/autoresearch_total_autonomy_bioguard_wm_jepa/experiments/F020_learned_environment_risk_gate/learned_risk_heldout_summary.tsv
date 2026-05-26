@@ -1,0 +1,2 @@
+candidate	alpha	threshold	seed_count	mean_active_fraction	mean_transition_improvement	min_transition_improvement	mean_delta_cosine	min_delta_cosine	mean_condition_recall_at_1	min_condition_recall_at_1	mean_delta_rank	mean_magnitude_ratio	mean_transition_gap	min_transition_gap	mean_delta_cosine_gap	min_delta_cosine_gap	mean_recall_gap	min_recall_gap
+floor_fallback	0.0	0.0	5	0.0	0.011281438877204748	0.0004243423315500173	0.45151513636166707	0.39796251669473043	0.3333333333333333	0.25925925925925924	10.245808787907375	0.7556432505625665	0.0	0.0	0.0	0.0	0.0	0.0

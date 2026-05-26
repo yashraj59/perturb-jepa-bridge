@@ -1,0 +1,31 @@
+{
+  "below_floor_count": 2.0,
+  "calibration_mismatch_count": 2.0,
+  "diagnostic_label": "F067_CLOSE_RESIDUAL_SELECTOR_FAMILY_PIVOT_TO_DATA_CONTRACT",
+  "latest_status": "F066_TRAIN_ACTION_HELDOUT_STILL_OPTIMISTIC_FOR_REAL_HELDOUT",
+  "max_floor_gap_transition": 0.001195,
+  "mean_floor_gap_transition": -1.9999999999999998e-05,
+  "min_floor_gap_transition": -0.000882,
+  "model_promoted": false,
+  "oracle_capacity_seen": 1.0,
+  "protected_model_of_record": "rank-3 train-split-only PLS raw-linear readout",
+  "protected_transition_floor": "full train-only action ridge floor for residual/operator candidates",
+  "row_count": 12,
+  "safe_nonzero_train_only_count": 2.0,
+  "source_experiments": [
+    "F055",
+    "F056",
+    "F057",
+    "F058",
+    "F059",
+    "F060",
+    "F061",
+    "F062",
+    "F063",
+    "F064",
+    "F065",
+    "F066"
+  ],
+  "tier2_pass_count": 0.0,
+  "train_only_below_floor_count": 2.0
+}

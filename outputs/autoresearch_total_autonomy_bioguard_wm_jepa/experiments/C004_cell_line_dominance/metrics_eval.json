@@ -1,0 +1,13 @@
+{
+  "diagnostic_label": "C004_CELL_LINE_SOURCE_DOMINANCE_CONFIRMED_PERTURBATION_DELTA_UNDERREPRESENTED",
+  "pred_delta_cell_line_eta": 0.1210134678515528,
+  "pred_delta_perturbation_eta": 0.06519653986383091,
+  "pred_delta_to_true_delta_cosine_mean": 0.4996354137985374,
+  "pred_endpoint_cell_line_eta": 0.5014631781872264,
+  "pred_endpoint_perturbation_eta": 0.04159421645693616,
+  "pred_endpoint_to_source_cosine_mean": 0.9488238359980512,
+  "pred_endpoint_to_target_cosine_mean": 0.9213717834766141,
+  "source_cell_line_eta": 0.47518882542955704,
+  "source_to_target_cosine_mean": 0.8976797916944725,
+  "true_delta_perturbation_eta": 0.3024965837740845
+}

@@ -1,0 +1,10 @@
+{
+  "device_used": "cpu",
+  "final_active_std_dims": 24.0,
+  "final_loss": 0.21199637651443481,
+  "final_mse": 0.06787972897291183,
+  "final_prediction_target_cosine_train": 0.8188890218734741,
+  "final_relational_loss": 0.10991115123033524,
+  "relational_weight": 0.25,
+  "steps": 100.0
+}

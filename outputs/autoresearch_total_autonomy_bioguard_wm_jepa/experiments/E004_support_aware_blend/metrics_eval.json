@@ -1,0 +1,34 @@
+{
+  "diagnostic_label": "E004_SUPPORT_AWARE_BLEND_DISCARDED_HELDOUT_BELOW_FLOOR",
+  "eval_active_fraction": 1.0,
+  "eval_metrics": {
+    "absolute_target_cosine": 0.9096570398965717,
+    "delta_cosine": 0.4037716900528022,
+    "delta_magnitude_ratio": 0.7655580299825776,
+    "delta_prediction_effective_rank": 10.268397573424462,
+    "delta_prediction_spectral_entropy": 1.726166230800753,
+    "delta_teacher_effective_rank": 11.781895734223935,
+    "source_as_target_bio_cosine_to_teacher": 0.9031308180300731,
+    "source_improvement_hinge_violation_fraction": 0.7407407407407407,
+    "transition_source_cosine_improvement": 0.006526221866498448,
+    "transition_to_target_map": 0.3956329370218259,
+    "transition_to_target_median_rank": 2.0,
+    "transition_to_target_recall@1": 0.4444444444444444,
+    "transition_to_target_recall@10": 0.9629629629629629,
+    "transition_to_target_recall@5": 0.8148148148148148,
+    "transition_to_target_same_perturbation_enrichment@10": 1.0
+  },
+  "selected_alpha_source_only": 0.1,
+  "selected_support_threshold": 0.4933503502876452,
+  "selected_train_summary": {
+    "alpha_source_only": 0.1,
+    "mean_active_fraction": 1.0,
+    "mean_delta_cosine_gap": 0.002554841056117845,
+    "mean_recall_gap": 0.0,
+    "mean_transition_gap": 0.00043469125141047107,
+    "min_delta_cosine_gap": -0.0007913170461401609,
+    "min_recall_gap": 0.0,
+    "min_transition_gap": 8.946168703794638e-05,
+    "support_threshold": 0.4933503502876452
+  }
+}

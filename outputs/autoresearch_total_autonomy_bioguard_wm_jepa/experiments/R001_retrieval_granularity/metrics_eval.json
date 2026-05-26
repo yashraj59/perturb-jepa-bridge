@@ -1,0 +1,49 @@
+{
+  "cell_line_mean_recall_at_1": 0.8313492063492064,
+  "condition_batch_mean_recall_at_1": 0.08465608465608465,
+  "condition_key_mean_recall_at_1": 0.26587301587301587,
+  "diagnostic_label": "R001_RETRIEVAL_DOMINATED_BY_CELL_LINE_NOT_PERTURBATION",
+  "perturbation_mean_recall_at_1": 0.32010582010582006,
+  "rows": [
+    {
+      "label_col": "cell_line_label",
+      "mean_map": 0.6621251173973229,
+      "mean_recall_at_1": 0.8313492063492064,
+      "mean_recall_at_5": 0.9907407407407407,
+      "median_median_rank": 1.0,
+      "min_recall_at_1": 0.37037037037037035
+    },
+    {
+      "label_col": "perturbation_label",
+      "mean_map": 0.41521306474553615,
+      "mean_recall_at_1": 0.32010582010582006,
+      "mean_recall_at_5": 0.8214285714285714,
+      "median_median_rank": 2.0,
+      "min_recall_at_1": 0.1111111111111111
+    },
+    {
+      "label_col": "batch_label",
+      "mean_map": 0.4106337384277912,
+      "mean_recall_at_1": 0.3161375661375661,
+      "mean_recall_at_5": 0.9490740740740741,
+      "median_median_rank": 2.0,
+      "min_recall_at_1": 0.14814814814814814
+    },
+    {
+      "label_col": "condition_key",
+      "mean_map": 0.35647907535398715,
+      "mean_recall_at_1": 0.26587301587301587,
+      "mean_recall_at_5": 0.7162698412698412,
+      "median_median_rank": 3.0,
+      "min_recall_at_1": 0.1111111111111111
+    },
+    {
+      "label_col": "condition_batch_label",
+      "mean_map": 0.24130037467656854,
+      "mean_recall_at_1": 0.08465608465608465,
+      "mean_recall_at_5": 0.3981481481481481,
+      "median_median_rank": 8.0,
+      "min_recall_at_1": 0.0
+    }
+  ]
+}

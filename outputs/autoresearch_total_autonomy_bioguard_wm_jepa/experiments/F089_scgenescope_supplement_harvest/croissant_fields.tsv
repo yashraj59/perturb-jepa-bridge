@@ -1,0 +1,6 @@
+record_set	field	description	data_type
+treatment_classification	cell_id	Unique identifier for each sample.	string
+treatment_classification	Treatment	Chemical perturbation applied to cells. This is the target label for the treatment classification task.	string
+treatment_classification	Replicate	Replicate number (1-5), used for train/val/test splits. Split assignments are: 3 = train, 5 = validation, 4 = test, and 1+2 = alternate test set.	string
+treatment_classification	batch	Batch identifier for the sample. Currently unused, but could be used for batch effects correction.	string
+treatment_classification	Group	Indicates whether the sample is a treatment or DMSO control. Not used for classification.	string

@@ -1,0 +1,39 @@
+{
+  "diagnostic_label": "F004_ACTION_SUPPORT_DISTANCE_AUDIT_COMPLETED",
+  "nearest_distance_transition_corr": 0.0,
+  "rows": [
+    {
+      "delta_cosine": 0.12867587312415363,
+      "eval_perturbation_id": "9",
+      "mean_action_l2_to_train": 1.926776695296637,
+      "median_rank": 1.0,
+      "nearest_action_l2": 1.4142135623730951,
+      "nearest_train_perturbation_id": "1",
+      "recall_at_1": 0.5555555555555556,
+      "rows": 9,
+      "transition_improvement": -0.03787556074381832
+    },
+    {
+      "delta_cosine": 0.4427734591544262,
+      "eval_perturbation_id": "10",
+      "mean_action_l2_to_train": 1.926776695296637,
+      "median_rank": 1.0,
+      "nearest_action_l2": 1.4142135623730951,
+      "nearest_train_perturbation_id": "2",
+      "recall_at_1": 1.0,
+      "rows": 9,
+      "transition_improvement": 0.009205303511384969
+    },
+    {
+      "delta_cosine": 0.6224382178056113,
+      "eval_perturbation_id": "11",
+      "mean_action_l2_to_train": 1.926776695296637,
+      "median_rank": 1.0,
+      "nearest_action_l2": 1.4142135623730951,
+      "nearest_train_perturbation_id": "3",
+      "recall_at_1": 0.8888888888888888,
+      "rows": 9,
+      "transition_improvement": 0.04565597678101558
+    }
+  ]
+}

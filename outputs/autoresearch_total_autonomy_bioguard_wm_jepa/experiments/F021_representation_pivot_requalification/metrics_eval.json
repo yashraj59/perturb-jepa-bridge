@@ -1,0 +1,48 @@
+{
+  "c013_recall_passes_active_gate": true,
+  "c015_old_floor_recall_gap": -0.02381,
+  "diagnostic_label": "F021_REOPEN_REPRESENTATION_REPAIR_UNDER_ACTIVE_MULTISEED_GATES",
+  "environment_branch_cooled": true,
+  "evidence_rows": [
+    {
+      "delta": 0.451515,
+      "interpretation": "environment/risk branch selected floor fallback",
+      "recall": 0.333333,
+      "source": "F020",
+      "status": "F020_OOF_LEARNED_RISK_SELECTS_FLOOR_FALLBACK",
+      "transition": 0.011281
+    },
+    {
+      "delta": 0.440083,
+      "interpretation": "multi-seed source-state stability diagnostic rechecked under active gates",
+      "recall": 0.430886,
+      "source": "G002",
+      "status": "G002_MULTI_SEED_SOURCE_STATE_SIGNAL_UNSTABLE_NO_TRAINING_REOPEN",
+      "transition": 0.009311
+    },
+    {
+      "delta": 0.397963,
+      "interpretation": "source-state signal stronger outside z_bio",
+      "recall": 0.911229,
+      "source": "C012",
+      "status": "C012_SOURCE_STATE_SIGNAL_STRONGER_OUTSIDE_Z_BIO",
+      "transition": 0.005662
+    },
+    {
+      "delta": 0.397963,
+      "interpretation": "online-source-neighborhood retrieval partial repair",
+      "recall": 0.457672,
+      "source": "C013",
+      "status": "C013_ONLINE_SOURCE_NEIGHBORHOOD_RETRIEVAL_PARTIAL_REPAIR_BELOW_FLOOR",
+      "transition": 0.005662
+    }
+  ],
+  "g002_passes_active_multiseed_gates": true,
+  "gates": {
+    "primary_delta_cosine_gate": 0.3943880553384362,
+    "primary_transition_gate": 0.0032213672056209536,
+    "secondary_recall_gate": 0.25564378902443324
+  },
+  "model_promoted": false,
+  "next_recommended_family": "source_state_preserving_jepa"
+}

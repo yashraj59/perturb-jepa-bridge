@@ -1,0 +1,11 @@
+item	status	detail
+train_prediction_vs_analytical_low_rank	diff	rmse=0.024167; max_abs=0.127171
+eval_prediction_vs_analytical_low_rank	diff	rmse=0.022674; max_abs=0.085180
+same_action_features	pass	action_dim=20
+same_train_rows_only	pass	train_rows=72
+same_ridge_regularization	pass	alpha=1e-2
+same_output_normalization	warning	operator metrics use source + delta without endpoint normalization; old BOJ002 code trained raw delta then evaluated common metrics
+same_rank_orientation	fail	BOJ002 decomposes source block and keeps full action shift; analytical low-rank ridge reduces full predicted delta in teacher-delta spectral basis
+same_bias_term	pass	delta mean/source/action mean retained
+same_feature_standardization	pass	mean-centering only
+same_action_descriptor_dimensions	pass	20

@@ -1,0 +1,18 @@
+{
+  "exact_match_fraction": 1.0,
+  "program_level_effect_recovery": 0.35022338256173363,
+  "rna_counterfactual_direction_accuracy": 0.53125,
+  "rna_counterfactual_logfc_correlation": 0.1267911573959699,
+  "rna_counterfactual_pathway_score_correlation": 0.35022338256173363,
+  "rna_counterfactual_pathway_score_correlation:program_0": 0.32790756182408665,
+  "rna_counterfactual_pathway_score_correlation:program_1": -0.030927603302120077,
+  "rna_counterfactual_pathway_score_correlation:program_2": 0.554801163588014,
+  "rna_counterfactual_pathway_score_correlation:program_3": -0.15656464170969042,
+  "rna_counterfactual_pathway_score_correlation:program_4": 0.7427163335724297,
+  "rna_counterfactual_pathway_score_correlation:program_5": 0.40842161585920617,
+  "rna_counterfactual_pathway_score_correlation:program_6": 0.5569714370012979,
+  "rna_counterfactual_pathway_score_correlation:program_7": 0.398461193660645,
+  "rna_counterfactual_pseudobulk_correlation": 0.7491028435276309,
+  "rna_counterfactual_top50_de_overlap": 0.41500000000000004,
+  "rows": 24.0
+}

@@ -1,0 +1,402 @@
+[
+  {
+    "image_teacher_mse": 0.0,
+    "rna_teacher_mse": 0.0,
+    "step": 1.0,
+    "student_align": 1.3387196063995361,
+    "student_variance": 0.0,
+    "total": 0.026774391531944275
+  },
+  {
+    "image_teacher_mse": 1.686118328292352e-10,
+    "rna_teacher_mse": 3.211164445460213e-09,
+    "step": 2.0,
+    "student_align": 0.9750320315361023,
+    "student_variance": 0.0,
+    "total": 0.019500643014907837
+  },
+  {
+    "image_teacher_mse": 2.489674244543494e-09,
+    "rna_teacher_mse": 1.8963281434025703e-07,
+    "step": 3.0,
+    "student_align": 1.5976247787475586,
+    "student_variance": 0.0,
+    "total": 0.031952690333127975
+  },
+  {
+    "image_teacher_mse": 1.3520756736440376e-09,
+    "rna_teacher_mse": 1.2529241644188005e-08,
+    "step": 4.0,
+    "student_align": 1.4103741645812988,
+    "student_variance": 0.0,
+    "total": 0.02820749580860138
+  },
+  {
+    "image_teacher_mse": 2.905512275219735e-09,
+    "rna_teacher_mse": 1.0316543175292736e-08,
+    "step": 5.0,
+    "student_align": 1.2280787229537964,
+    "student_variance": 0.0,
+    "total": 0.02456158772110939
+  },
+  {
+    "image_teacher_mse": 1.3169937140844468e-08,
+    "rna_teacher_mse": 3.0342821588646984e-08,
+    "step": 6.0,
+    "student_align": 1.369417667388916,
+    "student_variance": 0.0,
+    "total": 0.027388395741581917
+  },
+  {
+    "image_teacher_mse": 1.7831158771741684e-08,
+    "rna_teacher_mse": 2.2770487717593824e-08,
+    "step": 7.0,
+    "student_align": 1.211194396018982,
+    "student_variance": 0.0,
+    "total": 0.02422392927110195
+  },
+  {
+    "image_teacher_mse": 1.1306251046505622e-08,
+    "rna_teacher_mse": 2.6757083659845193e-08,
+    "step": 8.0,
+    "student_align": 1.3229446411132812,
+    "student_variance": 0.0,
+    "total": 0.02645893022418022
+  },
+  {
+    "image_teacher_mse": 3.0450983956598066e-08,
+    "rna_teacher_mse": 4.886867355224922e-09,
+    "step": 9.0,
+    "student_align": 1.38775634765625,
+    "student_variance": 0.0,
+    "total": 0.027755161747336388
+  },
+  {
+    "image_teacher_mse": 1.2596557574795497e-08,
+    "rna_teacher_mse": 9.603160933124855e-09,
+    "step": 10.0,
+    "student_align": 1.2319176197052002,
+    "student_variance": 0.0,
+    "total": 0.024638373404741287
+  },
+  {
+    "image_teacher_mse": 1.2662695780818467e-08,
+    "rna_teacher_mse": 1.0993839172357411e-09,
+    "step": 11.0,
+    "student_align": 1.1321228742599487,
+    "student_variance": 0.0,
+    "total": 0.02264247089624405
+  },
+  {
+    "image_teacher_mse": 1.87408648599785e-08,
+    "rna_teacher_mse": 3.9585227457061833e-11,
+    "step": 12.0,
+    "student_align": 1.2445132732391357,
+    "student_variance": 0.0,
+    "total": 0.02489028312265873
+  },
+  {
+    "image_teacher_mse": 6.25132514642246e-08,
+    "rna_teacher_mse": 2.762116924071023e-10,
+    "step": 13.0,
+    "student_align": 1.1806950569152832,
+    "student_variance": 0.0,
+    "total": 0.023613963276147842
+  },
+  {
+    "image_teacher_mse": 1.7571293753348982e-08,
+    "rna_teacher_mse": 6.253513262777233e-10,
+    "step": 14.0,
+    "student_align": 1.3014649152755737,
+    "student_variance": 0.0,
+    "total": 0.02602931670844555
+  },
+  {
+    "image_teacher_mse": 1.0572702535682765e-07,
+    "rna_teacher_mse": 4.443320822389296e-09,
+    "step": 15.0,
+    "student_align": 1.2012232542037964,
+    "student_variance": 0.0,
+    "total": 0.02402457408607006
+  },
+  {
+    "image_teacher_mse": 4.943796128031863e-08,
+    "rna_teacher_mse": 5.9611218183874826e-09,
+    "step": 16.0,
+    "student_align": 1.3144960403442383,
+    "student_variance": 0.0,
+    "total": 0.02628997527062893
+  },
+  {
+    "image_teacher_mse": 5.4921986958333946e-08,
+    "rna_teacher_mse": 5.381600942655496e-09,
+    "step": 17.0,
+    "student_align": 0.9497228860855103,
+    "student_variance": 0.0,
+    "total": 0.018994517624378204
+  },
+  {
+    "image_teacher_mse": 6.069421942811459e-08,
+    "rna_teacher_mse": 6.665624052715202e-09,
+    "step": 18.0,
+    "student_align": 1.1029300689697266,
+    "student_variance": 0.0,
+    "total": 0.022058667615056038
+  },
+  {
+    "image_teacher_mse": 7.01679212511408e-08,
+    "rna_teacher_mse": 2.950872790563608e-08,
+    "step": 19.0,
+    "student_align": 1.317506194114685,
+    "student_variance": 0.0,
+    "total": 0.026350224390625954
+  },
+  {
+    "image_teacher_mse": 7.229025982269377e-07,
+    "rna_teacher_mse": 7.017176244517032e-07,
+    "step": 20.0,
+    "student_align": 1.4007598161697388,
+    "student_variance": 0.0,
+    "total": 0.028016621246933937
+  },
+  {
+    "image_teacher_mse": 8.628017411638211e-08,
+    "rna_teacher_mse": 1.9042628807142137e-08,
+    "step": 21.0,
+    "student_align": 1.2199699878692627,
+    "student_variance": 0.0,
+    "total": 0.02439950592815876
+  },
+  {
+    "image_teacher_mse": 2.9483393504392552e-08,
+    "rna_teacher_mse": 4.715424939405466e-09,
+    "step": 22.0,
+    "student_align": 1.1056361198425293,
+    "student_variance": 0.0,
+    "total": 0.022112755104899406
+  },
+  {
+    "image_teacher_mse": 8.803947793012412e-08,
+    "rna_teacher_mse": 3.227979827880034e-10,
+    "step": 23.0,
+    "student_align": 1.0710917711257935,
+    "student_variance": 0.0,
+    "total": 0.021421922370791435
+  },
+  {
+    "image_teacher_mse": 1.5387219320928125e-07,
+    "rna_teacher_mse": 6.472121172329537e-10,
+    "step": 24.0,
+    "student_align": 1.313686728477478,
+    "student_variance": 0.0,
+    "total": 0.02627388946712017
+  },
+  {
+    "image_teacher_mse": 4.701471212342767e-08,
+    "rna_teacher_mse": 7.64025214622377e-12,
+    "step": 25.0,
+    "student_align": 1.4052538871765137,
+    "student_variance": 0.0,
+    "total": 0.028105122968554497
+  },
+  {
+    "image_teacher_mse": 5.4021683126848075e-08,
+    "rna_teacher_mse": 1.2043369079783872e-10,
+    "step": 26.0,
+    "student_align": 1.2080519199371338,
+    "student_variance": 0.0,
+    "total": 0.024161091074347496
+  },
+  {
+    "image_teacher_mse": 6.328102841735017e-08,
+    "rna_teacher_mse": 2.3234641988167937e-10,
+    "step": 27.0,
+    "student_align": 1.1388108730316162,
+    "student_variance": 0.0,
+    "total": 0.022776279598474503
+  },
+  {
+    "image_teacher_mse": 1.8687096314806695e-08,
+    "rna_teacher_mse": 4.070864478844527e-10,
+    "step": 28.0,
+    "student_align": 1.1317574977874756,
+    "student_variance": 0.0,
+    "total": 0.022635167464613914
+  },
+  {
+    "image_teacher_mse": 9.031493419797698e-08,
+    "rna_teacher_mse": 4.979686663020289e-10,
+    "step": 29.0,
+    "student_align": 1.3026241064071655,
+    "student_variance": 0.0,
+    "total": 0.026052573695778847
+  },
+  {
+    "image_teacher_mse": 6.91055177526323e-08,
+    "rna_teacher_mse": 4.399342834471298e-10,
+    "step": 30.0,
+    "student_align": 1.3949103355407715,
+    "student_variance": 0.0,
+    "total": 0.02789827436208725
+  },
+  {
+    "image_teacher_mse": 7.65334604579948e-08,
+    "rna_teacher_mse": 4.1186057342379456e-10,
+    "step": 31.0,
+    "student_align": 1.2307595014572144,
+    "student_variance": 0.0,
+    "total": 0.024615265429019928
+  },
+  {
+    "image_teacher_mse": 4.3956518425147806e-08,
+    "rna_teacher_mse": 3.7249304335462696e-11,
+    "step": 32.0,
+    "student_align": 1.1754153966903687,
+    "student_variance": 0.0,
+    "total": 0.023508351296186447
+  },
+  {
+    "image_teacher_mse": 6.142639819017859e-08,
+    "rna_teacher_mse": 3.1227982005832544e-11,
+    "step": 33.0,
+    "student_align": 1.2443151473999023,
+    "student_variance": 0.0,
+    "total": 0.024886364117264748
+  },
+  {
+    "image_teacher_mse": 1.053491700986342e-06,
+    "rna_teacher_mse": 2.6658628637932225e-09,
+    "step": 34.0,
+    "student_align": 1.2638280391693115,
+    "student_variance": 0.0,
+    "total": 0.02527761645615101
+  },
+  {
+    "image_teacher_mse": 8.261702788558978e-08,
+    "rna_teacher_mse": 1.3947089039234584e-09,
+    "step": 35.0,
+    "student_align": 1.7473223209381104,
+    "student_variance": 0.0,
+    "total": 0.03494653105735779
+  },
+  {
+    "image_teacher_mse": 1.1374081765325172e-07,
+    "rna_teacher_mse": 3.286536598423595e-09,
+    "step": 36.0,
+    "student_align": 1.2393913269042969,
+    "student_variance": 0.0,
+    "total": 0.024787943810224533
+  },
+  {
+    "image_teacher_mse": 2.002725949523665e-07,
+    "rna_teacher_mse": 1.987918984980297e-08,
+    "step": 37.0,
+    "student_align": 1.2239348888397217,
+    "student_variance": 0.0,
+    "total": 0.024478917941451073
+  },
+  {
+    "image_teacher_mse": 1.0230684210910113e-06,
+    "rna_teacher_mse": 1.9531372075221043e-08,
+    "step": 38.0,
+    "student_align": 1.2567071914672852,
+    "student_variance": 0.0,
+    "total": 0.025135185569524765
+  },
+  {
+    "image_teacher_mse": 5.9137832408850954e-08,
+    "rna_teacher_mse": 1.1926619691848828e-08,
+    "step": 39.0,
+    "student_align": 0.9973241090774536,
+    "student_variance": 0.0,
+    "total": 0.01994655281305313
+  },
+  {
+    "image_teacher_mse": 4.1717644450045555e-08,
+    "rna_teacher_mse": 2.252022568427492e-08,
+    "step": 40.0,
+    "student_align": 1.275292158126831,
+    "student_variance": 0.0,
+    "total": 0.025505905970931053
+  },
+  {
+    "image_teacher_mse": 1.0014824880499873e-07,
+    "rna_teacher_mse": 4.2920884624209066e-08,
+    "step": 41.0,
+    "student_align": 1.2913565635681152,
+    "student_variance": 0.0,
+    "total": 0.025827273726463318
+  },
+  {
+    "image_teacher_mse": 1.33662311441185e-07,
+    "rna_teacher_mse": 7.156010184417028e-08,
+    "step": 42.0,
+    "student_align": 1.3537864685058594,
+    "student_variance": 0.0,
+    "total": 0.027075933292508125
+  },
+  {
+    "image_teacher_mse": 2.049867049436216e-07,
+    "rna_teacher_mse": 3.611952692494924e-08,
+    "step": 43.0,
+    "student_align": 1.4015088081359863,
+    "student_variance": 0.0,
+    "total": 0.02803041599690914
+  },
+  {
+    "image_teacher_mse": 9.676228529542641e-08,
+    "rna_teacher_mse": 8.341712742776508e-08,
+    "step": 44.0,
+    "student_align": 0.9107494950294495,
+    "student_variance": 0.0,
+    "total": 0.01821517013013363
+  },
+  {
+    "image_teacher_mse": 1.3186162561851233e-07,
+    "rna_teacher_mse": 1.771356181734518e-07,
+    "step": 45.0,
+    "student_align": 0.9915741682052612,
+    "student_variance": 0.0,
+    "total": 0.019831791520118713
+  },
+  {
+    "image_teacher_mse": 1.767733692759066e-07,
+    "rna_teacher_mse": 4.407377218740294e-08,
+    "step": 46.0,
+    "student_align": 1.3214685916900635,
+    "student_variance": 0.0,
+    "total": 0.026429593563079834
+  },
+  {
+    "image_teacher_mse": 5.077404807707353e-08,
+    "rna_teacher_mse": 6.070377622791057e-08,
+    "step": 47.0,
+    "student_align": 1.2454352378845215,
+    "student_variance": 0.0,
+    "total": 0.024908816441893578
+  },
+  {
+    "image_teacher_mse": 2.677203099210601e-07,
+    "rna_teacher_mse": 3.2295466212417523e-07,
+    "step": 48.0,
+    "student_align": 1.187213659286499,
+    "student_variance": 0.0,
+    "total": 0.023744862526655197
+  },
+  {
+    "image_teacher_mse": 4.725044178144344e-08,
+    "rna_teacher_mse": 1.1162558166688541e-07,
+    "step": 49.0,
+    "student_align": 1.1301476955413818,
+    "student_variance": 0.0,
+    "total": 0.02260311134159565
+  },
+  {
+    "image_teacher_mse": 4.249615415119479e-08,
+    "rna_teacher_mse": 1.6112034018078703e-07,
+    "step": 50.0,
+    "student_align": 1.1421394348144531,
+    "student_variance": 0.0,
+    "total": 0.02284299209713936
+  }
+]

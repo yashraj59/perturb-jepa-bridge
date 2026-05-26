@@ -17,6 +17,7 @@ class RNAEncoderConfig:
     mlp_ratio: int = 4
     dropout: float = 0.1
     max_genes: int = 2048
+    pooling: str = "cls"
 
 
 @dataclass
@@ -76,8 +77,15 @@ class RNAEncoder(nn.Module):
         encoded = self.norm(self.encoder(tokens))
         gene_tokens = encoded[:, 1:]
         reconstruction = self.reconstruction_head(gene_tokens).squeeze(-1)
+        if self.config.pooling == "cls":
+            cell_embedding = encoded[:, 0]
+        elif self.config.pooling == "mean_tokens":
+            cell_embedding = gene_tokens.mean(dim=1)
+        else:
+            raise ValueError(f"unsupported RNA pooling mode: {self.config.pooling}")
+
         return RNAEncoderOutput(
             token_embeddings=gene_tokens,
-            cell_embedding=encoded[:, 0],
+            cell_embedding=cell_embedding,
             reconstruction=reconstruction,
         )

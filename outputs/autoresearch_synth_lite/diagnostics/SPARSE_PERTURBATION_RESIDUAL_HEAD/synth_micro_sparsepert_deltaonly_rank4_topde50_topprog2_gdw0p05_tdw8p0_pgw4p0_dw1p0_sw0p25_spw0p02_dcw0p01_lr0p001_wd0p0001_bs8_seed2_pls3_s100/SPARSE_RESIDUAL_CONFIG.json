@@ -1,0 +1,18 @@
+{
+  "delta_form": "x_cf = x_control + delta_hat",
+  "dictionary_rank": 4,
+  "hidden_dim": 32,
+  "loss_weights": {
+    "decorrelation": 0.01,
+    "global_delta": 0.05,
+    "outside_sparsity": 0.02,
+    "program_direction": 1.0,
+    "program_gene": 4.0,
+    "program_sign": 0.25,
+    "top_de": 8.0
+  },
+  "metadata_context": "perturbation_id + cell_line_id + dose + time; batch_id excluded",
+  "top_de_k": 50,
+  "top_programs": 2,
+  "z_pert_dim": 16
+}

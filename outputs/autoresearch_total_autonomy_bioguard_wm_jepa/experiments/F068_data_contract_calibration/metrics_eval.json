@@ -1,0 +1,35 @@
+{
+  "best_alternative_abs_transition_optimism": 0.06498268325090521,
+  "best_alternative_benchmark": "synth_program_aligned_stratified_holdout_lite",
+  "best_alternative_inner_transition": 0.2894615453627589,
+  "best_alternative_policy": "stratified_program",
+  "best_alternative_real_transition": 0.30617272028899445,
+  "best_alternative_transition_optimism": -0.016711174926235525,
+  "created_named_benchmarks": [
+    "synth_program_aligned_extrapolative_holdout_lite",
+    "synth_program_aligned_random_holdout_lite",
+    "synth_program_aligned_stratified_holdout_lite"
+  ],
+  "current_abs_transition_optimism": 0.02617969924386133,
+  "current_inner_transition": 0.2888242646964725,
+  "current_minus_best_abs_transition_optimism": -0.03880298400704388,
+  "current_policy": "extrapolative_index",
+  "current_real_transition": 0.2957597590256905,
+  "current_transition_optimism": -0.006935494329217992,
+  "diagnostic_label": "F068_TRAIN_REAL_MISMATCH_PERSISTS_ACROSS_SPLIT_CONTRACTS",
+  "leakage_controls": "All ridge fits and PCA bases use train rows for each diagnostic split; heldout rows are scoring-only; no condition_key/biological_key/exact target key/eval target means are inputs.",
+  "locked_current_benchmark": "synth_program_aligned_genetic_lite",
+  "model_promoted": false,
+  "policies": [
+    "extrapolative_index",
+    "random_perturbation",
+    "stratified_program"
+  ],
+  "seed_set": [
+    34,
+    35,
+    36,
+    37,
+    38
+  ]
+}

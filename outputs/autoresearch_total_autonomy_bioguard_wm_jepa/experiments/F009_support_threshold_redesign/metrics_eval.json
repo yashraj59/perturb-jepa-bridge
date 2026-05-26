@@ -1,0 +1,20 @@
+{
+  "best_rule": {
+    "mean_delta_cosine": 0.5464573026273899,
+    "mean_recall_at_1": 0.2846003898635477,
+    "mean_transition_improvement": 0.03390580315938957,
+    "min_delta_cosine": 0.4810425900281079,
+    "min_recall_at_1": 0.1481481481481481,
+    "min_transition_improvement": 0.0196329197145446,
+    "negative_transition_triplets": 0,
+    "recall_below_protected_floor_triplets": 19,
+    "retained_fraction": 0.3392857142857143,
+    "support_score": "nearest_train_delta_cosine_min",
+    "threshold": 0.2644089190767913,
+    "triplets_retained": 19
+  },
+  "candidate_rules": 32,
+  "diagnostic_label": "F009_SUPPORT_THRESHOLDS_REMOVE_NEGATIVE_TRANSITION_NOT_RECALL_BENCHMARK_REDESIGN_REQUIRED",
+  "floor_preserving_rules": 0,
+  "no_negative_transition_rules": 22
+}

@@ -1,0 +1,11 @@
+{
+  "direct_batch_balanced_accuracy": 0.625,
+  "direct_batch_majority_accuracy": 0.5,
+  "direct_image_bio_latent_r2": 0.9690286787358908,
+  "direct_image_min_std": 0.8358818754492422,
+  "direct_image_to_rna_recall@1": 0.21875,
+  "direct_rna_bio_latent_r2": 0.33573251660363246,
+  "direct_rna_min_std": 0.4815905269909062,
+  "direct_rna_to_image_recall@1": 0.0625,
+  "direct_rna_to_image_recall@5": 0.375
+}

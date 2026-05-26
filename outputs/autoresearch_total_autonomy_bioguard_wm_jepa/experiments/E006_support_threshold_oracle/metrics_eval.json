@@ -1,0 +1,17 @@
+{
+  "best_oracle": {
+    "active_fraction": 0.25925925925925924,
+    "alpha_source_only": 0.5,
+    "delta_cosine": 0.40187713237641143,
+    "delta_rank": 10.415636945473965,
+    "floor_gap_delta_cosine": 0.003914615681681,
+    "floor_gap_recall": 0.0,
+    "floor_gap_transition": 0.0012196833801752498,
+    "magnitude_ratio": 0.7613165517016935,
+    "recall_at_1": 0.48148148148148145,
+    "support_threshold": 0.9080497913691117,
+    "transition_improvement": 0.006881589896369326
+  },
+  "diagnostic_label": "E006_ORACLE_SUPPORT_GATE_HAS_CAPACITY_CALIBRATION_FAILURE",
+  "preserving_candidates": 31
+}

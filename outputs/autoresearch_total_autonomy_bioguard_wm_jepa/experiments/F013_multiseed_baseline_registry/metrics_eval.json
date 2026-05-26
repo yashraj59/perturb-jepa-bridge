@@ -1,0 +1,182 @@
+{
+  "action_ridge_floor_summary": {
+    "baseline": "action_ridge_floor",
+    "mean_cell_line_recall_at_1": 0.8962962962962961,
+    "mean_condition_recall_at_1": 0.3333333333333333,
+    "mean_delta_cosine": 0.45151513636166707,
+    "mean_delta_rank": 10.245808787907375,
+    "mean_magnitude_ratio": 0.7556432505625665,
+    "mean_perturbation_recall_at_1": 0.37777777777777777,
+    "mean_transition_improvement": 0.011281438877204748,
+    "min_condition_recall_at_1": 0.25925925925925924,
+    "min_transition_improvement": 0.0004243423315500173,
+    "seed_count": 5,
+    "std_condition_recall_at_1": 0.08685955110784128,
+    "std_delta_cosine": 0.06387001826204126,
+    "std_transition_improvement": 0.00901143408059086
+  },
+  "architecture_search_allowed": false,
+  "baseline_summary": [
+    {
+      "baseline": "action_ridge_floor",
+      "mean_cell_line_recall_at_1": 0.8962962962962961,
+      "mean_condition_recall_at_1": 0.3333333333333333,
+      "mean_delta_cosine": 0.45151513636166707,
+      "mean_delta_rank": 10.245808787907375,
+      "mean_magnitude_ratio": 0.7556432505625665,
+      "mean_perturbation_recall_at_1": 0.37777777777777777,
+      "mean_transition_improvement": 0.011281438877204748,
+      "min_condition_recall_at_1": 0.25925925925925924,
+      "min_transition_improvement": 0.0004243423315500173,
+      "seed_count": 5,
+      "std_condition_recall_at_1": 0.08685955110784128,
+      "std_delta_cosine": 0.06387001826204126,
+      "std_transition_improvement": 0.00901143408059086
+    },
+    {
+      "baseline": "source_only_ridge",
+      "mean_cell_line_recall_at_1": 0.9111111111111111,
+      "mean_condition_recall_at_1": 0.25925925925925924,
+      "mean_delta_cosine": 0.42764472546686944,
+      "mean_delta_rank": 9.778554663094674,
+      "mean_magnitude_ratio": 0.7167147237905473,
+      "mean_perturbation_recall_at_1": 0.2814814814814815,
+      "mean_transition_improvement": 0.009866133543730638,
+      "min_condition_recall_at_1": 0.2222222222222222,
+      "min_transition_improvement": 0.002179689139244399,
+      "seed_count": 5,
+      "std_condition_recall_at_1": 0.026189140043946204,
+      "std_delta_cosine": 0.08130677801513297,
+      "std_transition_improvement": 0.007999880079968599
+    },
+    {
+      "baseline": "source_as_target",
+      "mean_cell_line_recall_at_1": 0.9185185185185185,
+      "mean_condition_recall_at_1": 0.3333333333333333,
+      "mean_delta_cosine": 0.0,
+      "mean_delta_rank": 0.0,
+      "mean_magnitude_ratio": 0.0,
+      "mean_perturbation_recall_at_1": 0.37037037037037035,
+      "mean_transition_improvement": 0.0,
+      "min_condition_recall_at_1": 0.2962962962962963,
+      "min_transition_improvement": 0.0,
+      "seed_count": 5,
+      "std_condition_recall_at_1": 0.04536092116265145,
+      "std_delta_cosine": 0.0,
+      "std_transition_improvement": 0.0
+    },
+    {
+      "baseline": "action_mean_delta",
+      "mean_cell_line_recall_at_1": 0.9037037037037037,
+      "mean_condition_recall_at_1": 0.2962962962962963,
+      "mean_delta_cosine": 0.045608679625420735,
+      "mean_delta_rank": 0.0,
+      "mean_magnitude_ratio": 0.36133968772552244,
+      "mean_perturbation_recall_at_1": 0.31851851851851853,
+      "mean_transition_improvement": -0.004957371579360629,
+      "min_condition_recall_at_1": 0.25925925925925924,
+      "min_transition_improvement": -0.018758301311607058,
+      "seed_count": 5,
+      "std_condition_recall_at_1": 0.026189140043946204,
+      "std_delta_cosine": 0.08293048726300656,
+      "std_transition_improvement": 0.008229655491804022
+    },
+    {
+      "baseline": "mean_delta",
+      "mean_cell_line_recall_at_1": 0.9037037037037037,
+      "mean_condition_recall_at_1": 0.2962962962962963,
+      "mean_delta_cosine": 0.045608679625420735,
+      "mean_delta_rank": 0.0,
+      "mean_magnitude_ratio": 0.36133968772552244,
+      "mean_perturbation_recall_at_1": 0.31851851851851853,
+      "mean_transition_improvement": -0.004957371579360629,
+      "min_condition_recall_at_1": 0.25925925925925924,
+      "min_transition_improvement": -0.018758301311607058,
+      "seed_count": 5,
+      "std_condition_recall_at_1": 0.026189140043946204,
+      "std_delta_cosine": 0.08293048726300656,
+      "std_transition_improvement": 0.008229655491804022
+    },
+    {
+      "baseline": "action_only_ridge",
+      "mean_cell_line_recall_at_1": 0.9111111111111111,
+      "mean_condition_recall_at_1": 0.36296296296296293,
+      "mean_delta_cosine": 0.10869584936936771,
+      "mean_delta_rank": 1.9208609388465372,
+      "mean_magnitude_ratio": 0.47228026509712784,
+      "mean_perturbation_recall_at_1": 0.39259259259259255,
+      "mean_transition_improvement": -0.005422354406282718,
+      "min_condition_recall_at_1": 0.2962962962962963,
+      "min_transition_improvement": -0.021508798470111817,
+      "seed_count": 5,
+      "std_condition_recall_at_1": 0.04829038818668628,
+      "std_delta_cosine": 0.08424662595880679,
+      "std_transition_improvement": 0.01029191399662149
+    },
+    {
+      "baseline": "seed_randomized_full_ridge_null",
+      "mean_cell_line_recall_at_1": 0.874074074074074,
+      "mean_condition_recall_at_1": 0.3037037037037037,
+      "mean_delta_cosine": 0.05377898565319358,
+      "mean_delta_rank": 10.048200238655614,
+      "mean_magnitude_ratio": 0.5962879176516145,
+      "mean_perturbation_recall_at_1": 0.3555555555555555,
+      "mean_transition_improvement": -0.014996010735353732,
+      "min_condition_recall_at_1": 0.25925925925925924,
+      "min_transition_improvement": -0.033185550035107335,
+      "seed_count": 5,
+      "std_condition_recall_at_1": 0.030987408390150944,
+      "std_delta_cosine": 0.06508226339391393,
+      "std_transition_improvement": 0.010906507866420787
+    }
+  ],
+  "benchmark_name": "synthetic_genetic_anchor_lite_multiseed_v1",
+  "cache_sources": [
+    {
+      "cache_dir": "outputs/autoresearch_bioflow_jepa_phase4/delta_operator_audit",
+      "cache_status": "current_phase4_cache",
+      "seed": 0
+    },
+    {
+      "cache_dir": "outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/G001_fresh_synthetic_seed_cache/seed1_latent_cache",
+      "cache_status": "loaded",
+      "seed": 1
+    },
+    {
+      "cache_dir": "outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/G002_multi_seed_source_state_stability/seed2_latent_cache",
+      "cache_status": "loaded",
+      "seed": 2
+    },
+    {
+      "cache_dir": "outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/G002_multi_seed_source_state_stability/seed3_latent_cache",
+      "cache_status": "loaded",
+      "seed": 3
+    },
+    {
+      "cache_dir": "outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/G002_multi_seed_fresh_cache_replication/seed4_latent_cache",
+      "cache_status": "loaded",
+      "seed": 4
+    }
+  ],
+  "diagnostic_label": "F013_MULTISEED_STEP0_REGISTRY_COMPLETE_ARCHITECTURE_STILL_LOCKED",
+  "leakage_controls": "all baselines fit on each seed train split only; eval rows are scoring-only; no condition_key/biological_key/exact target-key features are used as model inputs",
+  "protected_old_seed0_floor": {
+    "absolute_target_cosine": 0.9087927245462672,
+    "delta_cosine": 0.39796251669473043,
+    "delta_magnitude_ratio": 0.7744371112179363,
+    "delta_prediction_effective_rank": 10.283476977293052,
+    "delta_prediction_spectral_entropy": 1.7229253141211776,
+    "delta_teacher_effective_rank": 11.781895734223935,
+    "source_as_target_bio_cosine_to_teacher": 0.9031308180300731,
+    "source_improvement_hinge_violation_fraction": 0.7407407407407407,
+    "transition_source_cosine_improvement": 0.005661906516194076,
+    "transition_to_target_map": 0.39993427495606143,
+    "transition_to_target_median_rank": 2.0,
+    "transition_to_target_recall@1": 0.48148148148148145,
+    "transition_to_target_recall@10": 0.9259259259259259,
+    "transition_to_target_recall@5": 0.8148148148148148,
+    "transition_to_target_same_perturbation_enrichment@10": 1.0222222222222224
+  },
+  "registry_complete": true,
+  "seed_count_required": 5
+}

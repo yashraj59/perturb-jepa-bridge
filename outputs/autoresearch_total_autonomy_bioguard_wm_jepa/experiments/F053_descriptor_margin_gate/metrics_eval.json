@@ -1,0 +1,67 @@
+{
+  "audit_scope": "Train-only safety gate over F051 train scale grid; zero fallback when nonzero residual lacks a near-tie lower-tail certificate.",
+  "candidate_scale_rows": [
+    {
+      "all_train_safe": true,
+      "certified": false,
+      "has_required_lower_tail_diagnostics": false,
+      "min_gap_delta_cosine": 0.0,
+      "min_gap_recall": 0.0,
+      "min_gap_transition": 0.0,
+      "min_train_mean_margin_change": 0.0,
+      "scale": 0.0,
+      "seed_count": 3,
+      "total_train_broken_count": 0.0
+    },
+    {
+      "all_train_safe": true,
+      "certified": false,
+      "has_required_lower_tail_diagnostics": false,
+      "min_gap_delta_cosine": 0.0010460012109348,
+      "min_gap_recall": 0.0,
+      "min_gap_transition": 0.0008510207842257,
+      "min_train_mean_margin_change": 0.0,
+      "scale": 0.025,
+      "seed_count": 3,
+      "total_train_broken_count": 0.0
+    },
+    {
+      "all_train_safe": true,
+      "certified": false,
+      "has_required_lower_tail_diagnostics": false,
+      "min_gap_delta_cosine": 0.002064843219912,
+      "min_gap_recall": 0.0,
+      "min_gap_transition": 0.0016782428202257,
+      "min_train_mean_margin_change": 0.0,
+      "scale": 0.05,
+      "seed_count": 3,
+      "total_train_broken_count": 1.0
+    }
+  ],
+  "certified_nonzero_scale_count": 0,
+  "diagnostic_label": "F053_DESCRIPTOR_MARGIN_GATE_ZERO_FALLBACK_INSUFFICIENT_TRAIN_DIAGNOSTICS",
+  "heldout_local_floor_preserved": true,
+  "leakage_controls": "Scale decision uses only F051 train scale-grid diagnostics; held-out metrics are copied for floor-preserving scoring and not used to choose a nonzero residual.",
+  "mean_floor_delta_cosine": 0.8979373119004643,
+  "mean_floor_recall_at_1": 0.8518518518518517,
+  "mean_floor_transition_improvement": 0.49837292953580503,
+  "mean_selected_delta_cosine": 0.8979373119004643,
+  "mean_selected_delta_rank": 7.036994101687616,
+  "mean_selected_gap_delta_cosine": 0.0,
+  "mean_selected_gap_recall": 0.0,
+  "mean_selected_gap_transition": 0.0,
+  "mean_selected_magnitude_ratio": 0.0,
+  "mean_selected_recall_at_1": 0.8518518518518517,
+  "mean_selected_transition_improvement": 0.49837292953580503,
+  "missing_lower_tail_columns": [
+    "margin_q10_change",
+    "near_tie_count",
+    "near_tie_erosions"
+  ],
+  "model_promoted": false,
+  "next_recommendation": "Rerun the descriptor-aligned JEPA only with pre-logged train near-tie lower-tail diagnostics and a smaller scale grid; do not use F051 held-out row to choose the scale.",
+  "selected_residual_scale": 0.0,
+  "selection_label": "F053_ZERO_FALLBACK_INSUFFICIENT_TRAIN_MARGIN_CERTIFICATE",
+  "selection_reason": "No nonzero scale had complete train-only near-tie lower-tail diagnostics plus nonnegative continuous and retrieval-margin evidence.",
+  "source_experiment": "F051_descriptor_aligned_replication"
+}

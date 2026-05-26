@@ -1,0 +1,25 @@
+{
+  "constraint": "source-neighborhood masks use online/context z_bio source latents; no cell-line metadata used for scoring masks",
+  "current_seed": {
+    "full_gallery_endpoint_condition_recall_at_1": 0.26587301587301587,
+    "selected_condition_median_rank": 1.7142857142857142,
+    "selected_condition_recall_at_1": 0.4576719576719577,
+    "selected_condition_recall_at_1_min": 0.2962962962962963,
+    "selected_delta_score_weight_mean": 0.5732142857142858,
+    "selected_delta_score_weight_nonzero_rate": 1.0,
+    "selected_perturbation_recall_at_1": 0.4748677248677248,
+    "selected_source_neighborhood_fraction_mean": 0.3333333333333333
+  },
+  "diagnostic_label": "C013_ONLINE_SOURCE_NEIGHBORHOOD_RETRIEVAL_PARTIAL_REPAIR_BELOW_FLOOR",
+  "fresh_seed": {
+    "full_gallery_endpoint_condition_recall_at_1": 0.27645502645502645,
+    "selected_condition_median_rank": 1.9285714285714286,
+    "selected_condition_recall_at_1": 0.4186507936507936,
+    "selected_condition_recall_at_1_min": 0.2962962962962963,
+    "selected_delta_score_weight_mean": 0.7383928571428571,
+    "selected_delta_score_weight_nonzero_rate": 1.0,
+    "selected_perturbation_recall_at_1": 0.4484126984126985,
+    "selected_source_neighborhood_fraction_mean": 0.3333333333333333
+  },
+  "protected_condition_recall_floor": 0.48148148148148145
+}

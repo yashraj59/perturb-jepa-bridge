@@ -1,0 +1,3 @@
+# Model Card
+
+Decision: `BGWM000_KEEP_AUDIT_REOPEN_PREDICTOR_ASSAY`

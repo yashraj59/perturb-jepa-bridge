@@ -1,0 +1,32 @@
+# F069 Representation Noise Audit
+
+## Decision
+`F069_OBSERVED_RNA_REPRESENTATION_AMPLIFIES_CALIBRATION_MISMATCH`
+
+## Purpose
+F068 showed train-real mismatch across split contracts. F069 checks whether observed RNA PCA amplifies that mismatch relative to the generator's true biological latent `z_bio`.
+
+## Findings
+- mean true abs transition optimism: `0.016932`
+- mean observed abs transition optimism: `0.058406`
+- observed-minus-true abs transition optimism: `0.041474`
+- observed/true abs transition optimism ratio: `3.354761`
+- mean true abs delta optimism: `0.051200`
+- mean observed abs delta optimism: `0.088751`
+- observed-minus-true abs delta optimism: `0.037552`
+- observed/true abs delta optimism ratio: `5.168045`
+
+## Interpretation
+If observed RNA PCA substantially amplifies calibration mismatch relative to true `z_bio`, the next family should target representation denoising or biological-latent recovery before another residual transition operator. If true `z_bio` is equally mismatched, the data contract remains the dominant issue.
+
+## Policy Rows
+```tsv
+policy	benchmark	true_abs_transition_optimism	observed_abs_transition_optimism	observed_minus_true_abs_transition_optimism	observed_to_true_abs_transition_optimism_ratio	true_abs_delta_optimism	observed_abs_delta_optimism	observed_minus_true_abs_delta_optimism	observed_to_true_abs_delta_optimism_ratio	true_real_transition	observed_real_transition	true_real_delta_cosine	observed_real_delta_cosine	true_real_recall_at_1	observed_real_recall_at_1
+extrapolative_index	synth_program_aligned_extrapolative_holdout_lite	0.0130658949422301	0.0261796992438613	0.0131138043016312	2.0036667491674263	0.0066808084141797	0.054992454782432	0.048311646368252296	8.231407244924599	0.1740915750355355	0.2957597590256905	0.96447443869107	0.9138991828651196	1.0	0.874074074074074
+random_perturbation	synth_program_aligned_random_holdout_lite	0.0229608275021545	0.0840560391416297	0.06109521163947519	3.660845373876111	0.1367898445908613	0.148603591352644	0.011813746761782706	1.0863642092519197	0.1627429665374319	0.3160528267028468	0.9614420716773	0.923050057911612	1.0	0.9185185185185184
+stratified_program	synth_program_aligned_stratified_holdout_lite	0.01476955920253	0.0649826832509052	0.0502131240483752	4.399771337777892	0.0101284650514196	0.0626583517971828	0.052529886745763206	6.186362047860416	0.1717590633110538	0.3061727202889944	0.9686494802830472	0.9166952144639756	1.0	0.948148148148148
+
+```
+
+## Promotion Status
+No model is promoted. F069 is read-only diagnostic work.

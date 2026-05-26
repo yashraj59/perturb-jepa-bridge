@@ -1,0 +1,3 @@
+aggregator	steps_completed	final_total	history_path
+attention	30	3.5909042358398438	outputs/autoresearch_synth_lite/diagnostics/ENCODER_PROJECTION_MODE_AUDIT/attention_history.json
+mean	30	3.599853754043579	outputs/autoresearch_synth_lite/diagnostics/ENCODER_PROJECTION_MODE_AUDIT/mean_history.json

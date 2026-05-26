@@ -1,0 +1,20 @@
+{
+  "action_negative_gap": -0.00014980322662127166,
+  "calibration_residual_fit_metric": 0.0060181090335698914,
+  "candidate_id": "spectral",
+  "cv_lcb_recall_gap": -0.041111111111111126,
+  "cv_lcb_transition_gap": -0.00020704404417760337,
+  "decision_label": "BSG002_DISCARD_SPECTRAL_RESIDUAL_FAILS_CV_GATE",
+  "magnitude_ratio_mean": 0.7284217542170404,
+  "mean_delta_cosine_gap": -0.0007381843325368759,
+  "mean_delta_rank_gap": 0.012371957548175772,
+  "mean_recall_gap": -0.013888888888888895,
+  "mean_transition_gap": -0.00014980322662127166,
+  "permutation_action_gap": 0.0,
+  "residual_gate_mean": 0.0,
+  "residual_gate_nonzero_fraction": 0.0,
+  "residual_scale": 0.0,
+  "residual_train_to_calibration_gap": 0.004203185914477402,
+  "selected": false,
+  "train_residual_fit_metric": 0.0018149231190924897
+}

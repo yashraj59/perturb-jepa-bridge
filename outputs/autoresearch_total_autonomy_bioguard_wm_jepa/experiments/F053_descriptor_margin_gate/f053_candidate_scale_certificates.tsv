@@ -1,0 +1,4 @@
+scale	seed_count	all_train_safe	min_gap_transition	min_gap_delta_cosine	min_gap_recall	total_train_broken_count	min_train_mean_margin_change	has_required_lower_tail_diagnostics	certified
+0.0	3	True	0.0	0.0	0.0	0.0	0.0	False	False
+0.025	3	True	0.0008510207842257	0.0010460012109348	0.0	0.0	0.0	False	False
+0.05	3	True	0.0016782428202257	0.002064843219912	0.0	1.0	0.0	False	False

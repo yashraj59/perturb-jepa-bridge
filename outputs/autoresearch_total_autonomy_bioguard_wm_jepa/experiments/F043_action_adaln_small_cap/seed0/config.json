@@ -1,0 +1,19 @@
+{
+  "bio_dim": 24,
+  "calibration_mode": "small_cap_continuous",
+  "context_length": 3,
+  "dataset": "synth_genetic_anchor_lite",
+  "device": "cpu",
+  "eval_split": "test_heldout_perturbation",
+  "latent_cache_path": "outputs/autoresearch_bioflow_jepa_phase4/delta_operator_audit",
+  "output_dir": "outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F043_action_adaln_small_cap/seed0",
+  "paper_path": "papers/2512.24497v3.pdf",
+  "predictor_depth": 6,
+  "predictor_dim": 64,
+  "predictor_heads": 4,
+  "residual_scale": 0.0,
+  "rollout_steps": 1,
+  "save_checkpoint": false,
+  "seed": 0,
+  "steps": 50
+}

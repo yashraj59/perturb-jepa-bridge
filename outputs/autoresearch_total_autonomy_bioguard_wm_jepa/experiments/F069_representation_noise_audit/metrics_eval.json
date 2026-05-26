@@ -1,0 +1,17 @@
+{
+  "diagnostic_label": "F069_OBSERVED_RNA_REPRESENTATION_AMPLIFIES_CALIBRATION_MISMATCH",
+  "f068_decision": "F068_TRAIN_REAL_MISMATCH_PERSISTS_ACROSS_SPLIT_CONTRACTS",
+  "leakage_controls": "Read-only comparison of F068 true z_bio versus observed RNA PCA rows; no heldout targets are used for fitting or selection.",
+  "max_observed_minus_true_abs_delta_optimism": 0.052529886745763206,
+  "mean_observed_abs_delta_optimism": 0.0887514659774196,
+  "mean_observed_abs_transition_optimism": 0.0584061405454654,
+  "mean_observed_minus_true_abs_delta_optimism": 0.037551759958599405,
+  "mean_observed_minus_true_abs_transition_optimism": 0.041474046663160534,
+  "mean_observed_to_true_abs_delta_optimism_ratio": 5.168044500678978,
+  "mean_observed_to_true_abs_transition_optimism_ratio": 3.354761153607143,
+  "mean_true_abs_delta_optimism": 0.0511997060188202,
+  "mean_true_abs_transition_optimism": 0.016932093882304867,
+  "model_promoted": false,
+  "policy_count": 3,
+  "source_experiment": "F068"
+}

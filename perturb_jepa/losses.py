@@ -29,6 +29,49 @@ def cosine_jepa_loss(student: torch.Tensor, teacher: torch.Tensor) -> torch.Tens
     return 1.0 - F.cosine_similarity(student, teacher.detach(), dim=-1).mean()
 
 
+def variance_floor_loss(x: torch.Tensor, *, target_std: float = 1.0, eps: float = 1e-4) -> torch.Tensor:
+    if x.ndim < 2:
+        raise ValueError("variance floor loss expects at least [batch, features]")
+    values = x.reshape(-1, x.shape[-1])
+    if values.shape[0] < 2:
+        return torch.zeros((), device=x.device, dtype=x.dtype)
+    std = torch.sqrt(values.var(dim=0, unbiased=False) + eps)
+    return F.relu(float(target_std) - std).mean()
+
+
+def covariance_offdiag_loss(x: torch.Tensor, *, eps: float = 1e-4) -> torch.Tensor:
+    if x.ndim < 2:
+        raise ValueError("covariance off-diagonal loss expects at least [batch, features]")
+    values = x.reshape(-1, x.shape[-1])
+    if values.shape[0] < 2 or values.shape[1] < 2:
+        return torch.zeros((), device=x.device, dtype=x.dtype)
+    values = values - values.mean(dim=0, keepdim=True)
+    values = values / torch.sqrt(values.var(dim=0, unbiased=False, keepdim=True) + eps)
+    covariance = values.T @ values / max(1, values.shape[0] - 1)
+    offdiag = covariance - torch.diag_embed(torch.diagonal(covariance))
+    return offdiag.pow(2).sum() / values.shape[1]
+
+
+def cross_correlation_identity_loss(x: torch.Tensor, y: torch.Tensor, *, eps: float = 1e-4) -> torch.Tensor:
+    if x.shape != y.shape:
+        raise ValueError("cross-correlation identity loss inputs must have matching shapes")
+    if x.ndim < 2:
+        raise ValueError("cross-correlation identity loss expects at least [batch, features]")
+    x_values = x.reshape(-1, x.shape[-1])
+    y_values = y.reshape(-1, y.shape[-1])
+    if x_values.shape[0] < 2 or x_values.shape[1] < 2:
+        return torch.zeros((), device=x.device, dtype=x.dtype)
+    x_values = (x_values - x_values.mean(dim=0, keepdim=True)) / torch.sqrt(
+        x_values.var(dim=0, unbiased=False, keepdim=True) + eps
+    )
+    y_values = (y_values - y_values.mean(dim=0, keepdim=True)) / torch.sqrt(
+        y_values.var(dim=0, unbiased=False, keepdim=True) + eps
+    )
+    correlation = x_values.T @ y_values / x_values.shape[0]
+    identity = torch.eye(correlation.shape[0], device=x.device, dtype=x.dtype)
+    return (correlation - identity).pow(2).sum() / correlation.shape[0]
+
+
 def masked_cosine_jepa_loss(
     student: torch.Tensor,
     teacher: torch.Tensor,
@@ -363,6 +406,9 @@ class BridgeLossWeights:
     counterfactual: float = 0.2
     cycle: float = 0.1
     response_bottleneck: float = 0.01
+    shared_variance: float = 0.0
+    shared_covariance: float = 0.0
+    cross_correlation: float = 0.0
 
 
 def bridge_loss(
@@ -444,6 +490,17 @@ def bridge_loss(
                 outputs["image_shared"],
                 bag_labels,
             )
+    if "rna_shared" in outputs:
+        terms["rna_shared_variance"] = variance_floor_loss(outputs["rna_shared"])
+        terms["rna_shared_covariance"] = covariance_offdiag_loss(outputs["rna_shared"])
+    if "image_shared" in outputs:
+        terms["image_shared_variance"] = variance_floor_loss(outputs["image_shared"])
+        terms["image_shared_covariance"] = covariance_offdiag_loss(outputs["image_shared"])
+    if "rna_shared" in outputs and "image_shared" in outputs:
+        terms["shared_cross_correlation"] = cross_correlation_identity_loss(
+            outputs["rna_shared"],
+            outputs["image_shared"],
+        )
     if (
         counterfactual_rna_target is not None
         and counterfactual_control_rna is not None
@@ -516,5 +573,17 @@ def bridge_loss(
     )
     total = total + weights.cycle * terms.get("cycle", torch.zeros((), device=device))
     total = total + weights.response_bottleneck * terms.get("response_bottleneck", torch.zeros((), device=device))
+    total = total + weights.shared_variance * (
+        terms.get("rna_shared_variance", torch.zeros((), device=device))
+        + terms.get("image_shared_variance", torch.zeros((), device=device))
+    )
+    total = total + weights.shared_covariance * (
+        terms.get("rna_shared_covariance", torch.zeros((), device=device))
+        + terms.get("image_shared_covariance", torch.zeros((), device=device))
+    )
+    total = total + weights.cross_correlation * terms.get(
+        "shared_cross_correlation",
+        torch.zeros((), device=device),
+    )
     terms["total"] = total
     return total, terms

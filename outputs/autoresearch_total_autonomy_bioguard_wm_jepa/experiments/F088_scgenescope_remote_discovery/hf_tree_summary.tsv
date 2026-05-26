@@ -1,0 +1,48 @@
+probe_path	path	type	size_bytes	modality	representation	extension	round	is_light_metadata_candidate	is_large_payload	is_feature_h5ad
+.	features	directory	0	unknown	unknown		unknown	False	False	False
+.	measured	directory	0	unknown	unknown		unknown	False	False	False
+.	.gitattributes	file	4841	unknown	unknown		unknown	False	False	False
+.	README.md	file	33	unknown	unknown	.md	unknown	False	False	False
+features	features/imaging	directory	0	image	feature		unknown	False	False	False
+features	features/rnaseq	directory	0	rna	feature		unknown	False	False	False
+features/rnaseq	features/rnaseq/UCE	directory	0	rna	feature		unknown	False	False	False
+features/rnaseq	features/rnaseq/geneformer	directory	0	rna	feature		unknown	False	False	False
+features/rnaseq	features/rnaseq/pca	directory	0	rna	feature		unknown	False	False	False
+features/rnaseq	features/rnaseq/scgpt	directory	0	rna	feature		unknown	False	False	False
+features/rnaseq	features/rnaseq/scvi	directory	0	rna	feature		unknown	False	False	False
+features/rnaseq/pca/n2000	features/rnaseq/pca/n2000/round_1.h5ad	file	43347445080	rna	feature	.h5ad	round_1	False	True	True
+features/rnaseq/pca/n2000	features/rnaseq/pca/n2000/round_2.h5ad	file	26608721472	rna	feature	.h5ad	round_2	False	True	True
+features/rnaseq/scvi/n200	features/rnaseq/scvi/n200/round_1.h5ad	file	4366952116	rna	feature	.h5ad	round_1	False	True	True
+features/rnaseq/scvi/n200	features/rnaseq/scvi/n200/round_2.h5ad	file	2565764148	rna	feature	.h5ad	round_2	False	True	True
+features/rnaseq/scvi/scvi_1	features/rnaseq/scvi/scvi_1/round_1.h5ad	file	16478887380	rna	feature	.h5ad	round_1	False	True	True
+features/rnaseq/scvi/scvi_1	features/rnaseq/scvi/scvi_1/round_2.h5ad	file	10176230692	rna	feature	.h5ad	round_2	False	True	True
+features/rnaseq/scvi/scvi_2	features/rnaseq/scvi/scvi_2/round_1.h5ad	file	16478887380	rna	feature	.h5ad	round_1	False	True	True
+features/rnaseq/scvi/scvi_2	features/rnaseq/scvi/scvi_2/round_2.h5ad	file	10176230692	rna	feature	.h5ad	round_2	False	True	True
+features/rnaseq/UCE/4layer	features/rnaseq/UCE/4layer/round_1.h5ad	file	18663899464	rna	feature	.h5ad	round_1	False	True	True
+features/rnaseq/UCE/4layer	features/rnaseq/UCE/4layer/round_2.h5ad	file	10788867496	rna	feature	.h5ad	round_2	False	True	True
+features/rnaseq/geneformer	features/rnaseq/geneformer/round_1.h5ad	file	15593619472	rna	feature	.h5ad	round_1	False	True	True
+features/rnaseq/geneformer	features/rnaseq/geneformer/round_2.h5ad	file	9195433072	rna	feature	.h5ad	round_2	False	True	True
+features/rnaseq/scgpt	features/rnaseq/scgpt/round_1.h5ad	file	16904806844	rna	feature	.h5ad	round_1	False	True	True
+features/rnaseq/scgpt	features/rnaseq/scgpt/round_2.h5ad	file	10408144396	rna	feature	.h5ad	round_2	False	True	True
+features/imaging	features/imaging/imagenet	directory	0	image	feature		unknown	False	False	False
+features/imaging/imagenet	features/imaging/imagenet/resnet152	directory	0	image	feature		unknown	False	False	False
+features/imaging/imagenet	features/imaging/imagenet/resnet50	directory	0	image	feature		unknown	False	False	False
+features/imaging/imagenet	features/imaging/imagenet/vit-h	directory	0	image	feature		unknown	False	False	False
+features/imaging/imagenet	features/imaging/imagenet/vit-l	directory	0	image	feature		unknown	False	False	False
+features/imaging/imagenet/resnet50	features/imaging/imagenet/resnet50/round_1.h5ad	file	36909661416	image	feature	.h5ad	round_1	False	True	True
+features/imaging/imagenet/resnet50	features/imaging/imagenet/resnet50/round_2.h5ad	file	21979889495	image	feature	.h5ad	round_2	False	True	True
+features/imaging/imagenet/resnet152	features/imaging/imagenet/resnet152/round_1.h5ad	file	36909661416	image	feature	.h5ad	round_1	False	True	True
+features/imaging/imagenet/resnet152	features/imaging/imagenet/resnet152/round_2.h5ad	file	21979889495	image	feature	.h5ad	round_2	False	True	True
+features/imaging/imagenet/vit-l	features/imaging/imagenet/vit-l/round_1.h5ad	file	18506448104	image	feature	.h5ad	round_1	False	True	True
+features/imaging/imagenet/vit-l	features/imaging/imagenet/vit-l/round_2.h5ad	file	11023900503	image	feature	.h5ad	round_2	False	True	True
+features/imaging/imagenet/vit-h	features/imaging/imagenet/vit-h/round_1.h5ad	file	23107251432	image	feature	.h5ad	round_1	False	True	True
+features/imaging/imagenet/vit-h	features/imaging/imagenet/vit-h/round_2.h5ad	file	13762897751	image	feature	.h5ad	round_2	False	True	True
+measured	measured/imaging	directory	0	image	measured		unknown	False	False	False
+measured	measured/rnaseq	directory	0	rna	measured		unknown	False	False	False
+measured/rnaseq	measured/rnaseq/round_1.h5ad	file	48101886092	rna	measured	.h5ad	round_1	False	True	False
+measured/rnaseq	measured/rnaseq/round_2.h5ad	file	29797702796	rna	measured	.h5ad	round_2	False	True	False
+measured/imaging	measured/imaging/uint8	directory	0	image	measured		unknown	False	False	False
+measured/imaging	measured/imaging/round_1.h5	file	2046741347	image	measured	.h5	round_1	False	True	False
+measured/imaging	measured/imaging/round_2.h5	file	1419408564	image	measured	.h5	round_2	False	True	False
+measured/imaging/uint8	measured/imaging/uint8/round_1	directory	0	image	measured		round_1	False	False	False
+measured/imaging/uint8	measured/imaging/uint8/round_2	directory	0	image	measured		round_2	False	False	False

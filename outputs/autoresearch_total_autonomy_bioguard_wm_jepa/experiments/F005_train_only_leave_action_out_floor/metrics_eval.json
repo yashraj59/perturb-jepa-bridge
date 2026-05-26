@@ -1,0 +1,88 @@
+{
+  "diagnostic_label": "F005_TRAIN_ONLY_LEAVE_ACTION_OUT_FLOOR_AUDIT_COMPLETED",
+  "mean_transition_improvement": 0.02831607867752169,
+  "min_transition_improvement": -0.018999318877425946,
+  "negative_action_groups": 2,
+  "rows": [
+    {
+      "delta_cosine": 0.48590465293160473,
+      "delta_rank": 6.125551355323057,
+      "left_out_perturbation_id": "1",
+      "median_rank": 1.0,
+      "recall_at_1": 0.8888888888888888,
+      "rows": 9,
+      "teacher_delta_norm_mean": 0.36272220794425447,
+      "transition_improvement": 0.023028965137528685
+    },
+    {
+      "delta_cosine": 0.39200953537420535,
+      "delta_rank": 5.906472283532189,
+      "left_out_perturbation_id": "2",
+      "median_rank": 3.0,
+      "recall_at_1": 0.3333333333333333,
+      "rows": 9,
+      "teacher_delta_norm_mean": 0.46922460339038263,
+      "transition_improvement": -0.006793939518271268
+    },
+    {
+      "delta_cosine": 0.717307876498913,
+      "delta_rank": 6.248441709292594,
+      "left_out_perturbation_id": "3",
+      "median_rank": 1.0,
+      "recall_at_1": 0.6666666666666666,
+      "rows": 9,
+      "teacher_delta_norm_mean": 0.46847700247314733,
+      "transition_improvement": 0.05799531482670972
+    },
+    {
+      "delta_cosine": 0.6456696326496965,
+      "delta_rank": 6.134576526459246,
+      "left_out_perturbation_id": "4",
+      "median_rank": 1.0,
+      "recall_at_1": 1.0,
+      "rows": 9,
+      "teacher_delta_norm_mean": 0.4138465123580264,
+      "transition_improvement": 0.05159785686543264
+    },
+    {
+      "delta_cosine": 0.48037401211633907,
+      "delta_rank": 6.17802300963685,
+      "left_out_perturbation_id": "5",
+      "median_rank": 1.0,
+      "recall_at_1": 0.7777777777777778,
+      "rows": 9,
+      "teacher_delta_norm_mean": 0.38959386252106426,
+      "transition_improvement": 0.01845665132929523
+    },
+    {
+      "delta_cosine": 0.6155503279254639,
+      "delta_rank": 6.440033434434323,
+      "left_out_perturbation_id": "6",
+      "median_rank": 1.0,
+      "recall_at_1": 1.0,
+      "rows": 9,
+      "teacher_delta_norm_mean": 0.4240417690628744,
+      "transition_improvement": 0.04312902570158434
+    },
+    {
+      "delta_cosine": 0.679365341052053,
+      "delta_rank": 6.293855297205964,
+      "left_out_perturbation_id": "7",
+      "median_rank": 1.0,
+      "recall_at_1": 0.7777777777777778,
+      "rows": 9,
+      "teacher_delta_norm_mean": 0.4978349611577379,
+      "transition_improvement": 0.05811407395532012
+    },
+    {
+      "delta_cosine": 0.1725483296665374,
+      "delta_rank": 5.654102432111186,
+      "left_out_perturbation_id": "8",
+      "median_rank": 2.0,
+      "recall_at_1": 0.4444444444444444,
+      "rows": 9,
+      "teacher_delta_norm_mean": 0.4221010488631369,
+      "transition_improvement": -0.018999318877425946
+    }
+  ]
+}

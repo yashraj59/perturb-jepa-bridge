@@ -1,0 +1,3 @@
+benchmark	seed_count	mean_same_program_cosine	min_same_program_cosine	mean_different_program_cosine	mean_program_cosine_margin
+synth_genetic_anchor_lite	5	-0.0840707663136224	-0.4640536308288574	-0.04487842017163833	-0.039192346141984066
+synth_program_aligned_genetic_lite	5	0.9913208882013956	0.9841533899307251	-0.09968864023685456	1.0910095284382502

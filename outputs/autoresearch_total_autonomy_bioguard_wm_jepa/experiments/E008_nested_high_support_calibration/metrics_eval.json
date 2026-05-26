@@ -1,0 +1,9 @@
+{
+  "diagnostic_label": "E008_NESTED_HIGH_SUPPORT_CALIBRATION_FAILED_TRAIN_ONLY",
+  "mean_outer_transition_gap": -1.6373628158513568e-05,
+  "min_outer_delta_cosine_gap": -0.003404427029368051,
+  "min_outer_recall_gap": 0.0,
+  "min_outer_transition_gap": -0.0009617467123618217,
+  "outer_folds": 8,
+  "selected_nonzero_outer_folds": 8
+}

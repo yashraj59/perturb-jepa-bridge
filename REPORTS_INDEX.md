@@ -4,6 +4,8 @@ This file summarizes the reports needed to resume the project without the origin
 
 ## Top-Level Handoff
 ```text
+F082_EXTERNAL_VALIDATION_INSTRUCTIONS.md
+CODEX_CHAT_SUMMARY.md
 CODEX_RESUME_HANDOFF.md
 SYNTHETIC_PASS_SUMMARY.md
 REPORTS_INDEX.md

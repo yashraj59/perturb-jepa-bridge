@@ -8,5 +8,9 @@ F097/F098/F100/F101 cpg0003 Rosetta runs failed fresh confirmation and do not
 supersede the protected model. Rosetta is L1000 plus Cell Painting, not strict
 paired scRNA plus imaging.
 
-F102 is dataset preflight only. It found PerturbMulti as a candidate but did not
-run model validation and does not supersede the protected model.
+F102/F103 found and preflighted PerturbMulti as a strict paired RNA plus
+image-derived/protein-intensity validator. F104-F111 ran frozen F082/F096
+ProgramBootstrapJEPA validation on GPU and all failed fresh external Tier 3
+promotion because F082 did not beat the protected full-ridge floor on all
+required split metrics. F111 was closest but remained non-promoting and does
+not supersede the protected model.

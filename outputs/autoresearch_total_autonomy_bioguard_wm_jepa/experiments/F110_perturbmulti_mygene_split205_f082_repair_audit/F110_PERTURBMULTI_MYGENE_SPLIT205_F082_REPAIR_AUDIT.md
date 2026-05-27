@@ -1,0 +1,398 @@
+# F110 PerturbMulti F082 External Validation
+
+## Decision
+`F110_FAIL_FRESH_EXTERNAL_TIER3_NO_PROMOTION`
+
+- model promoted: `False`
+- split mode: `guide_holdout_supported_gene`
+- model path: frozen F082/F096 ProgramBootstrapJEPA architecture and train-only delta calibration
+- protected audit floor: rank-3 train-split-only PLS/raw-linear model remains protected unless this report records a fresh Tier 3 pass
+- raw H5AD/image payloads stayed outside git
+
+## Preflight
+```json
+{
+  "action_summary": {
+    "action_descriptor": "Train-scaled external MyGene symbol/name/GO/pathway/interpro feature hashes plus train-control RNA projections; not exact target-key one-hot and no held-out target means.",
+    "action_descriptor_mode": "mygene_hash",
+    "action_dim": 265,
+    "descriptor_columns": [
+      "gene_length",
+      "uppercase_fraction",
+      "digit_fraction",
+      "vowel_fraction",
+      "ascii_mean",
+      "ascii_std",
+      "is_control",
+      "control_mean_projection_0",
+      "control_mean_projection_1",
+      "signed_char_ngram_hash_0",
+      "signed_char_ngram_hash_1",
+      "signed_char_ngram_hash_2",
+      "signed_char_ngram_hash_3",
+      "signed_char_ngram_hash_4",
+      "signed_char_ngram_hash_5",
+      "signed_char_ngram_hash_6",
+      "signed_char_ngram_hash_7",
+      "signed_char_ngram_hash_8",
+      "signed_char_ngram_hash_9",
+      "signed_char_ngram_hash_10",
+      "signed_char_ngram_hash_11",
+      "signed_char_ngram_hash_12",
+      "signed_char_ngram_hash_13",
+      "signed_char_ngram_hash_14",
+      "signed_char_ngram_hash_15",
+      "signed_char_ngram_hash_16",
+      "signed_char_ngram_hash_17",
+      "signed_char_ngram_hash_18",
+      "signed_char_ngram_hash_19",
+      "signed_char_ngram_hash_20",
+      "signed_char_ngram_hash_21",
+      "signed_char_ngram_hash_22",
+      "signed_char_ngram_hash_23",
+      "signed_char_ngram_hash_24",
+      "signed_char_ngram_hash_25",
+      "signed_char_ngram_hash_26",
+      "signed_char_ngram_hash_27",
+      "signed_char_ngram_hash_28",
+      "signed_char_ngram_hash_29",
+      "signed_char_ngram_hash_30",
+      "signed_char_ngram_hash_31",
+      "signed_char_ngram_hash_32",
+      "signed_char_ngram_hash_33",
+      "signed_char_ngram_hash_34",
+      "signed_char_ngram_hash_35",
+      "signed_char_ngram_hash_36",
+      "signed_char_ngram_hash_37",
+      "signed_char_ngram_hash_38",
+      "signed_char_ngram_hash_39",
+      "signed_char_ngram_hash_40",
+      "signed_char_ngram_hash_41",
+      "signed_char_ngram_hash_42",
+      "signed_char_ngram_hash_43",
+      "signed_char_ngram_hash_44",
+      "signed_char_ngram_hash_45",
+      "signed_char_ngram_hash_46",
+      "signed_char_ngram_hash_47",
+      "signed_char_ngram_hash_48",
+      "signed_char_ngram_hash_49",
+      "signed_char_ngram_hash_50",
+      "signed_char_ngram_hash_51",
+      "signed_char_ngram_hash_52",
+      "signed_char_ngram_hash_53",
+      "signed_char_ngram_hash_54",
+      "signed_char_ngram_hash_55",
+      "signed_char_ngram_hash_56",
+      "signed_char_ngram_hash_57",
+      "signed_char_ngram_hash_58",
+      "signed_char_ngram_hash_59",
+      "signed_char_ngram_hash_60",
+      "signed_char_ngram_hash_61",
+      "signed_char_ngram_hash_62",
+      "signed_char_ngram_hash_63",
+      "signed_char_ngram_hash_64",
+      "signed_char_ngram_hash_65",
+      "signed_char_ngram_hash_66",
+      "signed_char_ngram_hash_67",
+      "signed_char_ngram_hash_68",
+      "signed_char_ngram_hash_69",
+      "signed_char_ngram_hash_70",
+      "signed_char_ngram_hash_71",
+      "signed_char_ngram_hash_72",
+      "signed_char_ngram_hash_73",
+      "signed_char_ngram_hash_74",
+      "signed_char_ngram_hash_75",
+      "signed_char_ngram_hash_76",
+      "signed_char_ngram_hash_77",
+      "signed_char_ngram_hash_78",
+      "signed_char_ngram_hash_79",
+      "signed_char_ngram_hash_80",
+      "signed_char_ngram_hash_81",
+      "signed_char_ngram_hash_82",
+      "signed_char_ngram_hash_83",
+      "signed_char_ngram_hash_84",
+      "signed_char_ngram_hash_85",
+      "signed_char_ngram_hash_86",
+      "signed_char_ngram_hash_87",
+      "signed_char_ngram_hash_88",
+      "signed_char_ngram_hash_89",
+      "signed_char_ngram_hash_90",
+      "signed_char_ngram_hash_91",
+      "signed_char_ngram_hash_92",
+      "signed_char_ngram_hash_93",
+      "signed_char_ngram_hash_94",
+      "signed_char_ngram_hash_95",
+      "signed_char_ngram_hash_96",
+      "signed_char_ngram_hash_97",
+      "signed_char_ngram_hash_98",
+      "signed_char_ngram_hash_99",
+      "signed_char_ngram_hash_100",
+      "signed_char_ngram_hash_101",
+      "signed_char_ngram_hash_102",
+      "signed_char_ngram_hash_103",
+      "signed_char_ngram_hash_104",
+      "signed_char_ngram_hash_105",
+      "signed_char_ngram_hash_106",
+      "signed_char_ngram_hash_107",
+      "signed_char_ngram_hash_108",
+      "signed_char_ngram_hash_109",
+      "signed_char_ngram_hash_110",
+      "signed_char_ngram_hash_111",
+      "signed_char_ngram_hash_112",
+      "signed_char_ngram_hash_113",
+      "signed_char_ngram_hash_114",
+      "signed_char_ngram_hash_115",
+      "signed_char_ngram_hash_116",
+      "signed_char_ngram_hash_117",
+      "signed_char_ngram_hash_118",
+      "signed_char_ngram_hash_119",
+      "signed_char_ngram_hash_120",
+      "signed_char_ngram_hash_121",
+      "signed_char_ngram_hash_122",
+      "signed_char_ngram_hash_123",
+      "signed_char_ngram_hash_124",
+      "signed_char_ngram_hash_125",
+      "signed_char_ngram_hash_126",
+      "signed_char_ngram_hash_127",
+      "signed_char_ngram_hash_128",
+      "signed_char_ngram_hash_129",
+      "signed_char_ngram_hash_130",
+      "signed_char_ngram_hash_131",
+      "signed_char_ngram_hash_132",
+      "signed_char_ngram_hash_133",
+      "signed_char_ngram_hash_134",
+      "signed_char_ngram_hash_135",
+      "signed_char_ngram_hash_136",
+      "signed_char_ngram_hash_137",
+      "signed_char_ngram_hash_138",
+      "signed_char_ngram_hash_139",
+      "signed_char_ngram_hash_140",
+      "signed_char_ngram_hash_141",
+      "signed_char_ngram_hash_142",
+      "signed_char_ngram_hash_143",
+      "signed_char_ngram_hash_144",
+      "signed_char_ngram_hash_145",
+      "signed_char_ngram_hash_146",
+      "signed_char_ngram_hash_147",
+      "signed_char_ngram_hash_148",
+      "signed_char_ngram_hash_149",
+      "signed_char_ngram_hash_150",
+      "signed_char_ngram_hash_151",
+      "signed_char_ngram_hash_152",
+      "signed_char_ngram_hash_153",
+      "signed_char_ngram_hash_154",
+      "signed_char_ngram_hash_155",
+      "signed_char_ngram_hash_156",
+      "signed_char_ngram_hash_157",
+      "signed_char_ngram_hash_158",
+      "signed_char_ngram_hash_159",
+      "signed_char_ngram_hash_160",
+      "signed_char_ngram_hash_161",
+      "signed_char_ngram_hash_162",
+      "signed_char_ngram_hash_163",
+      "signed_char_ngram_hash_164",
+      "signed_char_ngram_hash_165",
+      "signed_char_ngram_hash_166",
+      "signed_char_ngram_hash_167",
+      "signed_char_ngram_hash_168",
+      "signed_char_ngram_hash_169",
+      "signed_char_ngram_hash_170",
+      "signed_char_ngram_hash_171",
+      "signed_char_ngram_hash_172",
+      "signed_char_ngram_hash_173",
+      "signed_char_ngram_hash_174",
+      "signed_char_ngram_hash_175",
+      "signed_char_ngram_hash_176",
+      "signed_char_ngram_hash_177",
+      "signed_char_ngram_hash_178",
+      "signed_char_ngram_hash_179",
+      "signed_char_ngram_hash_180",
+      "signed_char_ngram_hash_181",
+      "signed_char_ngram_hash_182",
+      "signed_char_ngram_hash_183",
+      "signed_char_ngram_hash_184",
+      "signed_char_ngram_hash_185",
+      "signed_char_ngram_hash_186",
+      "signed_char_ngram_hash_187",
+      "signed_char_ngram_hash_188",
+      "signed_char_ngram_hash_189",
+      "signed_char_ngram_hash_190",
+      "signed_char_ngram_hash_191",
+      "signed_char_ngram_hash_192",
+      "signed_char_ngram_hash_193",
+      "signed_char_ngram_hash_194",
+      "signed_char_ngram_hash_195",
+      "signed_char_ngram_hash_196",
+      "signed_char_ngram_hash_197",
+      "signed_char_ngram_hash_198",
+      "signed_char_ngram_hash_199",
+      "signed_char_ngram_hash_200",
+      "signed_char_ngram_hash_201",
+      "signed_char_ngram_hash_202",
+      "signed_char_ngram_hash_203",
+      "signed_char_ngram_hash_204",
+      "signed_char_ngram_hash_205",
+      "signed_char_ngram_hash_206",
+      "signed_char_ngram_hash_207",
+      "signed_char_ngram_hash_208",
+      "signed_char_ngram_hash_209",
+      "signed_char_ngram_hash_210",
+      "signed_char_ngram_hash_211",
+      "signed_char_ngram_hash_212",
+      "signed_char_ngram_hash_213",
+      "signed_char_ngram_hash_214",
+      "signed_char_ngram_hash_215",
+      "signed_char_ngram_hash_216",
+      "signed_char_ngram_hash_217",
+      "signed_char_ngram_hash_218",
+      "signed_char_ngram_hash_219",
+      "signed_char_ngram_hash_220",
+      "signed_char_ngram_hash_221",
+      "signed_char_ngram_hash_222",
+      "signed_char_ngram_hash_223",
+      "signed_char_ngram_hash_224",
+      "signed_char_ngram_hash_225",
+      "signed_char_ngram_hash_226",
+      "signed_char_ngram_hash_227",
+      "signed_char_ngram_hash_228",
+      "signed_char_ngram_hash_229",
+      "signed_char_ngram_hash_230",
+      "signed_char_ngram_hash_231",
+      "signed_char_ngram_hash_232",
+      "signed_char_ngram_hash_233",
+      "signed_char_ngram_hash_234",
+      "signed_char_ngram_hash_235",
+      "signed_char_ngram_hash_236",
+      "signed_char_ngram_hash_237",
+      "signed_char_ngram_hash_238",
+      "signed_char_ngram_hash_239",
+      "signed_char_ngram_hash_240",
+      "signed_char_ngram_hash_241",
+      "signed_char_ngram_hash_242",
+      "signed_char_ngram_hash_243",
+      "signed_char_ngram_hash_244",
+      "signed_char_ngram_hash_245",
+      "signed_char_ngram_hash_246",
+      "signed_char_ngram_hash_247",
+      "signed_char_ngram_hash_248",
+      "signed_char_ngram_hash_249",
+      "signed_char_ngram_hash_250",
+      "signed_char_ngram_hash_251",
+      "signed_char_ngram_hash_252",
+      "signed_char_ngram_hash_253",
+      "signed_char_ngram_hash_254",
+      "signed_char_ngram_hash_255"
+    ],
+    "hash_dim": 256,
+    "mygene_found_count": 195
+  },
+  "device_status": {
+    "cuda_device_count": 1,
+    "requested": "cuda",
+    "selected": "cuda",
+    "torch_cuda_available": true
+  },
+  "experiment_id": "F110",
+  "leakage_controls": {
+    "condition_key_eval_label_only": true,
+    "no_biological_key": true,
+    "no_condition_key_in_model_inputs": true,
+    "no_exact_target_key_one_hot": true,
+    "no_heldout_target_means": true,
+    "raw_payloads_outside_git": true,
+    "train_only_scaling_and_pca": true
+  },
+  "paired_summary": {
+    "condition_genes": 202,
+    "condition_guides": 417,
+    "control_guides": 46,
+    "exact_guide_matched_cells": 79048,
+    "gene_verified_cells": 79048,
+    "image_dim": 18,
+    "min_cells_per_guide": 20,
+    "protein_cells": 99294,
+    "rna_dim": 209,
+    "rna_feature_source": "X",
+    "shared_protein_rna_cells": 93848
+  },
+  "preflight_pass": true,
+  "preflight_reason": "",
+  "promotion_eligible": false,
+  "protein_h5ad": "/content/hf_cache/hub/datasets--xingjiepan--PerturbMulti/snapshots/8aac954eb631b68f6e11171a8313db61cc16c38c/protein_intensities_crispr_screen_20240615.h5ad",
+  "rna_feature_source": "X",
+  "rna_h5ad": "/content/hf_cache/datasets--xingjiepan--PerturbMulti/snapshots/8aac954eb631b68f6e11171a8313db61cc16c38c/RNA_scaled_crispr_screen_20240615.h5ad",
+  "split_mode": "guide_holdout_supported_gene",
+  "split_summary": {
+    "all_eval_splits_present": true,
+    "rows": [
+      {
+        "cells": 3826,
+        "guides": 17,
+        "noncontrol_genes": 17,
+        "noncontrol_guides": 17,
+        "split": "alternate_test"
+      },
+      {
+        "cells": 3538,
+        "guides": 17,
+        "noncontrol_genes": 17,
+        "noncontrol_guides": 17,
+        "split": "test"
+      },
+      {
+        "cells": 68137,
+        "guides": 366,
+        "noncontrol_genes": 202,
+        "noncontrol_guides": 320,
+        "split": "train"
+      },
+      {
+        "cells": 3170,
+        "guides": 17,
+        "noncontrol_genes": 17,
+        "noncontrol_guides": 17,
+        "split": "validation"
+      }
+    ]
+  }
+}
+```
+
+## Summary Metrics
+method	split	mean_transition_improvement	mean_delta_cosine	mean_recall_at_1	mean_delta_rank	mean_magnitude_ratio	mean_rna_to_image_recall_at_1	mean_image_to_rna_recall_at_1	max_identity_violation	max_leakage_flag	floor_transition_improvement	floor_delta_cosine	floor_recall_at_1	floor_gap_transition_improvement	floor_gap_delta_cosine	floor_gap_recall_at_1
+F082_delta_calibrated	alternate_test	0.09845751250548647	0.1474811937185794	0.0784313725490196	10.202815198628477	0.8049487232655012	0.1568627450980392	0.21568627450980393	0.0	0.0	0.13069965863734165	0.1803733774998865	0.1176470588235294	-0.03224214613185518	-0.032892183781307094	-0.03921568627450979
+F082_delta_calibrated	test	0.3209489353448545	0.3212784542944941	0.1372549019607843	9.980941858989182	0.8965968905421376	0.1176470588235294	0.11764705882352942	0.0	0.0	0.37933708784636505	0.355429611343235	0.35294117647058826	-0.058388152501510526	-0.03415115704874089	-0.21568627450980396
+F082_delta_calibrated	validation	0.14521079975561157	0.25761828755831534	0.1568627450980392	10.287749970613225	1.0036825142869146	0.1568627450980392	0.21568627450980393	0.0	0.0	0.12346197597852825	0.2335761305325558	0.1176470588235294	0.02174882377708333	0.024042157025759542	0.03921568627450982
+F082_no_delta_calibration	alternate_test	0.09760334111145987	0.14688514846688602	0.09803921568627451	11.114858131219167	0.7833045725144184					0.13069965863734165	0.1803733774998865	0.1176470588235294	-0.03309631752588178	-0.03348822903300047	-0.019607843137254888
+F082_no_delta_calibration	test	0.2942013203372275	0.2782026844258276	0.17647058823529413	11.060144266241915	0.8627046195293566					0.37933708784636505	0.355429611343235	0.35294117647058826	-0.08513576750913754	-0.0772269269174074	-0.17647058823529413
+F082_no_delta_calibration	validation	0.13784277804058245	0.2382315583888028	0.11764705882352942	11.425941430882714	0.9355317524088219					0.12346197597852825	0.2335761305325558	0.1176470588235294	0.014380802062054207	0.0046554278562470075	2.7755575615628914e-17
+no_residual_source_as_target	alternate_test	0.0	0.0	0.0588235294117647	0.0	0.0					0.13069965863734165	0.1803733774998865	0.1176470588235294	-0.13069965863734165	-0.1803733774998865	-0.0588235294117647
+no_residual_source_as_target	test	0.0	0.0	0.0588235294117647	0.0	0.0					0.37933708784636505	0.355429611343235	0.35294117647058826	-0.37933708784636505	-0.355429611343235	-0.29411764705882354
+no_residual_source_as_target	validation	0.0	0.0	0.0588235294117647	0.0	0.0					0.12346197597852825	0.2335761305325558	0.1176470588235294	-0.12346197597852825	-0.2335761305325558	-0.0588235294117647
+protected_full_ridge_floor	alternate_test	0.13069965863734165	0.1803733774998865	0.1176470588235294	10.49449986057863	0.8073859335581554					0.13069965863734165	0.1803733774998865	0.1176470588235294	0.0	0.0	0.0
+protected_full_ridge_floor	test	0.37933708784636505	0.355429611343235	0.35294117647058826	9.741670033842711	1.200993310831222					0.37933708784636505	0.355429611343235	0.35294117647058826	0.0	0.0	0.0
+protected_full_ridge_floor	validation	0.12346197597852825	0.2335761305325558	0.1176470588235294	10.126893531593339	1.2713960946819913					0.12346197597852825	0.2335761305325558	0.1176470588235294	0.0	0.0	0.0
+source_as_target	alternate_test	0.0	0.0	0.0588235294117647	0.0	0.0					0.13069965863734165	0.1803733774998865	0.1176470588235294	-0.13069965863734165	-0.1803733774998865	-0.0588235294117647
+source_as_target	test	0.0	0.0	0.0588235294117647	0.0	0.0					0.37933708784636505	0.355429611343235	0.35294117647058826	-0.37933708784636505	-0.355429611343235	-0.29411764705882354
+source_as_target	validation	0.0	0.0	0.0588235294117647	0.0	0.0					0.12346197597852825	0.2335761305325558	0.1176470588235294	-0.12346197597852825	-0.2335761305325558	-0.0588235294117647
+
+## Baseline Metrics
+method	split	transition_improvement	delta_cosine	recall_at_1	delta_rank	magnitude_ratio
+F082_no_delta_calibration	alternate_test	0.09760334111145987	0.14688514846688602	0.09803921568627451	11.114858131219167	0.7833045725144184
+F082_no_delta_calibration	test	0.2942013203372275	0.2782026844258276	0.17647058823529413	11.060144266241915	0.8627046195293566
+F082_no_delta_calibration	validation	0.13784277804058245	0.2382315583888028	0.11764705882352942	11.425941430882714	0.9355317524088219
+no_residual_source_as_target	alternate_test	0.0	0.0	0.0588235294117647	0.0	0.0
+no_residual_source_as_target	test	0.0	0.0	0.0588235294117647	0.0	0.0
+no_residual_source_as_target	validation	0.0	0.0	0.0588235294117647	0.0	0.0
+protected_full_ridge_floor	alternate_test	0.13069965863734165	0.1803733774998865	0.1176470588235294	10.49449986057863	0.8073859335581554
+protected_full_ridge_floor	test	0.37933708784636505	0.355429611343235	0.35294117647058826	9.741670033842711	1.200993310831222
+protected_full_ridge_floor	validation	0.12346197597852825	0.2335761305325558	0.1176470588235294	10.126893531593339	1.2713960946819913
+source_as_target	alternate_test	0.0	0.0	0.0588235294117647	0.0	0.0
+source_as_target	test	0.0	0.0	0.0588235294117647	0.0	0.0
+source_as_target	validation	0.0	0.0	0.0588235294117647	0.0	0.0
+
+## Leakage And Identity
+- condition_key/biological_key/exact one-hot descriptors were not used.
+- action descriptors were train-scaled gene-symbol/control-expression descriptors.
+- PCA, standardization, and delta calibration used train split only.
+- identity_violation and leakage_flag are reported in the summary metrics.

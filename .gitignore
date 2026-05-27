@@ -29,3 +29,6 @@ data/processed/
 # Generated external-validation tables that can expose per-compound metadata.
 outputs/**/paired_condition_metadata.tsv
 outputs/**/action_descriptor_matrix_head.tsv
+outputs/**/mygene_descriptor_cache.json
+outputs/**/f104_guide_condition_metadata.tsv
+outputs/**/f104_sealed_split_metadata.tsv

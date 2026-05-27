@@ -230,9 +230,32 @@ outputs/autoresearch_total_autonomy_bioguard_wm_jepa/research_journal.md
 
 Start from branch `dev`. Do not promote F096/F097/F098/F100/F101. cpg0003
 Rosetta should now be treated as an auxiliary L1000 plus Cell Painting stress
-test, not a strict promotion validator. Resume at
-`F103_PERTURBMULTI_RNA_OBS_AND_PAIRING_PREFLIGHT`: download only the
-PerturbMulti CRISPR RNA H5AD to ignored storage, inspect obs with backed/HDF5
-access only, prove RNA/protein/image cell-ID overlap, and only then run the
-frozen F082/F096 ProgramBootstrapJEPA path on GPU unless the GPU is unavailable
-or occupied.
+test, not a strict promotion validator.
+
+F103 completed the PerturbMulti strict paired preflight. It downloaded only the
+CRISPR RNA H5AD to ignored `/content/hf_cache`, inspected RNA/protein H5AD obs
+through HDF5/backed metadata, and range-read image tar headers only. Pairing
+passed: RNA/protein cell-ID overlap was 93,848 protein cells, and sampled image
+IDs overlapped both RNA and protein IDs. No `.X` matrix was loaded during F103.
+
+F104-F111 then ran the frozen F082/F096 ProgramBootstrapJEPA validation path on
+GPU. No run promoted a model. The strongest repair/capacity audit was F111
+(`mygene_hash`, `pca_dim=18`, guide-holdout supported-gene split, 600 steps,
+non-promoting by construction). It still missed the protected full-ridge floor
+on alternate_test and recall:
+
+```text
+F111 decision = F111_FAIL_FRESH_EXTERNAL_TIER3_NO_PROMOTION
+alternate_test floor gaps = transition -0.023675, delta -0.026036, recall -0.019608
+test floor gaps = transition -0.014287, delta +0.008811, recall -0.078431
+validation floor gaps = transition +0.006185, delta +0.004353, recall 0.0
+identity_violation = 0.0
+leakage_flag = 0.0
+```
+
+Current safe resume state: F082 is externally validated on a fresh strict paired
+PerturbMulti protocol but is not promotable under the registered floor. The
+protected model of record remains the rank-3 train-split-only PLS raw-linear
+readout. Any next attempt should either extract true image-tar features for a
+new paired validator pass or start a clearly new repair/redesign family, then
+require a fresh untouched external Tier 3 confirmation before promotion.

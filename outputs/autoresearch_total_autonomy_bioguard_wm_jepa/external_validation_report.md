@@ -1,5 +1,29 @@
 # scGeneScope External Validation Report
 
+## Latest Fresh External Confirmation Attempt
+`F111_FAIL_FRESH_EXTERNAL_TIER3_NO_PROMOTION`
+
+After the non-promoting scGeneScope repair-loop pass, a fresh strict paired
+PerturbMulti validator was preflighted and run. F103 passed RNA/protein/image
+metadata pairing using backed/HDF5 obs-only checks and image tar header
+range-reads only. F104-F111 then evaluated the frozen F082/F096
+ProgramBootstrapJEPA path on GPU. No model was promoted.
+
+Closest PerturbMulti audit: F111, MyGene hashed descriptors, `pca_dim=18`,
+guide-holdout supported-gene split, 600 steps, non-promoting by construction.
+
+```tsv
+split	transition_gap_vs_floor	delta_gap_vs_floor	recall_gap_vs_floor	identity_violation	leakage_flag
+alternate_test	-0.023675484631447224	-0.026035609147232963	-0.019607843137254888	0.0	0.0
+test	-0.014286628009727687	0.008811200176968459	-0.07843137254901966	0.0	0.0
+validation	0.006184862918593534	0.004352677447577141	0.0	0.0	0.0
+```
+
+Conclusion: F082 remains externally validated but not promotable on the fresh
+PerturbMulti protocol because it does not beat the protected full-ridge floor on
+all required split metrics. The protected rank-3 train-split-only PLS raw-linear
+readout remains the model of record.
+
 ## Current Decision
 `F096_PASS_EXTERNAL_TIER3_NON_PROMOTING`
 

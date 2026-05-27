@@ -261,18 +261,39 @@ HF_HOME=/content/hf_cache python scripts/run_cpg0003_rosetta_external_confirmati
    per-cell image tar archives. A backed obs/schema probe of the small
    protein-intensity H5AD passed: 99,294 cells, 18 channels, 508 perturbations.
 
-10. Resume at `F103_PERTURBMULTI_RNA_OBS_AND_PAIRING_PREFLIGHT`: download only
-   `RNA_scaled_crispr_screen_20240615.h5ad` to ignored storage, inspect obs with
-   backed/HDF5 access only, and prove RNA/protein/image cell-ID overlap before
-   any model run.
+10. F103 passed `PERTURBMULTI_RNA_OBS_AND_PAIRING_PREFLIGHT`. The large CRISPR
+    RNA H5AD was downloaded only to ignored `/content/hf_cache`; obs metadata
+    was inspected through HDF5/backed access; `.X` was not loaded; image tar
+    headers were range-read only. Pairing evidence:
+    RNA/protein cell-ID overlap = 93,848 protein cells, sampled image/RNA
+    overlap = 281 IDs, sampled image/protein overlap = 17 IDs, sampled
+    image/RNA/protein overlap = 17 IDs.
 
-11. Before trying any new scGeneScope payload protocol, satisfy the recovery plan in:
+11. F104-F111 ran frozen F082/F096 ProgramBootstrapJEPA PerturbMulti external
+    validation on GPU. No run promoted a model. Key outcomes:
+    - F104 gene-holdout failed promotion.
+    - F105 guide-holdout supported-gene failed promotion.
+    - F106 longer guide-holdout capacity audit failed and overfit floor gaps.
+    - F107 RNA `obsm:X_pca_harmony` adapter audit failed.
+    - F108 `pca_dim=18` adapter audit failed.
+    - F109 MyGene hashed descriptor repair audit failed.
+    - F110 MyGene split-seed 205 repair audit failed.
+    - F111 MyGene split-seed 205 long capacity audit failed.
+
+12. F111 was closest but still missed the protected floor:
+    alternate_test transition gap -0.023675, delta gap -0.026036,
+    recall gap -0.019608; test transition gap -0.014287, delta gap +0.008811,
+    recall gap -0.078431; validation gaps +0.006185, +0.004353, 0.0. Identity
+    and leakage flags were zero. F111 was explicitly non-promoting because it
+    was part of the repair loop.
+
+13. Before trying any new scGeneScope payload protocol, satisfy the recovery plan in:
 
 ```text
 outputs/autoresearch_total_autonomy_bioguard_wm_jepa/SCGENESCOPE_QUOTA_SAFE_RECOVERY_PLAN.md
 ```
 
-12. For any model run, use `--device cuda` unless the GPU is unavailable or
+14. For any model run, use `--device cuda` unless the GPU is unavailable or
    already occupied. Do not fall back to CPU silently.
 
 ## Code Paths For The Synthetic-Passing Candidate

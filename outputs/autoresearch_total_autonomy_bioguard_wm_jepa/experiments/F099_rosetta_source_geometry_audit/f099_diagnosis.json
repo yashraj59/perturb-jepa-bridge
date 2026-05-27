@@ -1,0 +1,19 @@
+{
+  "decision": "F099_SOURCE_STATE_CONTRACT_FAILURE_AND_VALIDATOR_MISMATCH_NO_PROMOTION",
+  "experiment_id": "F099",
+  "focus_experiment": "F098",
+  "identity_violation_max": 0.0,
+  "interpretation": "F098 shows high source-as-target cosine with a rank-one repeated control source. The uncalibrated JEPA transition slightly improves absolute target cosine but points opposite the measured small delta; the train-only delta calibrator improves delta cosine while damaging absolute target cosine. This is best treated as a Rosetta source-state contract failure plus validator mismatch, not as promotion evidence and not as a reason to redesign the architecture before a strict fresh scRNA+imaging validation.",
+  "leakage_flag_max": 0.0,
+  "mean_calibrated_absolute_target_cosine": 0.30574775409348137,
+  "mean_calibrated_delta_cosine": 0.23513388462828416,
+  "mean_calibrated_transition_improvement": -0.6432521596137892,
+  "mean_direct_delta_cosine": -0.9186171209665646,
+  "mean_direct_transition_improvement": 0.01987258616861415,
+  "mean_source_effective_rank": 1.0000000000000187,
+  "mean_source_to_target_cosine": 0.9489999137072707,
+  "mean_target_effective_rank": 11.808316606868376,
+  "model_promoted": false,
+  "source_state_contract_failure": true,
+  "validator_mismatch": true
+}

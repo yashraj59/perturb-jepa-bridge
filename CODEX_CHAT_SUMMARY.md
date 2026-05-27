@@ -155,12 +155,15 @@ Current fresh-confirmation run status:
 ```text
 F097 compound-holdout cpg0003 Rosetta = FAIL_FRESH_EXTERNAL_CONFIRMATION_NO_PROMOTION
 F098 same-condition replicate-holdout cpg0003 Rosetta = FAIL_FRESH_EXTERNAL_CONFIRMATION_NO_PROMOTION
-F098 transition/delta floor gaps were positive on all splits except test recall,
-but absolute transition improvement stayed negative.
+F099 artifact-only Rosetta geometry audit = SOURCE_STATE_CONTRACT_FAILURE_AND_VALIDATOR_MISMATCH_NO_PROMOTION
+F100 zero-signature source-state run = FAIL_FRESH_EXTERNAL_CONFIRMATION_NO_PROMOTION
+F101 small-scale train-only delta calibration = FAIL_FRESH_EXTERNAL_CONFIRMATION_NO_PROMOTION
+F101 fixed delta cosine and recall floor gaps, but absolute transition
+improvement stayed slightly negative on all splits.
 No model promoted.
-Next needed step = diagnose whether Rosetta source-state/control geometry makes
-transition-improvement unsuitable, or whether a Rosetta-specific source/target
-normalization audit is needed before another confirmation attempt.
+Next needed step = stop the Rosetta promotion loop and resume strict paired
+scRNA plus imaging fresh-dataset preflight, preferably an unused scGeneScope
+sealed split or another public paired scRNA/imaging dataset.
 ```
 
 ## How Synthetic Finally Worked
@@ -221,10 +224,10 @@ outputs/autoresearch_total_autonomy_bioguard_wm_jepa/research_journal.md
 
 ## Next Safe Resume Step
 
-Start from branch `dev`. Do not promote F096. Continue from F097 by implementing
-and running a fresh cpg0003 Rosetta confirmation runner for the frozen
-fingerprint-calibrated F082 path, using GPU for model training unless unavailable
-or occupied. Keep raw files under ignored `data/raw/`, keep PLS/full-ridge as an
-audit floor only, and document whether cpg0003 is sufficient as fresh external
-confirmation or only a non-scRNA stress test requiring a later scRNA+imaging
-fresh confirmation.
+Start from branch `dev`. Do not promote F096/F097/F098/F100/F101. cpg0003
+Rosetta should now be treated as an auxiliary L1000 plus Cell Painting stress
+test, not a strict promotion validator. Resume at
+`F102_STRICT_SCRNA_IMAGING_FRESH_DATASET_PREFLIGHT`: find or recover a strict
+paired scRNA plus imaging fresh validation protocol, run metadata/obs-only/backed
+checks first, and only then run the frozen F082/F096 ProgramBootstrapJEPA path on
+GPU unless the GPU is unavailable or occupied.

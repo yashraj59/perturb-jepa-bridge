@@ -16,6 +16,10 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from perturb_jepa.models.program_bootstrap_jepa import ProgramBootstrapJEPAConfig
+from perturb_jepa.training.bioguard_wm_calibration import (
+    make_action_grouped_folds,
+    select_residual_scale_small_cap_continuous,
+)
 from perturb_jepa.training.biospectral_operator import (
     LatentOperatorBundle,
     bundle_features,
@@ -24,7 +28,10 @@ from perturb_jepa.training.biospectral_operator import (
     predict_ridge_numpy,
 )
 from scripts.run_bioguard_wm_total_autonomy import (
+    _encode_program_jepa_table,
     _evaluate_delta_calibrated_source_delta_rank_jepa,
+    _evaluate_source_delta_rank_program_jepa,
+    _predict_program_jepa_transition,
     _train_source_delta_rank_program_jepa,
 )
 
@@ -89,6 +96,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--pca-dim", type=int, default=24)
     parser.add_argument("--hash-dim", type=int, default=SMILES_HASH_DIM)
     parser.add_argument("--split-mode", choices=["compound_holdout", "same_condition_replicate"], default="compound_holdout")
+    parser.add_argument("--source-state", choices=["control_centroid", "zero_signature"], default="control_centroid")
+    parser.add_argument("--delta-calibration-mode", choices=["full_delta", "train_small_scale"], default="full_delta")
     parser.add_argument("--experiment-id", default="F097")
     return parser
 
@@ -107,6 +116,7 @@ def main(argv: list[str] | None = None) -> int:
         min_shared_noncontrol=args.min_shared_noncontrol,
         pca_dim=args.pca_dim,
         hash_dim=args.hash_dim,
+        source_state=args.source_state,
     )
     preflight = {
         "environment": env,
@@ -117,6 +127,8 @@ def main(argv: list[str] | None = None) -> int:
         "preflight_pass": bool(tables["preflight_pass"]),
         "preflight_reason": tables.get("reason", ""),
         "split_mode": args.split_mode,
+        "source_state": args.source_state,
+        "delta_calibration_mode": args.delta_calibration_mode,
         "experiment_id": args.experiment_id,
         "raw_files_not_for_git": True,
         "validator_caveat": "cpg0003 Rosetta is L1000 expression plus Cell Painting morphology, not scRNA.",
@@ -135,6 +147,12 @@ def main(argv: list[str] | None = None) -> int:
     per_seed_rows: list[dict[str, Any]] = []
     baseline_rows: list[dict[str, Any]] = []
     trace_rows: list[dict[str, Any]] = []
+    calibration_rows: list[dict[str, Any]] = []
+    candidate_method = (
+        f"{args.experiment_id}_frozen_smiles_scaled_delta_calibrated"
+        if args.delta_calibration_mode == "train_small_scale"
+        else f"{args.experiment_id}_frozen_smiles_delta_calibrated"
+    )
     for seed in args.seeds:
         model, trace = _train_source_delta_rank_program_jepa(
             tables["train_table"],
@@ -145,18 +163,42 @@ def main(argv: list[str] | None = None) -> int:
             steps=args.steps,
         )
         trace_rows.append({"seed": seed, **trace})
-        for split, eval_table in tables["eval_tables"].items():
-            eval_payload = _evaluate_delta_calibrated_source_delta_rank_jepa(
+        scaled_fit: dict[str, Any] | None = None
+        if args.delta_calibration_mode == "train_small_scale":
+            scaled_fit = _fit_train_only_scaled_delta_calibrator(
                 model,
                 tables["train_table"],
-                eval_table,
+                seed=seed,
                 device=args.device,
+                output_dir=args.output_dir / f"seed_{seed}",
             )
+            calibration_rows.append({"seed": seed, **scaled_fit["selection"]})
+        for split, eval_table in tables["eval_tables"].items():
+            if args.delta_calibration_mode == "train_small_scale":
+                if scaled_fit is None:
+                    raise RuntimeError("Internal error: missing scaled calibration fit.")
+                eval_payload = _evaluate_scaled_delta_calibrated_jepa(
+                    model,
+                    tables["train_table"],
+                    eval_table,
+                    fit=scaled_fit["fit"],
+                    residual_scale=float(scaled_fit["selection"]["residual_scale"]),
+                    train_metrics=scaled_fit["train_metrics"],
+                    selection=scaled_fit["selection"],
+                    device=args.device,
+                )
+            else:
+                eval_payload = _evaluate_delta_calibrated_source_delta_rank_jepa(
+                    model,
+                    tables["train_table"],
+                    eval_table,
+                    device=args.device,
+                )
             per_seed_rows.append(
                 {
                     "seed": seed,
                     "split": split,
-                    "method": f"{args.experiment_id}_frozen_smiles_delta_calibrated",
+                    "method": candidate_method,
                     **eval_payload,
                 }
             )
@@ -171,22 +213,30 @@ def main(argv: list[str] | None = None) -> int:
     per_seed.to_csv(args.output_dir / f"{file_prefix}_seed_split_metrics.tsv", sep="\t", index=False)
     baselines.to_csv(args.output_dir / f"{file_prefix}_baseline_metrics.tsv", sep="\t", index=False)
     trace.to_csv(args.output_dir / f"{file_prefix}_train_trace.tsv", sep="\t", index=False)
+    if calibration_rows:
+        pd.DataFrame(calibration_rows).to_csv(
+            args.output_dir / f"{file_prefix}_calibration_selection.tsv",
+            sep="\t",
+            index=False,
+        )
     summary.to_csv(args.output_dir / f"{file_prefix}_summary_metrics.tsv", sep="\t", index=False)
 
-    decision = _decision(summary, preflight, candidate_method=f"{args.experiment_id}_frozen_smiles_delta_calibrated")
+    decision = _decision(summary, preflight, candidate_method=candidate_method)
     payload = {
         "decision": decision,
-        "candidate_method": f"{args.experiment_id}_frozen_smiles_delta_calibrated",
+        "candidate_method": candidate_method,
         "preflight": preflight,
         "per_seed_split_metrics": per_seed.to_dict("records"),
         "baseline_metrics": baselines.to_dict("records"),
         "summary_metrics": summary.to_dict("records"),
         "train_trace": trace.to_dict("records"),
+        "calibration_selection": calibration_rows,
         "model_promoted": False,
         "leakage_controls": (
             f"{args.experiment_id} uses compound IDs only for pairing/grouping/retrieval labels. "
             "Model action tensors are non-exact SMILES hash descriptors, simple chemistry counts, and dose. "
-            "PCA, scaling, full-ridge floor, and delta calibration are fit on train split only. "
+            f"The source-state contract is {args.source_state}. PCA, scaling, full-ridge floor, and delta "
+            "calibration are fit on train split only. "
             "No condition_key, biological_key, exact target one-hot, held-out target means, pooled train+test "
             "statistics, or floor predictions are candidate model inputs."
         ),
@@ -507,6 +557,7 @@ def _build_tables(
     min_shared_noncontrol: int,
     pca_dim: int,
     hash_dim: int,
+    source_state: str,
 ) -> dict[str, Any]:
     metadata = paired["metadata"].copy()
     l1k = np.asarray(paired["l1k"], dtype=np.float64)
@@ -544,13 +595,22 @@ def _build_tables(
             "descriptor_summary": {},
             "control_summary": {},
         }
+    if source_state == "zero_signature":
+        cp_source_values = np.zeros((1, cp.shape[1]), dtype=np.float64)
+        l1k_source_values = np.zeros((1, l1k.shape[1]), dtype=np.float64)
+    elif source_state == "control_centroid":
+        cp_source_values = paired["cp_train_controls"]
+        l1k_source_values = paired["l1k_train_controls"]
+    else:
+        raise ValueError(f"Unknown source_state: {source_state}")
+
     cp_pca, source_cp_pca = _train_only_pca_with_source(
         cp,
         train_mask,
-        paired["cp_train_controls"],
+        cp_source_values,
         dim=pca_dim,
     )
-    source_l1k = np.asarray(paired["l1k_train_controls"], dtype=np.float64).mean(axis=0, keepdims=True)
+    source_l1k = np.asarray(l1k_source_values, dtype=np.float64).mean(axis=0, keepdims=True)
     descriptors, descriptor_columns, descriptor_summary = _action_descriptors(metadata, train_mask, hash_dim=hash_dim)
     descriptor_frame = pd.DataFrame(descriptors, columns=descriptor_columns)
     descriptor_frame.insert(0, "condition_key", metadata["condition_key"].to_numpy())
@@ -575,6 +635,7 @@ def _build_tables(
         "l1k_train_control_rows": int(np.asarray(paired["l1k_train_controls"]).shape[0]),
         "source_l1k_dim": int(source_l1k.shape[1]),
         "source_cp_pca_dim": int(source_cp_pca.shape[1]),
+        "source_state": source_state,
     }
     config = ProgramBootstrapJEPAConfig(
         genes=int(l1k.shape[1]),
@@ -702,6 +763,145 @@ def _hashed_smiles_ngrams(smiles: str, *, dim: int) -> np.ndarray:
     if norm > 0.0:
         out = out / norm
     return out
+
+
+def _fit_train_only_scaled_delta_calibrator(
+    model: Any,
+    train_table: dict[str, Any],
+    *,
+    seed: int,
+    device: str,
+    output_dir: Path,
+) -> dict[str, Any]:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    encoded = _encode_program_jepa_table(model, train_table, device=device)
+    raw_delta = encoded["transition"] - train_table["source_pca_target"].astype(np.float64)
+    true_delta = train_table["pca_target"].astype(np.float64) - train_table["source_pca_target"].astype(np.float64)
+    metadata = train_table["metadata"].reset_index(drop=True).copy()
+    folds = make_action_grouped_folds(metadata, n_folds=4, action_key="perturbation", seed=int(seed) + 10100)
+    scale_grid = [0.0, 0.001, 0.0025, 0.005, 0.01, 0.025, 0.05]
+    fold_rows: list[dict[str, Any]] = []
+    for fold in folds:
+        if fold.get("status") != "OK":
+            continue
+        fit_idx = np.asarray(fold["fit_indices"], dtype=int)
+        cal_idx = np.asarray(fold["calibration_indices"], dtype=int)
+        if fit_idx.size < 2 or cal_idx.size < 1:
+            continue
+        fold_fit = fit_ridge_numpy(raw_delta[fit_idx], true_delta[fit_idx], alpha=1.0e-2)
+        fold_calibrated = predict_ridge_numpy(fold_fit, raw_delta[cal_idx])
+        bundle = _table_bundle(_slice_table(train_table, cal_idx), name=f"f101_train_fold_{fold.get('fold_id', 0)}")
+        floor_metrics = bundle_transition_metrics(bundle, np.zeros_like(bundle.delta))
+        for scale in scale_grid:
+            metrics = bundle_transition_metrics(bundle, float(scale) * fold_calibrated)
+            fold_rows.append(
+                {
+                    "fold_id": int(fold.get("fold_id", 0)),
+                    "scale": float(scale),
+                    "transition_improvement": metrics["transition_source_cosine_improvement"],
+                    "delta_cosine": metrics["delta_cosine"],
+                    "recall_at_1": metrics.get("transition_to_target_recall@1", 0.0),
+                    "delta_rank": metrics["delta_prediction_effective_rank"],
+                    "magnitude_ratio": metrics["delta_magnitude_ratio"],
+                    "floor_gap_transition": metrics["transition_source_cosine_improvement"]
+                    - floor_metrics["transition_source_cosine_improvement"],
+                    "floor_gap_delta_cosine": metrics["delta_cosine"] - floor_metrics["delta_cosine"],
+                    "floor_gap_recall": metrics.get("transition_to_target_recall@1", 0.0)
+                    - floor_metrics.get("transition_to_target_recall@1", 0.0),
+                    "action_negative_gap": 0.0,
+                }
+            )
+    selection = select_residual_scale_small_cap_continuous(
+        fold_rows,
+        cap=0.05,
+        scale_grid=scale_grid,
+        require_nonnegative_min_recall=True,
+    )
+    if fold_rows:
+        pd.DataFrame(fold_rows).to_csv(output_dir / "f101_scaled_calibration_fold_metrics.tsv", sep="\t", index=False)
+    full_fit = fit_ridge_numpy(raw_delta, true_delta, alpha=1.0e-2)
+    full_calibrated = predict_ridge_numpy(full_fit, raw_delta)
+    train_bundle = _table_bundle(train_table, name="f101_train_scaled_calibration")
+    scaled_train = float(selection.residual_scale) * full_calibrated
+    train_metrics_raw = bundle_transition_metrics(train_bundle, raw_delta)
+    train_metrics_scaled = bundle_transition_metrics(train_bundle, scaled_train)
+    selection_payload = {
+        "residual_scale": float(selection.residual_scale),
+        "residual_gate": float(selection.residual_gate),
+        "calibration_status": selection.status,
+        "cv_lcb_transition_gap": float(selection.cv_lcb_transition_gap),
+        "cv_lcb_delta_cosine_gap": float(selection.cv_lcb_delta_cosine_gap),
+        "cv_lcb_recall_gap": float(selection.cv_lcb_recall_gap),
+        "mean_transition_gap": float(selection.mean_transition_gap),
+        "mean_recall_gap": float(selection.mean_recall_gap),
+        "action_negative_gap": float(selection.action_negative_gap),
+        "train_raw_transition_improvement": train_metrics_raw["transition_source_cosine_improvement"],
+        "train_raw_delta_cosine": train_metrics_raw["delta_cosine"],
+        "train_raw_recall_at_1": train_metrics_raw.get("transition_to_target_recall@1", 0.0),
+        "train_raw_delta_rank": train_metrics_raw["delta_prediction_effective_rank"],
+        "train_calibrated_transition_improvement": train_metrics_scaled["transition_source_cosine_improvement"],
+        "train_calibrated_delta_cosine": train_metrics_scaled["delta_cosine"],
+        "train_calibrated_recall_at_1": train_metrics_scaled.get("transition_to_target_recall@1", 0.0),
+        "train_calibrated_delta_rank": train_metrics_scaled["delta_prediction_effective_rank"],
+        "train_calibrated_magnitude_ratio": train_metrics_scaled["delta_magnitude_ratio"],
+    }
+    _write_json(output_dir / "f101_scaled_calibration_selection.json", selection_payload)
+    return {"fit": full_fit, "selection": selection_payload, "train_metrics": selection_payload}
+
+
+def _evaluate_scaled_delta_calibrated_jepa(
+    model: Any,
+    train_table: dict[str, Any],
+    eval_table: dict[str, Any],
+    *,
+    fit: Any,
+    residual_scale: float,
+    train_metrics: dict[str, float],
+    selection: dict[str, float],
+    device: str,
+) -> dict[str, float]:
+    raw = _evaluate_source_delta_rank_program_jepa(model, train_table, eval_table, device=device)
+    encoded = _encode_program_jepa_table(model, eval_table, device=device)
+    raw_delta = encoded["transition"] - eval_table["source_pca_target"].astype(np.float64)
+    calibrated_delta = predict_ridge_numpy(fit, raw_delta)
+    scaled_delta = float(residual_scale) * calibrated_delta
+    bundle = _table_bundle(eval_table, name="f101_eval_scaled_delta")
+    scaled_metrics = bundle_transition_metrics(bundle, scaled_delta)
+    wrong_action = np.roll(eval_table["action"], shift=1, axis=0)
+    wrong_transition = _predict_program_jepa_transition(model, eval_table["control_expression"], wrong_action, device=device)
+    wrong_raw_delta = wrong_transition - eval_table["source_pca_target"].astype(np.float64)
+    wrong_scaled_delta = float(residual_scale) * predict_ridge_numpy(fit, wrong_raw_delta)
+    wrong_metrics = bundle_transition_metrics(bundle, wrong_scaled_delta)
+    return {
+        **raw,
+        **train_metrics,
+        "selected_residual_scale": float(residual_scale),
+        "calibration_status_code": 1.0
+        if str(selection.get("calibration_status", "")).startswith("CALIBRATION_SELECTED")
+        else 0.0,
+        "calibrated_transition_improvement": scaled_metrics["transition_source_cosine_improvement"],
+        "calibrated_delta_cosine": scaled_metrics["delta_cosine"],
+        "calibrated_recall_at_1": scaled_metrics.get("transition_to_target_recall@1", 0.0),
+        "calibrated_delta_rank": scaled_metrics["delta_prediction_effective_rank"],
+        "calibrated_magnitude_ratio": scaled_metrics["delta_magnitude_ratio"],
+        "calibrated_action_negative_gap": scaled_metrics["transition_source_cosine_improvement"]
+        - wrong_metrics["transition_source_cosine_improvement"],
+        "calibrated_delta_cosine_gain": scaled_metrics["delta_cosine"] - raw["image_teacher_delta_cosine"],
+        "calibrated_transition_gain": scaled_metrics["transition_source_cosine_improvement"]
+        - raw["image_teacher_transition_improvement"],
+        "calibrated_recall_gain": scaled_metrics.get("transition_to_target_recall@1", 0.0)
+        - raw["image_teacher_recall_at_1"],
+    }
+
+
+def _slice_table(table: dict[str, Any], indices: np.ndarray) -> dict[str, Any]:
+    idx = np.asarray(indices, dtype=int)
+    return {
+        "source_pca_target": table["source_pca_target"][idx],
+        "pca_target": table["pca_target"][idx],
+        "action": table["action"][idx],
+        "metadata": table["metadata"].iloc[idx].reset_index(drop=True),
+    }
 
 
 def _baseline_rows(train_table: dict[str, Any], eval_table: dict[str, Any], *, seed: int, split: str) -> list[dict[str, Any]]:
@@ -864,6 +1064,8 @@ readout remains the model of record.
 - modalities: L1000 expression plus Cell Painting morphology
 - caveat: this is not scRNA
 - split mode: `{preflight.get('split_mode', 'unknown')}`
+- source-state contract: `{preflight.get('source_state', 'control_centroid')}`
+- delta calibration mode: `{preflight.get('delta_calibration_mode', 'full_delta')}`
 - action descriptor: {descriptor.get('action_descriptor', '')}
 - action dim: `{descriptor.get('action_dim', 0)}`
 - missing non-control SMILES rows: `{descriptor.get('missing_noncontrol_smiles_rows', 0)}`

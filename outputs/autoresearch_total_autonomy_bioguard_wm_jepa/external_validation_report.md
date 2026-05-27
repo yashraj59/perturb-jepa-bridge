@@ -101,3 +101,16 @@ Council 122 and the F093 artifact-only audit diagnose this as a calibration-tran
 
 ## Later Repair Status
 F094 restored delta-cosine floor safety by abstaining to raw JEPA, but it still missed transition floor gaps on harder external splits. F095 added non-exact PubChem fingerprint descriptors and produced a near pass: the official split-safe gate missed `alternate_test` recall by `-0.006061`, while the calibrated fingerprint row cleared all floor gaps. No model is promoted because the calibrated row was not the predeclared selected candidate and scGeneScope has now informed multiple repair decisions.
+
+## Fresh Confirmation Status
+F096 remains a non-promoting scGeneScope repair-loop pass. A fresh external
+confirmation is still required for promotion.
+
+cpg0003 Rosetta was tested as an auxiliary fresh perturbational transcriptomics
+plus morphology validator, but it is L1000 plus Cell Painting, not strict scRNA
+plus imaging. F097 compound-holdout, F098 same-condition replicate-holdout, F100
+zero-signature source-state, and F101 small-scale train-only calibration all
+failed the registered fresh-confirmation gate. F099 diagnosed the Rosetta failure
+as a source-state contract and validator mismatch. No model is promoted; the
+protected rank-3 train-split-only PLS raw-linear readout remains the model of
+record.

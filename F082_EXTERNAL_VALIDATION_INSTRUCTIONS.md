@@ -104,9 +104,42 @@ HF_HOME=/content/hf_cache python scripts/run_cpg0003_rosetta_external_confirmati
   --download-missing
 ```
 
-Before another candidate run, do an artifact-only F099 diagnostic of the Rosetta
-source/control geometry and source-as-target baseline. Do not redesign the model
-or promote anything from F097/F098.
+Current post-F098 status:
+
+```text
+F099 artifact-only Rosetta source geometry audit:
+  source-to-target cosine ~= 0.949 and repeated source effective rank ~= 1.
+  Diagnosis = source-state contract failure plus validator mismatch.
+
+F100 zero-signature source-state run:
+  failed; negative transition improvement and unstable magnitude ratios.
+
+F101 train-only small-scale delta calibration:
+  selected residual scale 0.01, repaired delta cosine and recall floor gaps,
+  but transition improvement stayed slightly negative on all splits.
+```
+
+Reproduce F101:
+
+```bash
+HF_HOME=/content/hf_cache python scripts/run_cpg0003_rosetta_external_confirmation.py \
+  --experiment-id F101 \
+  --split-mode same_condition_replicate \
+  --source-state control_centroid \
+  --delta-calibration-mode train_small_scale \
+  --device cuda \
+  --seeds 37 38 39 \
+  --steps 120 \
+  --output-dir outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F101_cpg0003_rosetta_small_scale_calibration \
+  --report-path outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F101_cpg0003_rosetta_small_scale_calibration/F101_CPG0003_ROSETTA_SMALL_SCALE_CALIBRATION.md \
+  --download-missing
+```
+
+Do not redesign the model or promote anything from F097/F098/F100/F101. Resume
+from `F102_STRICT_SCRNA_IMAGING_FRESH_DATASET_PREFLIGHT`: find or recover a
+strict paired scRNA plus imaging fresh validation protocol, run only
+metadata/manifest/obs-only/backed checks first, and document validation blocked
+if no strict fresh paired protocol is available.
 
 Use GPU for model work:
 

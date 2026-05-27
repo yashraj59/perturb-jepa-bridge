@@ -1,0 +1,69 @@
+# F101 cpg0003 Rosetta External Confirmation
+
+## Decision
+`FAIL_FRESH_EXTERNAL_CONFIRMATION_NO_PROMOTION`
+
+No model is promoted. The protected rank-3 train-split-only PLS raw-linear
+readout remains the model of record.
+
+## Scope
+- candidate family: `F082_DELTA_CALIBRATED_TIER2_READY_FOR_TIER3_DESIGN`
+- frozen path: ProgramBootstrapJEPA plus train-only delta calibration
+- external validator: cpg0003 Rosetta CDRPBIO-BBBC036-Bray
+- modalities: L1000 expression plus Cell Painting morphology
+- caveat: this is not scRNA
+- split mode: `same_condition_replicate`
+- source-state contract: `control_centroid`
+- delta calibration mode: `train_small_scale`
+- action descriptor: SMILES-derived chemistry counts, dose, and deterministic hashed SMILES n-grams; not exact treatment one-hot
+- action dim: `787`
+- missing non-control SMILES rows: `0`
+
+## Split And Pairing
+```tsv
+split	paired_conditions	compounds	min_cp_replicates	median_cp_replicates	max_cp_replicates	min_l1k_replicates	median_l1k_replicates	max_l1k_replicates
+alternate_test	387	387	1	1.0	1	1	1.0	1
+test	410	410	1	1.0	1	1	1.0	1
+train	1469	1469	3	7.0	15	1	1.0	1
+validation	381	381	1	1.0	1	1	1.0	1
+
+```
+
+## Candidate And Floor Comparison
+```tsv
+method	split	mean_transition_improvement	mean_delta_cosine	mean_recall_at_1	mean_delta_rank	mean_magnitude_ratio	mean_rna_to_image_recall_at_1	mean_image_to_rna_recall_at_1	max_identity_violation	max_leakage_flag	floor_transition_improvement	floor_delta_cosine	floor_recall_at_1	floor_gap_transition_improvement	floor_gap_delta_cosine	floor_gap_recall_at_1
+F101_frozen_smiles_scaled_delta_calibrated	alternate_test	-0.002180072254841161	0.241802187452438	0.002583979328165375	1.3277210702393691	0.023558607292045914	0.0017226528854435831	0.002583979328165375	0.0	0.0	-0.8138549409658986	0.09972989112200364	0.002583979328165375	0.8116748687110574	0.14207229633043436	0.0
+F101_frozen_smiles_scaled_delta_calibrated	test	-0.0048267341353404655	0.20162879700716263	0.0024390243902439024	1.307106711551844	0.02377423859299173	0.0016260162601626016	0.0024390243902439024	0.0	0.0	-0.8164523223941753	0.10225516138863615	0.0024390243902439024	0.8116255882588348	0.09937363561852648	0.0
+F101_frozen_smiles_scaled_delta_calibrated	validation	-0.006810329362444111	0.2619706694252519	0.0026246719160104987	1.2872979646431046	0.02448367855281534	0.0017497812773403325	0.004374453193350831	0.0	0.0	-0.8434169655343275	0.07501710423025253	0.0026246719160104987	0.8366066361718835	0.18695356519499934	0.0
+no_delta_calibration	alternate_test	0.021358450832273307	-0.918600669918293	0.002583979328165375	15.415624173432684	0.25623289770779767					-0.8138549409658986	0.09972989112200364	0.002583979328165375	0.8352133917981719	-1.0183305610402966	0.0
+no_delta_calibration	test	0.020785625939629116	-0.9186489420680198	0.0016260162601626016	15.240552776294484	0.2562417031188011					-0.8164523223941753	0.10225516138863615	0.0024390243902439024	0.8372379483338044	-1.020904103456656	-0.0008130081300813008
+no_delta_calibration	validation	0.017473681733940035	-0.9186017509133805	0.0026246719160104987	12.33337681712127	0.25625340081410813					-0.8434169655343275	0.07501710423025253	0.0026246719160104987	0.8608906472682676	-0.993618855143633	0.0
+protected_full_ridge_floor	alternate_test	-0.8138549409658986	0.09972989112200364	0.002583979328165375	1.4576578201799577	4.784271485348481					-0.8138549409658986	0.09972989112200364	0.002583979328165375	0.0	0.0	0.0
+protected_full_ridge_floor	test	-0.8164523223941753	0.10225516138863615	0.0024390243902439024	1.4178455654230655	4.788989307502616					-0.8164523223941753	0.10225516138863615	0.0024390243902439024	0.0	0.0	0.0
+protected_full_ridge_floor	validation	-0.8434169655343275	0.07501710423025253	0.0026246719160104987	1.4313783622981837	4.854460690903527					-0.8434169655343275	0.07501710423025253	0.0026246719160104987	0.0	0.0	0.0
+source_as_target	alternate_test	0.0	0.0	0.002583979328165375	0.0	0.0					-0.8138549409658986	0.09972989112200364	0.002583979328165375	0.8138549409658986	-0.09972989112200364	0.0
+source_as_target	test	0.0	0.0	0.0024390243902439024	0.0	0.0					-0.8164523223941753	0.10225516138863615	0.0024390243902439024	0.8164523223941753	-0.10225516138863615	0.0
+source_as_target	validation	0.0	0.0	0.0026246719160104987	0.0	0.0					-0.8434169655343275	0.07501710423025253	0.0026246719160104987	0.8434169655343275	-0.07501710423025253	0.0
+
+```
+
+## Baselines
+```tsv
+method	split	transition_improvement	delta_cosine	recall_at_1	delta_rank	magnitude_ratio
+no_delta_calibration	alternate_test	0.021358450832273307	-0.918600669918293	0.002583979328165375	15.415624173432684	0.25623289770779767
+no_delta_calibration	test	0.020785625939629116	-0.9186489420680198	0.0016260162601626016	15.240552776294484	0.2562417031188011
+no_delta_calibration	validation	0.017473681733940035	-0.9186017509133805	0.0026246719160104987	12.33337681712127	0.25625340081410813
+protected_full_ridge_floor	alternate_test	-0.8138549409658986	0.09972989112200364	0.002583979328165375	1.4576578201799577	4.784271485348481
+protected_full_ridge_floor	test	-0.8164523223941753	0.10225516138863615	0.0024390243902439024	1.4178455654230655	4.788989307502616
+protected_full_ridge_floor	validation	-0.8434169655343275	0.07501710423025253	0.0026246719160104987	1.4313783622981837	4.854460690903527
+source_as_target	alternate_test	0.0	0.0	0.002583979328165375	0.0	0.0
+source_as_target	test	0.0	0.0	0.0024390243902439024	0.0	0.0
+source_as_target	validation	0.0	0.0	0.0026246719160104987	0.0	0.0
+
+```
+
+## Leakage And Identity
+F101 uses compound IDs only for pairing/grouping/retrieval labels. Model action tensors are non-exact SMILES hash descriptors, simple chemistry counts, and dose. The source-state contract is control_centroid. PCA, scaling, full-ridge floor, and delta calibration are fit on train split only. No condition_key, biological_key, exact target one-hot, held-out target means, pooled train+test statistics, or floor predictions are candidate model inputs.
+
+## Promotion Status
+No model is promoted. cpg0003 Rosetta is fresh external L1000 plus Cell Painting validation, not strict scRNA plus imaging validation.

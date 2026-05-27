@@ -220,13 +220,53 @@ HF_HOME=/content/hf_cache python scripts/run_cpg0003_rosetta_external_confirmati
   --download-missing
 ```
 
-7. Before trying any new scGeneScope payload protocol, satisfy the recovery plan in:
+7. F099-F101 completed after F098:
+
+```text
+F099_ROSETTA_SOURCE_GEOMETRY_AUDIT:
+  source-to-target cosine ~= 0.949, repeated source rank ~= 1, no leakage/identity flags.
+  Diagnosis = source-state contract failure plus validator mismatch; no promotion.
+
+F100_CPG0003_ROSETTA_ZERO_SIGNATURE_SOURCE:
+  zero-signature source-state contract failed; no promotion.
+
+F101_CPG0003_ROSETTA_SMALL_SCALE_CALIBRATION:
+  train-only small-scale calibration selected scale 0.01, fixed delta cosine and recall floor gaps,
+  but transition improvement stayed slightly negative on all external splits; no promotion.
+```
+
+Reproduce F101:
+
+```bash
+HF_HOME=/content/hf_cache python scripts/run_cpg0003_rosetta_external_confirmation.py \
+  --experiment-id F101 \
+  --split-mode same_condition_replicate \
+  --source-state control_centroid \
+  --delta-calibration-mode train_small_scale \
+  --device cuda \
+  --seeds 37 38 39 \
+  --steps 120 \
+  --output-dir outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F101_cpg0003_rosetta_small_scale_calibration \
+  --report-path outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F101_cpg0003_rosetta_small_scale_calibration/F101_CPG0003_ROSETTA_SMALL_SCALE_CALIBRATION.md \
+  --download-missing
+```
+
+8. Stop the Rosetta promotion loop. cpg0003 Rosetta is useful as an auxiliary
+   L1000 plus Cell Painting stress test, but it is not strict paired scRNA plus
+   imaging validation and did not pass the registered gate.
+
+9. Resume at `F102_STRICT_SCRNA_IMAGING_FRESH_DATASET_PREFLIGHT`: search for or
+   recover a strict paired scRNA plus imaging fresh validation protocol,
+   preferably scGeneScope with an unused sealed split or another public paired
+   dataset. Start with metadata/manifest/obs-only/backed checks only.
+
+10. Before trying any new scGeneScope payload protocol, satisfy the recovery plan in:
 
 ```text
 outputs/autoresearch_total_autonomy_bioguard_wm_jepa/SCGENESCOPE_QUOTA_SAFE_RECOVERY_PLAN.md
 ```
 
-8. For any model run, use `--device cuda` unless the GPU is unavailable or
+11. For any model run, use `--device cuda` unless the GPU is unavailable or
    already occupied. Do not fall back to CPU silently.
 
 ## Code Paths For The Synthetic-Passing Candidate

@@ -1,0 +1,20 @@
+{
+  "action_negative_gap": 0.0,
+  "calibration_status": "CALIBRATION_SELECTED_SMALL_CAP_CONTINUOUS_RESIDUAL",
+  "cv_lcb_delta_cosine_gap": 0.2802071782338501,
+  "cv_lcb_recall_gap": 0.0,
+  "cv_lcb_transition_gap": -0.00467485793168624,
+  "mean_recall_gap": 0.0,
+  "mean_transition_gap": 0.011468761145635008,
+  "residual_gate": 1.0,
+  "residual_scale": 0.01,
+  "train_calibrated_delta_cosine": 0.323796356905538,
+  "train_calibrated_delta_rank": 1.1849481210699677,
+  "train_calibrated_magnitude_ratio": 0.0272198151603475,
+  "train_calibrated_recall_at_1": 0.0006807351940095302,
+  "train_calibrated_transition_improvement": 0.014490174423592036,
+  "train_raw_delta_cosine": -0.7660885683644566,
+  "train_raw_delta_rank": 8.860809959307574,
+  "train_raw_recall_at_1": 0.0,
+  "train_raw_transition_improvement": 0.05701760667178593
+}

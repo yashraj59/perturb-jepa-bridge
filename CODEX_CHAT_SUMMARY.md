@@ -164,6 +164,10 @@ No model promoted.
 Next needed step = stop the Rosetta promotion loop and resume strict paired
 scRNA plus imaging fresh-dataset preflight, preferably an unused scGeneScope
 sealed split or another public paired scRNA/imaging dataset.
+F102 found PerturbMulti as the current best actionable strict candidate:
+public/non-gated HF repo with RNA H5AD, protein-intensity H5AD, spatial
+coordinates, perturbation metadata, and per-cell image tar archives. Protein
+H5AD backed obs probe passed; RNA obs and image-key pairing are still pending.
 ```
 
 ## How Synthetic Finally Worked
@@ -227,7 +231,8 @@ outputs/autoresearch_total_autonomy_bioguard_wm_jepa/research_journal.md
 Start from branch `dev`. Do not promote F096/F097/F098/F100/F101. cpg0003
 Rosetta should now be treated as an auxiliary L1000 plus Cell Painting stress
 test, not a strict promotion validator. Resume at
-`F102_STRICT_SCRNA_IMAGING_FRESH_DATASET_PREFLIGHT`: find or recover a strict
-paired scRNA plus imaging fresh validation protocol, run metadata/obs-only/backed
-checks first, and only then run the frozen F082/F096 ProgramBootstrapJEPA path on
-GPU unless the GPU is unavailable or occupied.
+`F103_PERTURBMULTI_RNA_OBS_AND_PAIRING_PREFLIGHT`: download only the
+PerturbMulti CRISPR RNA H5AD to ignored storage, inspect obs with backed/HDF5
+access only, prove RNA/protein/image cell-ID overlap, and only then run the
+frozen F082/F096 ProgramBootstrapJEPA path on GPU unless the GPU is unavailable
+or occupied.

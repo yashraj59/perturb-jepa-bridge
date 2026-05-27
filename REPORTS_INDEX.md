@@ -101,6 +101,7 @@ experiments/F098_cpg0003_rosetta_replicate_holdout/
 experiments/F099_rosetta_source_geometry_audit/
 experiments/F100_cpg0003_rosetta_zero_signature_source/
 experiments/F101_cpg0003_rosetta_small_scale_calibration/
+experiments/F102_strict_scrna_imaging_fresh_dataset_preflight/
 ```
 
 ## Most Important Decisions
@@ -113,7 +114,8 @@ F091_SCGENESCOPE_FEATURE_PREFLIGHT_APPROVES_BACKED_OBS_ONLY_DRY_RUN
 F096_PASS_EXTERNAL_TIER3_NON_PROMOTING, not promoted because it is repair-loop validation
 F099_SOURCE_STATE_CONTRACT_FAILURE_AND_VALIDATOR_MISMATCH_NO_PROMOTION
 F101_FAIL_FRESH_EXTERNAL_CONFIRMATION_NO_PROMOTION
-F102_STRICT_SCRNA_IMAGING_FRESH_DATASET_PREFLIGHT is the next safe resume step
+F102_STRICT_SCRNA_IMAGING_CANDIDATE_FOUND_RNA_OBS_PREFLIGHT_PENDING
+F103_PERTURBMULTI_RNA_OBS_AND_PAIRING_PREFLIGHT is the next safe resume step
 ```
 
 ## Test Evidence

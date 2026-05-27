@@ -141,6 +141,14 @@ strict paired scRNA plus imaging fresh validation protocol, run only
 metadata/manifest/obs-only/backed checks first, and document validation blocked
 if no strict fresh paired protocol is available.
 
+F102 status: PerturbMulti is the current best public candidate. The repository
+`xingjiepan/PerturbMulti` is public/non-gated and includes CRISPR-screen RNA
+H5AD, protein-intensity H5AD, perturbation metadata, spatial coordinates, and
+per-cell image archives. The small protein H5AD passed a backed obs/schema
+probe. Resume at `F103_PERTURBMULTI_RNA_OBS_AND_PAIRING_PREFLIGHT`: inspect the
+large RNA H5AD obs with backed/HDF5 access only, do not load `.X`, and prove
+RNA/protein/image cell-ID overlap before any model run.
+
 Use GPU for model work:
 
 ```bash

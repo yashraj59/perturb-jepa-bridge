@@ -114,3 +114,8 @@ failed the registered fresh-confirmation gate. F099 diagnosed the Rosetta failur
 as a source-state contract and validator mismatch. No model is promoted; the
 protected rank-3 train-split-only PLS raw-linear readout remains the model of
 record.
+
+F102 found PerturbMulti as a public strict paired single-cell RNA plus imaging
+candidate. Only manifest checks and a backed obs/schema probe of the small
+protein-intensity H5AD were run; the large RNA H5AD obs and image-key pairing
+checks are pending. No model was trained and no model is promoted from F102.

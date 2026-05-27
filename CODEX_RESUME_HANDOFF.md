@@ -255,18 +255,24 @@ HF_HOME=/content/hf_cache python scripts/run_cpg0003_rosetta_external_confirmati
    L1000 plus Cell Painting stress test, but it is not strict paired scRNA plus
    imaging validation and did not pass the registered gate.
 
-9. Resume at `F102_STRICT_SCRNA_IMAGING_FRESH_DATASET_PREFLIGHT`: search for or
-   recover a strict paired scRNA plus imaging fresh validation protocol,
-   preferably scGeneScope with an unused sealed split or another public paired
-   dataset. Start with metadata/manifest/obs-only/backed checks only.
+9. F102 found PerturbMulti as the current actionable strict paired candidate.
+   It is public/non-gated on Hugging Face and includes CRISPR-screen RNA H5AD,
+   protein-intensity H5AD, spatial coordinates, perturbation metadata, and
+   per-cell image tar archives. A backed obs/schema probe of the small
+   protein-intensity H5AD passed: 99,294 cells, 18 channels, 508 perturbations.
 
-10. Before trying any new scGeneScope payload protocol, satisfy the recovery plan in:
+10. Resume at `F103_PERTURBMULTI_RNA_OBS_AND_PAIRING_PREFLIGHT`: download only
+   `RNA_scaled_crispr_screen_20240615.h5ad` to ignored storage, inspect obs with
+   backed/HDF5 access only, and prove RNA/protein/image cell-ID overlap before
+   any model run.
+
+11. Before trying any new scGeneScope payload protocol, satisfy the recovery plan in:
 
 ```text
 outputs/autoresearch_total_autonomy_bioguard_wm_jepa/SCGENESCOPE_QUOTA_SAFE_RECOVERY_PLAN.md
 ```
 
-11. For any model run, use `--device cuda` unless the GPU is unavailable or
+12. For any model run, use `--device cuda` unless the GPU is unavailable or
    already occupied. Do not fall back to CPU silently.
 
 ## Code Paths For The Synthetic-Passing Candidate

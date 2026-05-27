@@ -1,0 +1,2 @@
+file	local_path	n_obs	n_vars	required_columns_present	condition_unique	perturbation_unique	dataset_unique	var_names_head
+protein_intensities_crispr_screen_20240615.h5ad	/content/hf_cache/hub/datasets--xingjiepan--PerturbMulti/snapshots/8aac954eb631b68f6e11171a8313db61cc16c38c/protein_intensities_crispr_screen_20240615.h5ad	99294	18	True	1	508	11	Alb,polyT,rRNA,M6PR,CathB,Perilipin,Sqstm1,LC3b,TOMM20,Calreticulin

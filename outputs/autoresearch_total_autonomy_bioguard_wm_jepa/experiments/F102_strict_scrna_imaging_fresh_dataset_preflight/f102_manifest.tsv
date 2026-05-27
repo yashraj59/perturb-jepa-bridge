@@ -1,0 +1,3 @@
+candidate	repository_or_source	access	state	relevant_files	size_gib	contract_notes
+PerturbMulti	xingjiepan/PerturbMulti	public_huggingface_cc_by_4_0	manifest_pass_obs_partial	RNA_scaled_crispr_screen_20240615.h5ad; protein_intensities_crispr_screen_20240615.h5ad; crispr_screen_20240615_chunk_*.tar	426.194	Public, non-gated. CRISPR screen has RNA h5ad, protein-intensity h5ad, perturbation metadata, spatial coordinates, and per-cell image tar archives keyed by cell ID.
+HYPED	OpenReview HsJJDxjJ4R	public_paper_page_only	not_actionable_yet	processed dataset claimed but public payload link not found	unknown	Strict modality fit on paper: long-read scRNA plus live-cell imaging over four conditions, but no actionable data manifest found during this pass.

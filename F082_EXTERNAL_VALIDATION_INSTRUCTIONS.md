@@ -31,6 +31,16 @@ The actual next step is F097:
 F097_CPG0003_ROSETTA_FRESH_CONFIRMATION_PREFLIGHT
 ```
 
+Latest execution status:
+
+```text
+F097 cpg0003 Rosetta compound-holdout run failed external confirmation.
+F098 cpg0003 Rosetta same-condition replicate-holdout run also failed external confirmation.
+F098 had clean identity/leakage checks and positive transition/delta floor gaps,
+but it missed the test recall floor and retained negative absolute transition
+improvement. No promotion.
+```
+
 Use cpg0003 Rosetta CDRPBIO-BBBC036-Bray as the first fresh external
 confirmation candidate:
 
@@ -73,6 +83,30 @@ source-as-target, protected full-ridge floor, and no-residual baselines
 transition improvement, delta cosine, recall@1, bidirectional retrieval, rank,
 identity, and leakage checks
 ```
+
+The runner now exists:
+
+```bash
+python scripts/run_cpg0003_rosetta_external_confirmation.py --help
+```
+
+Reproduce the latest F098 run:
+
+```bash
+HF_HOME=/content/hf_cache python scripts/run_cpg0003_rosetta_external_confirmation.py \
+  --experiment-id F098 \
+  --split-mode same_condition_replicate \
+  --device cuda \
+  --seeds 37 38 39 \
+  --steps 120 \
+  --output-dir outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F098_cpg0003_rosetta_replicate_holdout \
+  --report-path outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F098_cpg0003_rosetta_replicate_holdout/F098_CPG0003_ROSETTA_REPLICATE_HOLDOUT.md \
+  --download-missing
+```
+
+Before another candidate run, do an artifact-only F099 diagnostic of the Rosetta
+source/control geometry and source-as-target baseline. Do not redesign the model
+or promote anything from F097/F098.
 
 Use GPU for model work:
 

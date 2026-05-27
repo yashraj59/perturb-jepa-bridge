@@ -150,6 +150,19 @@ status = runner implementation not yet complete
 promotion = still blocked until a fresh external confirmation actually passes
 ```
 
+Current fresh-confirmation run status:
+
+```text
+F097 compound-holdout cpg0003 Rosetta = FAIL_FRESH_EXTERNAL_CONFIRMATION_NO_PROMOTION
+F098 same-condition replicate-holdout cpg0003 Rosetta = FAIL_FRESH_EXTERNAL_CONFIRMATION_NO_PROMOTION
+F098 transition/delta floor gaps were positive on all splits except test recall,
+but absolute transition improvement stayed negative.
+No model promoted.
+Next needed step = diagnose whether Rosetta source-state/control geometry makes
+transition-improvement unsuitable, or whether a Rosetta-specific source/target
+normalization audit is needed before another confirmation attempt.
+```
+
 ## How Synthetic Finally Worked
 
 The decisive sequence was:

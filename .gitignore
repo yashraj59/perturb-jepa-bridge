@@ -25,3 +25,7 @@ results/
 data/raw/
 data/interim/
 data/processed/
+
+# Generated external-validation tables that can expose per-compound metadata.
+outputs/**/paired_condition_metadata.tsv
+outputs/**/action_descriptor_matrix_head.tsv

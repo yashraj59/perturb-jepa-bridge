@@ -1,0 +1,5 @@
+split	paired_conditions	compounds	min_cp_replicates	median_cp_replicates	max_cp_replicates	min_l1k_replicates	median_l1k_replicates	max_l1k_replicates
+alternate_test	151	151	7	8.0	8	1	2.0	2
+test	141	141	6	8.0	8	1	2.0	2
+train	1019	1019	4	8.0	16	1	2.0	2
+validation	158	158	6	8.0	8	1	2.0	2

@@ -121,6 +121,25 @@ the frozen F096 path as a fresh external confirmation/stress test, but the final
 promotion decision must explicitly decide whether the project still requires a
 strict paired scRNA+imaging fresh validation.
 
+F097/F098 execution update:
+
+```text
+F097_CPG0003_ROSETTA_COMPOUND_HOLDOUT = FAIL_FRESH_EXTERNAL_CONFIRMATION_NO_PROMOTION
+F098_CPG0003_ROSETTA_SAME_CONDITION_REPLICATE_HOLDOUT = FAIL_FRESH_EXTERNAL_CONFIRMATION_NO_PROMOTION
+```
+
+F097 used compound-holdout splits and was stricter than the scGeneScope
+replicate-heldout contract. F098 used same-condition replicate holdout, which is
+closer to scGeneScope. F098 had positive floor gaps for transition and delta
+cosine, but missed the recall floor on `test` and retained negative absolute
+transition improvement. No model was promoted.
+
+The next resume step should be an artifact-only F099 diagnostic before any new
+model changes: inspect Rosetta source-state/control geometry, source-vs-target
+cosines, floor behavior, and whether the L1000/Cell Painting profiles are
+already centered so `source_as_target` is a stronger or differently defined
+baseline than on scGeneScope.
+
 ## How To Resume On Another Cluster
 1. Clone/check out `dev`.
 2. Install dependencies:
@@ -179,6 +198,26 @@ protected full-ridge audit floor
 no-residual baseline
 transition improvement, delta cosine, recall@1, RNA/L1000->image/CP and image/CP->RNA/L1000 retrieval
 rank, identity, and leakage checks
+```
+
+Already implemented runner:
+
+```text
+scripts/run_cpg0003_rosetta_external_confirmation.py
+```
+
+Reproduce F098:
+
+```bash
+HF_HOME=/content/hf_cache python scripts/run_cpg0003_rosetta_external_confirmation.py \
+  --experiment-id F098 \
+  --split-mode same_condition_replicate \
+  --device cuda \
+  --seeds 37 38 39 \
+  --steps 120 \
+  --output-dir outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F098_cpg0003_rosetta_replicate_holdout \
+  --report-path outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F098_cpg0003_rosetta_replicate_holdout/F098_CPG0003_ROSETTA_REPLICATE_HOLDOUT.md \
+  --download-missing
 ```
 
 7. Before trying any new scGeneScope payload protocol, satisfy the recovery plan in:

@@ -6,8 +6,11 @@ This file is the portable handoff for resuming the work on another cluster.
 Start from branch:
 
 ```bash
-git checkout synthetic_pass
+git checkout dev
 ```
+
+`synthetic_pass` is the prior branch. The current external-validation packaging
+branch is `dev`.
 
 Then read these files first:
 
@@ -17,6 +20,11 @@ SYNTHETIC_PASS_SUMMARY.md
 REPORTS_INDEX.md
 outputs/autoresearch_total_autonomy_bioguard_wm_jepa/HARD_ESCALATION_REPORT.md
 outputs/autoresearch_total_autonomy_bioguard_wm_jepa/SCGENESCOPE_QUOTA_SAFE_RECOVERY_PLAN.md
+outputs/autoresearch_total_autonomy_bioguard_wm_jepa/external_validation_report.md
+outputs/autoresearch_total_autonomy_bioguard_wm_jepa/MODEL_OF_RECORD.md
+outputs/autoresearch_total_autonomy_bioguard_wm_jepa/phase_reports/phase_closure_report_125.md
+outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F096_frozen_fingerprint_calibrated_candidate/F096_SCGENESCOPE_EXTERNAL_VALIDATION.md
+outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F097_cpg0003_rosetta_fresh_preflight/F097_CPG0003_ROSETTA_FRESH_PREFLIGHT.md
 outputs/autoresearch_total_autonomy_bioguard_wm_jepa/research_journal.md
 outputs/autoresearch_total_autonomy_bioguard_wm_jepa/results.tsv
 ```
@@ -61,31 +69,60 @@ The active model of record is still:
 Protected rank-3 train-split-only PLS raw-linear readout
 ```
 
-No JEPA candidate has passed Tier 3 or been promoted.
+F096 passed the scGeneScope external floor comparison but is explicitly
+non-promoting because it occurred after scGeneScope-guided repair. A fresh
+external Tier 3 confirmation is still required before any promotion.
 
-## Hard Stop
-The current loop is halted by:
+## Recovered Hard Stop
 
-```text
-HARD_ESCALATE_COMPUTE_OR_STORAGE_EXHAUSTED
-```
-
-F092 attempted the smallest scGeneScope paired feature dry run. The files downloaded, but writing a status artifact failed with:
+Earlier, F092 attempted the smallest scGeneScope paired feature dry run. The
+files downloaded, but writing a status artifact failed with:
 
 ```text
 OSError: [Errno 122] Disk quota exceeded
 ```
 
-The generated payload directory was removed:
+That state is preserved in:
 
 ```text
-data/raw/scgenescope
+outputs/autoresearch_total_autonomy_bioguard_wm_jepa/HARD_ESCALATION_REPORT.md
+outputs/autoresearch_total_autonomy_bioguard_wm_jepa/SCGENESCOPE_QUOTA_SAFE_RECOVERY_PLAN.md
 ```
 
-Do not rerun F092 blindly. The runner now blocks F092 while `HARD_ESCALATION_REPORT.md` exists unless `--acknowledge-hard-escalation-retry` is explicitly supplied.
+The current workspace later reran F091 and F092 successfully with backed
+obs-only checks, then ran F082/F094/F095/F096 scGeneScope external validation.
+Raw scGeneScope H5ADs are local under ignored `data/raw/scgenescope/`, but they
+must not be committed or pushed.
+
+## Current Resume Point
+
+Do not promote F096. The current next stage is:
+
+```text
+F097_CPG0003_ROSETTA_FRESH_CONFIRMATION_PREFLIGHT
+```
+
+Manual preflight already found a viable fresh Rosetta candidate:
+
+```text
+dataset = cpg0003-rosetta CDRPBIO-BBBC036-Bray
+assays = Cell Painting morphology + L1000 expression
+cell line = U2OS
+shared exact compound+dose pairs = 1469
+controls = DMSO/negcon present in both modalities
+Cell Painting replicates per shared pair = min 4, median 8, max 16
+L1000 replicates per shared pair = min 1, median 2, max 2
+SMILES missing among shared pairs = 0
+```
+
+Important caveat: cpg0003 Rosetta is a fresh external perturbational
+transcriptomics+morphology validator, but L1000 is not scRNA. A pass can support
+the frozen F096 path as a fresh external confirmation/stress test, but the final
+promotion decision must explicitly decide whether the project still requires a
+strict paired scRNA+imaging fresh validation.
 
 ## How To Resume On Another Cluster
-1. Clone/check out `synthetic_pass`.
+1. Clone/check out `dev`.
 2. Install dependencies:
 
 ```bash
@@ -109,13 +146,49 @@ Expected latest local result:
 77 passed
 ```
 
-4. Before trying real scGeneScope payloads, satisfy the recovery plan in:
+4. Confirm GPU, RAM, and disk before any model run:
+
+```bash
+nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader,nounits || true
+df -h /content
+free -h
+```
+
+5. If resuming F097 and the ignored Rosetta files are absent, download only the
+   small CDRPBIO files:
+
+```bash
+mkdir -p data/raw/cpg0003_rosetta/CDRPBIO-BBBC036-Bray/CellPainting \
+  data/raw/cpg0003_rosetta/CDRPBIO-BBBC036-Bray/L1000
+curl -L --fail --retry 3 --retry-delay 2 \
+  -o data/raw/cpg0003_rosetta/CDRPBIO-BBBC036-Bray/CellPainting/replicate_level_cp_normalized_variable_selected.csv.gz \
+  https://cellpainting-gallery.s3.amazonaws.com/cpg0003-rosetta/broad/workspace/preprocessed_data/CDRPBIO-BBBC036-Bray/CellPainting/replicate_level_cp_normalized_variable_selected.csv.gz
+curl -L --fail --retry 3 --retry-delay 2 \
+  -o data/raw/cpg0003_rosetta/CDRPBIO-BBBC036-Bray/L1000/replicate_level_l1k.csv.gz \
+  https://cellpainting-gallery.s3.amazonaws.com/cpg0003-rosetta/broad/workspace/preprocessed_data/CDRPBIO-BBBC036-Bray/L1000/replicate_level_l1k.csv.gz
+```
+
+6. Implement/run the F097 fresh confirmation runner. It should reuse the frozen
+   F096 model path and avoid architecture redesign:
+
+```text
+ProgramBootstrapJEPA
+PubChem/SMILES-derived non-exact action descriptors plus train-only delta calibration
+source-as-target baseline
+protected full-ridge audit floor
+no-residual baseline
+transition improvement, delta cosine, recall@1, RNA/L1000->image/CP and image/CP->RNA/L1000 retrieval
+rank, identity, and leakage checks
+```
+
+7. Before trying any new scGeneScope payload protocol, satisfy the recovery plan in:
 
 ```text
 outputs/autoresearch_total_autonomy_bioguard_wm_jepa/SCGENESCOPE_QUOTA_SAFE_RECOVERY_PLAN.md
 ```
 
-5. First real-data resume step must remain metadata-only or obs-only/backed. Do not train on scGeneScope until the feature `obs` contract, split mapping, and pair table are proven on the target cluster.
+8. For any model run, use `--device cuda` unless the GPU is unavailable or
+   already occupied. Do not fall back to CPU silently.
 
 ## Code Paths For The Synthetic-Passing Candidate
 Core architecture and predictor:
@@ -166,9 +239,20 @@ tests/test_scgenescope_adapter.py
 tests/test_synthetic_biology_lite.py
 ```
 
+External validation scripts added in the current stage:
+
+```text
+scripts/run_f082_scgenescope_external_validation.py
+scripts/audit_f082_scgenescope_failure_modes.py
+```
+
 ## Do Not Do
-- Do not promote F082; it is Tier 2 style only.
+- Do not promote F082 or F096 without a fresh external confirmation.
 - Do not treat Norman RNA-only as cross-modal validation.
+- Do not treat cpg0003 as scRNA; it is L1000 expression plus Cell Painting.
 - Do not use condition_key, biological_key, exact target-key one-hot features, eval target means, or pooled train+test statistics.
 - Do not rerun scGeneScope full payload access without quota-safe recovery evidence.
-- Do not train on real scGeneScope until backed `obs` contract and split/pairing audits pass.
+- Do not train on a new architecture before finishing the fresh external
+  validation preflight for the frozen F096/F082 path.
+- Do not commit or push raw H5AD, CSV.GZ, checkpoint, or condition-cache `.npz`
+  payloads.

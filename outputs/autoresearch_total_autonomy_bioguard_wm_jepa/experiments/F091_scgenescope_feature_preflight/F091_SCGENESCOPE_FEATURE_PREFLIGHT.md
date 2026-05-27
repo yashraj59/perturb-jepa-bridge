@@ -12,8 +12,8 @@ F090 validated the Croissant split and adapter contract. F091 checks whether a s
 - Smallest paired feature footprint: `13.590` GB
 - Smallest RNA feature: `features/rnaseq/scvi/n200/round_2.h5ad` (`2565764148` bytes)
 - Smallest image feature: `features/imaging/imagenet/vit-l/round_2.h5ad` (`11023900503` bytes)
-- Available disk: `201571.21` GiB
-- Available memory: `415.32` GiB
+- Available disk: `187.72` GiB
+- Available memory: `49.04` GiB
 - Required disk gate: `53687091200` bytes
 - Required backed-IO RAM gate: `22047801006` bytes
 - `anndata` available: `True`
@@ -52,7 +52,7 @@ round_2	features/rnaseq/scvi/scvi_1/round_2.h5ad	10176230692	features/imaging/im
 ## Summary Row
 ```tsv
 source_experiments	f090_contract_valid	remote_summary_path	remote_summary_present	remote_feature_record_count	feature_pair_candidate_count	smallest_pair_round	smallest_rna_feature_path	smallest_rna_feature_bytes	smallest_image_feature_path	smallest_image_feature_bytes	smallest_paired_feature_bytes	smallest_paired_feature_gb	available_disk_bytes	available_disk_gib	available_memory_bytes	available_memory_gib	required_disk_bytes	required_backed_ram_bytes	estimated_full_in_memory_bytes	low_compute_pair_cap_bytes	anndata_available	h5py_available	scanpy_available	storage_gate_pass	backed_io_gate_pass	low_compute_payload_gate_pass	local_root_exists	local_manifest_valid	payload_download_attempted	model_promoted	next_safe_action	diagnostic_label
-F088,F090	True	outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F088_scgenescope_remote_discovery/hf_tree_summary.tsv	True	22	56	round_2	features/rnaseq/scvi/n200/round_2.h5ad	2565764148	features/imaging/imagenet/vit-l/round_2.h5ad	11023900503	13589664651	13.589664651	216435434389504	201571.20599365234	445950296064	415.3235778808594	53687091200	22047801006	54358658604	17179869184	True	True	True	True	True	True	False	False	False	False	If approved by the autonomy loop, run an obs-only/backed H5AD open dry run on the smallest paired feature files with strict byte accounting; do not train or promote.	F091_SCGENESCOPE_FEATURE_PREFLIGHT_APPROVES_BACKED_OBS_ONLY_DRY_RUN
+F088,F090	True	outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F088_scgenescope_remote_discovery/hf_tree_summary.tsv	True	22	56	round_2	features/rnaseq/scvi/n200/round_2.h5ad	2565764148	features/imaging/imagenet/vit-l/round_2.h5ad	11023900503	13589664651	13.589664651	201563709440	187.72083282470703	52657135616	49.04077911376953	53687091200	22047801006	54358658604	17179869184	True	True	True	True	True	True	False	False	False	False	If approved by the autonomy loop, run an obs-only/backed H5AD open dry run on the smallest paired feature files with strict byte accounting; do not train or promote.	F091_SCGENESCOPE_FEATURE_PREFLIGHT_APPROVES_BACKED_OBS_ONLY_DRY_RUN
 
 ```
 

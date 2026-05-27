@@ -1,0 +1,5 @@
+modality	round	repo_path	local_path	expected_bytes	actual_bytes	status
+rna	1	features/rnaseq/scvi/n200/round_1.h5ad	data/raw/scgenescope/features/rnaseq/scvi/n200/round_1.h5ad	4366952116	4366952116	present
+rna	2	features/rnaseq/scvi/n200/round_2.h5ad	data/raw/scgenescope/features/rnaseq/scvi/n200/round_2.h5ad	2565764148	2565764148	present
+image	1	features/imaging/imagenet/vit-l/round_1.h5ad	data/raw/scgenescope/features/imaging/imagenet/vit-l/round_1.h5ad	18506448104	18506448104	present
+image	2	features/imaging/imagenet/vit-l/round_2.h5ad	data/raw/scgenescope/features/imaging/imagenet/vit-l/round_2.h5ad	11023900503	11023900503	present

@@ -12,9 +12,10 @@ until a real Tier 3 pass, and to document every pivot. Later instructions
 enabled continuous autonomy where ordinary failed candidates became documented
 pivot events, not stopping events.
 
-The final packaging request was to save the chat state in the repo, summarize
-all reports, push the best synthetic architecture to branch `synthetic_pass`,
-and explain how synthetic finally worked and how many things were tried.
+The latest packaging request is to push the current external-validation stage to
+a new branch named `dev`, without pushing raw data files, and to make the resume
+point explicit in `CODEX_CHAT_SUMMARY.md`, `CODEX_RESUME_HANDOFF.md`, and
+`F082_EXTERNAL_VALIDATION_INSTRUCTIONS.md`.
 
 ## Research Path In One Timeline
 
@@ -39,12 +40,23 @@ and explain how synthetic finally worked and how many things were tried.
    state, delta direction, and latent rank before adding JEPA wrapping and
    train-only delta calibration.
 7. F082 passed the synthetic/current-registry gates strongly enough for Tier 3
-   design, but it was not promoted because no real paired scRNA plus imaging
-   Tier 3 validator has run.
-8. The next external validator was scGeneScope. Remote and Croissant discovery
-   succeeded, feature preflight identified a smallest paired feature pair, but
-   F092 hit disk quota during status artifact writing. The payload was removed
-   and a hard escalation report plus quota-safe recovery plan were written.
+   design, but it was not promoted.
+8. scGeneScope was validated through backed obs-only preflight, then used for
+   the F082 external validation path. The original scalar-descriptor F082 run
+   failed, F094 split-safe calibration restored delta safety but missed
+   transition floors, and F095 PubChem fingerprints nearly passed but the
+   predeclared gate still failed.
+9. F096 froze the useful repaired candidate:
+   PubChem fingerprint descriptors plus train-only delta-calibrated
+   ProgramBootstrapJEPA. It passed the scGeneScope external floor comparison,
+   but is explicitly non-promoting because scGeneScope had already guided the
+   repair loop.
+10. The current next stage is fresh external confirmation. The first fresh
+    candidate being preflighted is cpg0003 Rosetta CDRPBIO-BBBC036-Bray:
+    Cell Painting morphology profiles plus L1000 expression profiles with
+    1,469 exact shared compound+dose pairs and DMSO controls. This is a fresh
+    perturbational transcriptomics plus morphology confirmation target, not a
+    strict scRNA replacement.
 
 ## Final Synthetic Candidate
 
@@ -86,8 +98,56 @@ Status:
 
 ```text
 Synthetic/current-registry Tier 3 design ready.
-No JEPA promoted.
+F096 scGeneScope repair-loop pass is non-promoting.
+Fresh external confirmation is still required before any promotion.
 Protected rank-3 train-split-only PLS raw-linear readout remains model of record.
+```
+
+## Current External Validation State
+
+F096 result:
+
+```text
+candidate = F082_delta_calibrated
+descriptor mode = pubchem_fingerprint
+gate mode = calibrated
+dataset = scGeneScope
+device = cuda
+decision = PASS_EXTERNAL_TIER3_NON_PROMOTING
+promotion = no
+```
+
+Key F096 split means:
+
+```text
+alternate_test transition = 0.494588, delta cosine = 0.185750, recall@1 = 0.127273
+test transition = 0.646406, delta cosine = 0.331194, recall@1 = 0.428571
+validation transition = 0.400167, delta cosine = 0.277198, recall@1 = 0.370370
+all floor gaps for transition, delta cosine, and recall were >= 0
+identity violation = 0
+leakage flag = 0
+```
+
+Why it does not promote:
+
+```text
+The scGeneScope validator informed F093/F094/F095 repair decisions.
+F096 therefore confirms the repaired path on scGeneScope but is not a fresh
+external Tier 3 confirmation.
+```
+
+Current fresh-confirmation preflight:
+
+```text
+candidate dataset = cpg0003-rosetta CDRPBIO-BBBC036-Bray
+assays = Cell Painting morphology + L1000 expression
+shared exact compound+dose pairs = 1469
+controls = DMSO/negcon present in both modalities
+Cell Painting replicates per shared pair = min 4, median 8, max 16
+L1000 replicates per shared pair = min 1, median 2, max 2
+SMILES missing among shared pairs = 0
+status = runner implementation not yet complete
+promotion = still blocked until a fresh external confirmation actually passes
 ```
 
 ## How Synthetic Finally Worked
@@ -137,14 +197,21 @@ SYNTHETIC_PASS_SUMMARY.md
 REPORTS_INDEX.md
 outputs/autoresearch_total_autonomy_bioguard_wm_jepa/HARD_ESCALATION_REPORT.md
 outputs/autoresearch_total_autonomy_bioguard_wm_jepa/SCGENESCOPE_QUOTA_SAFE_RECOVERY_PLAN.md
+outputs/autoresearch_total_autonomy_bioguard_wm_jepa/external_validation_report.md
+outputs/autoresearch_total_autonomy_bioguard_wm_jepa/MODEL_OF_RECORD.md
+outputs/autoresearch_total_autonomy_bioguard_wm_jepa/phase_reports/phase_closure_report_125.md
+outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F096_frozen_fingerprint_calibrated_candidate/F096_SCGENESCOPE_EXTERNAL_VALIDATION.md
+outputs/autoresearch_total_autonomy_bioguard_wm_jepa/experiments/F097_cpg0003_rosetta_fresh_preflight/F097_CPG0003_ROSETTA_FRESH_PREFLIGHT.md
 outputs/autoresearch_total_autonomy_bioguard_wm_jepa/results.tsv
 outputs/autoresearch_total_autonomy_bioguard_wm_jepa/research_journal.md
 ```
 
 ## Next Safe Resume Step
 
-On the next cluster, do not start by training. First run tests, then run
-scGeneScope metadata-only or backed obs-only contract checks under the quota-safe
-recovery plan. Only train on real paired data after split mapping, pairing, and
-feature contracts are proven without loading multi-GB matrices into the working
-tree.
+Start from branch `dev`. Do not promote F096. Continue from F097 by implementing
+and running a fresh cpg0003 Rosetta confirmation runner for the frozen
+fingerprint-calibrated F082 path, using GPU for model training unless unavailable
+or occupied. Keep raw files under ignored `data/raw/`, keep PLS/full-ridge as an
+audit floor only, and document whether cpg0003 is sufficient as fresh external
+confirmation or only a non-scRNA stress test requiring a later scRNA+imaging
+fresh confirmation.

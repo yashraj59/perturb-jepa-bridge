@@ -1,0 +1,2 @@
+total_treatments	pubchem_found_treatments	missing_noncontrol_treatments	missing_noncontrol_treatment_names	descriptor_action_dim	interpretation
+29	26	2	PQ401;SKII	12	PubChem scalar properties are leakage-safe but too low-capacity for mechanism-aware perturbation action encoding.

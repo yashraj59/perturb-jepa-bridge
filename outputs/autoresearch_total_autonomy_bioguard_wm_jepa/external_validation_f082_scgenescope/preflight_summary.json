@@ -1,0 +1,166 @@
+{
+  "condition_cache": "outputs/autoresearch_total_autonomy_bioguard_wm_jepa/external_validation_f082_scgenescope/condition_features.npz",
+  "descriptor_summary": {
+    "action_descriptor": "PubChem numeric molecular properties plus found/control flags; not exact treatment one-hot",
+    "action_dim": 12,
+    "descriptor_columns": [
+      "MolecularWeight",
+      "XLogP",
+      "TPSA",
+      "Complexity",
+      "Charge",
+      "HBondDonorCount",
+      "HBondAcceptorCount",
+      "RotatableBondCount",
+      "HeavyAtomCount",
+      "CovalentUnitCount",
+      "pubchem_found",
+      "is_control_descriptor"
+    ],
+    "missing_noncontrol_descriptor_rows": 10,
+    "pubchem_found_treatments": 26,
+    "total_treatments": 29
+  },
+  "download_status": [
+    {
+      "actual_bytes": 4366952116,
+      "expected_bytes": 4366952116,
+      "local_path": "data/raw/scgenescope/features/rnaseq/scvi/n200/round_1.h5ad",
+      "modality": "rna",
+      "repo_path": "features/rnaseq/scvi/n200/round_1.h5ad",
+      "round": "1",
+      "status": "present"
+    },
+    {
+      "actual_bytes": 2565764148,
+      "expected_bytes": 2565764148,
+      "local_path": "data/raw/scgenescope/features/rnaseq/scvi/n200/round_2.h5ad",
+      "modality": "rna",
+      "repo_path": "features/rnaseq/scvi/n200/round_2.h5ad",
+      "round": "2",
+      "status": "present"
+    },
+    {
+      "actual_bytes": 18506448104,
+      "expected_bytes": 18506448104,
+      "local_path": "data/raw/scgenescope/features/imaging/imagenet/vit-l/round_1.h5ad",
+      "modality": "image",
+      "repo_path": "features/imaging/imagenet/vit-l/round_1.h5ad",
+      "round": "1",
+      "status": "present"
+    },
+    {
+      "actual_bytes": 11023900503,
+      "expected_bytes": 11023900503,
+      "local_path": "data/raw/scgenescope/features/imaging/imagenet/vit-l/round_2.h5ad",
+      "modality": "image",
+      "repo_path": "features/imaging/imagenet/vit-l/round_2.h5ad",
+      "round": "2",
+      "status": "present"
+    }
+  ],
+  "environment": {
+    "cuda_available": true,
+    "cuda_device_count": 1,
+    "device_names": [
+      "Tesla T4"
+    ],
+    "disk_free_bytes": 165084270592,
+    "disk_free_gib": 153.74670791625977
+  },
+  "metadata_cache": "outputs/autoresearch_total_autonomy_bioguard_wm_jepa/external_validation_f082_scgenescope/condition_metadata.tsv",
+  "obs_contract": {
+    "all_required_obs_columns_present": true,
+    "rows": [
+      {
+        "batch_unique_count": 6,
+        "group_unique_count": 2,
+        "modality": "rna",
+        "n_obs": 406412,
+        "n_vars": 2000,
+        "path": "data/raw/scgenescope/features/rnaseq/scvi/n200/round_1.h5ad",
+        "replicate_values": "3,4,5",
+        "required_obs_columns_present": true,
+        "round": "1",
+        "split_values": "test,train,validation",
+        "treatment_unique_count": 29
+      },
+      {
+        "batch_unique_count": 4,
+        "group_unique_count": 2,
+        "modality": "rna",
+        "n_obs": 221292,
+        "n_vars": 2000,
+        "path": "data/raw/scgenescope/features/rnaseq/scvi/n200/round_2.h5ad",
+        "replicate_values": "1,2",
+        "required_obs_columns_present": true,
+        "round": "2",
+        "split_values": "alternate_test",
+        "treatment_unique_count": 29
+      },
+      {
+        "batch_unique_count": 6,
+        "group_unique_count": 2,
+        "modality": "image",
+        "n_obs": 449292,
+        "n_vars": 5120,
+        "path": "data/raw/scgenescope/features/imaging/imagenet/vit-l/round_1.h5ad",
+        "replicate_values": "3,4,5",
+        "required_obs_columns_present": true,
+        "round": "1",
+        "split_values": "test,train,validation",
+        "treatment_unique_count": 29
+      },
+      {
+        "batch_unique_count": 4,
+        "group_unique_count": 2,
+        "modality": "image",
+        "n_obs": 267475,
+        "n_vars": 5120,
+        "path": "data/raw/scgenescope/features/imaging/imagenet/vit-l/round_2.h5ad",
+        "replicate_values": "1,2",
+        "required_obs_columns_present": true,
+        "round": "2",
+        "split_values": "alternate_test",
+        "treatment_unique_count": 29
+      }
+    ]
+  },
+  "split_pairing": {
+    "all_expected_splits_present": true,
+    "rows": [
+      {
+        "min_image_profiles": 2289,
+        "min_rna_profiles": 90,
+        "noncontrol_conditions": 55,
+        "paired_conditions": 57,
+        "split": "alternate_test",
+        "treatments": 29
+      },
+      {
+        "min_image_profiles": 2688,
+        "min_rna_profiles": 1641,
+        "noncontrol_conditions": 28,
+        "paired_conditions": 29,
+        "split": "test",
+        "treatments": 29
+      },
+      {
+        "min_image_profiles": 3829,
+        "min_rna_profiles": 1494,
+        "noncontrol_conditions": 28,
+        "paired_conditions": 29,
+        "split": "train",
+        "treatments": 29
+      },
+      {
+        "min_image_profiles": 3661,
+        "min_rna_profiles": 2281,
+        "noncontrol_conditions": 27,
+        "paired_conditions": 28,
+        "split": "validation",
+        "treatments": 28
+      }
+    ]
+  }
+}

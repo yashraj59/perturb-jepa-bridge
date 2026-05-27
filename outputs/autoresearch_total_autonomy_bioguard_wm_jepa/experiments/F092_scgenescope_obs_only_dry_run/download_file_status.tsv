@@ -1,0 +1,3 @@
+modality	repo_path	local_path	expected_bytes	actual_bytes	present	size_within_5pct	download_error
+rna	features/rnaseq/scvi/n200/round_2.h5ad	data/raw/scgenescope/features/rnaseq/scvi/n200/round_2.h5ad	2565764148	2565764148	True	True	
+image	features/imaging/imagenet/vit-l/round_2.h5ad	data/raw/scgenescope/features/imaging/imagenet/vit-l/round_2.h5ad	11023900503	11023900503	True	True	

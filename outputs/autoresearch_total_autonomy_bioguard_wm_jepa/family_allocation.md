@@ -10,5 +10,5 @@
 | Family E program/graph action priors | cooled after E008 nested train-only calibration failed |
 | Family B safe residual selection and abstention | cooled; uncertainty did not isolate the bad action |
 | Family D population transport JEPA | cooled after D001 fell below the protected transition floor |
-| External validator / scGeneScope | halted at F092 by `HARD_ESCALATE_COMPUTE_OR_STORAGE_EXHAUSTED`; adapter/Croissant/storage gates passed, but real payload access exceeded effective workspace quota |
-| Future family candidate | requires explicit user direction, smaller manifest-backed feature subset, or confirmed quota-safe payload access before more external-validator work; see `SCGENESCOPE_QUOTA_SAFE_RECOVERY_PLAN.md` |
+| External validator / scGeneScope | active through F092; adapter, Croissant, storage/RAM, and obs-only backed-open gates are being validated before any training |
+| Future family candidate | Debate Council should favor external validation, data/target geometry, or representation support repair before heavier JEPA residual training |

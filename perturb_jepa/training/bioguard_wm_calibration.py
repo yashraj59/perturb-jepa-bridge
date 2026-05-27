@@ -41,6 +41,22 @@ class CalibrationResult:
     decision_label: str
 
 
+@dataclass(frozen=True)
+class JEPAOutputGateSelection:
+    blend_alpha: float
+    status: str
+    cv_lcb_transition_gap_vs_raw: float
+    cv_lcb_delta_cosine_gap_vs_raw: float
+    cv_lcb_recall_gap_vs_raw: float
+    mean_transition_gap_vs_raw: float
+    mean_delta_cosine_gap_vs_raw: float
+    mean_recall_gap_vs_raw: float
+    mean_transition_improvement: float
+    mean_delta_cosine: float
+    mean_recall_at_1: float
+    selected_row: dict[str, Any]
+
+
 def make_action_group_folds(action_ids: np.ndarray, n_folds: int, seed: int) -> list[tuple[np.ndarray, np.ndarray]]:
     records = pd.DataFrame({"action_id": np.asarray(action_ids).astype(str)})
     folds = make_action_grouped_folds(records, n_folds=n_folds, action_key="action_id", seed=seed)
@@ -331,6 +347,105 @@ def select_residual_scale_small_cap_continuous(
         mean_transition_gap=float(best["mean_transition_gap"]),
         mean_recall_gap=float(best["mean_recall_gap"]),
         action_negative_gap=float(best["action_negative_gap"]),
+        selected_row=best,
+    )
+
+
+def select_jepa_calibration_blend_gate(
+    fold_metrics: list[dict[str, float]],
+    alpha_grid: list[float] | None = None,
+    *,
+    min_lcb_transition_gap_vs_raw: float = 0.0,
+    min_lcb_delta_cosine_gap_vs_raw: float = 0.0,
+    min_lcb_recall_gap_vs_raw: float = 0.0,
+    require_nonnegative_min_delta_gap: bool = True,
+) -> JEPAOutputGateSelection:
+    """Select a train-only JEPA raw/calibrated blend without floor fallback.
+
+    The candidate output is `(1 - alpha) * raw_jepa_delta + alpha *
+    calibrated_jepa_delta`. Alpha zero is the abstention path: it preserves the
+    raw JEPA output rather than substituting a PLS/full-ridge floor.
+    """
+
+    alpha_grid = [0.0, 0.1, 0.2, 0.35, 0.5, 0.65, 0.8, 1.0] if alpha_grid is None else alpha_grid
+    rows = []
+    for alpha in alpha_grid:
+        subset = [row for row in fold_metrics if abs(float(row["blend_alpha"]) - float(alpha)) < 1.0e-12]
+        if not subset:
+            continue
+        transition_gap = np.asarray([row["transition_gap_vs_raw"] for row in subset], dtype=float)
+        delta_gap = np.asarray([row["delta_cosine_gap_vs_raw"] for row in subset], dtype=float)
+        recall_gap = np.asarray([row["recall_gap_vs_raw"] for row in subset], dtype=float)
+        transition = np.asarray([row["transition_improvement"] for row in subset], dtype=float)
+        delta = np.asarray([row["delta_cosine"] for row in subset], dtype=float)
+        recall = np.asarray([row["recall_at_1"] for row in subset], dtype=float)
+        rows.append(
+            {
+                "blend_alpha": float(alpha),
+                "cv_lcb_transition_gap_vs_raw": _lcb(transition_gap),
+                "cv_lcb_delta_cosine_gap_vs_raw": _lcb(delta_gap),
+                "cv_lcb_recall_gap_vs_raw": _lcb(recall_gap),
+                "mean_transition_gap_vs_raw": float(transition_gap.mean()),
+                "mean_delta_cosine_gap_vs_raw": float(delta_gap.mean()),
+                "mean_recall_gap_vs_raw": float(recall_gap.mean()),
+                "min_fold_transition_gap_vs_raw": float(transition_gap.min()),
+                "min_fold_delta_cosine_gap_vs_raw": float(delta_gap.min()),
+                "min_fold_recall_gap_vs_raw": float(recall_gap.min()),
+                "mean_transition_improvement": float(transition.mean()),
+                "mean_delta_cosine": float(delta.mean()),
+                "mean_recall_at_1": float(recall.mean()),
+            }
+        )
+    if not rows:
+        return JEPAOutputGateSelection(0.0, "JEPA_GATE_NO_FOLDS_USE_RAW", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, {})
+    passing = [
+        row
+        for row in rows
+        if row["blend_alpha"] > 0.0
+        and row["cv_lcb_transition_gap_vs_raw"] >= min_lcb_transition_gap_vs_raw
+        and row["cv_lcb_delta_cosine_gap_vs_raw"] >= min_lcb_delta_cosine_gap_vs_raw
+        and row["cv_lcb_recall_gap_vs_raw"] >= min_lcb_recall_gap_vs_raw
+        and (row["min_fold_delta_cosine_gap_vs_raw"] >= 0.0 or not require_nonnegative_min_delta_gap)
+        and row["min_fold_recall_gap_vs_raw"] >= -0.05
+    ]
+    if not passing:
+        raw = next((row for row in rows if row["blend_alpha"] == 0.0), rows[0])
+        return JEPAOutputGateSelection(
+            blend_alpha=0.0,
+            status="JEPA_GATE_ABSTAIN_USE_RAW",
+            cv_lcb_transition_gap_vs_raw=float(raw.get("cv_lcb_transition_gap_vs_raw", 0.0)),
+            cv_lcb_delta_cosine_gap_vs_raw=float(raw.get("cv_lcb_delta_cosine_gap_vs_raw", 0.0)),
+            cv_lcb_recall_gap_vs_raw=float(raw.get("cv_lcb_recall_gap_vs_raw", 0.0)),
+            mean_transition_gap_vs_raw=float(raw.get("mean_transition_gap_vs_raw", 0.0)),
+            mean_delta_cosine_gap_vs_raw=float(raw.get("mean_delta_cosine_gap_vs_raw", 0.0)),
+            mean_recall_gap_vs_raw=float(raw.get("mean_recall_gap_vs_raw", 0.0)),
+            mean_transition_improvement=float(raw.get("mean_transition_improvement", 0.0)),
+            mean_delta_cosine=float(raw.get("mean_delta_cosine", 0.0)),
+            mean_recall_at_1=float(raw.get("mean_recall_at_1", 0.0)),
+            selected_row=raw,
+        )
+    best = max(
+        passing,
+        key=lambda row: (
+            row["cv_lcb_transition_gap_vs_raw"],
+            row["cv_lcb_delta_cosine_gap_vs_raw"],
+            row["cv_lcb_recall_gap_vs_raw"],
+            row["mean_transition_improvement"] + row["mean_delta_cosine"] + row["mean_recall_at_1"],
+            -row["blend_alpha"],
+        ),
+    )
+    return JEPAOutputGateSelection(
+        blend_alpha=float(best["blend_alpha"]),
+        status="JEPA_GATE_SELECTED_BLEND",
+        cv_lcb_transition_gap_vs_raw=float(best["cv_lcb_transition_gap_vs_raw"]),
+        cv_lcb_delta_cosine_gap_vs_raw=float(best["cv_lcb_delta_cosine_gap_vs_raw"]),
+        cv_lcb_recall_gap_vs_raw=float(best["cv_lcb_recall_gap_vs_raw"]),
+        mean_transition_gap_vs_raw=float(best["mean_transition_gap_vs_raw"]),
+        mean_delta_cosine_gap_vs_raw=float(best["mean_delta_cosine_gap_vs_raw"]),
+        mean_recall_gap_vs_raw=float(best["mean_recall_gap_vs_raw"]),
+        mean_transition_improvement=float(best["mean_transition_improvement"]),
+        mean_delta_cosine=float(best["mean_delta_cosine"]),
+        mean_recall_at_1=float(best["mean_recall_at_1"]),
         selected_row=best,
     )
 

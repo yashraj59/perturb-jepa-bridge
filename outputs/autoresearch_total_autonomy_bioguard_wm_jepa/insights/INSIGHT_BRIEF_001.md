@@ -136,6 +136,7 @@ Spectral, kernel, program, and action-AdaLN residual-only families are cooled un
 | F089 | F089_SCGENESCOPE_SUPPLEMENT_METADATA_RECOVERED_ADAPTER_UPDATED | 0.0 | 0.0 |
 | F090 | F090_SCGENESCOPE_CROISSANT_CONTRACT_VALIDATED_READY_FOR_FEATURE_SIZE_GATE | 0.0 | 0.0 |
 | F091 | F091_SCGENESCOPE_FEATURE_PREFLIGHT_APPROVES_BACKED_OBS_ONLY_DRY_RUN | 0.0 | 0.0 |
+| F092 | F092_SCGENESCOPE_OBS_ONLY_BACKED_DRY_RUN_PASS | 0.0 | 0.0 |
 
 ## Next Council Recommendation
 After F014, the named multi-seed gates are active for search. BGWM003 selected zero residual, so current work is testing leakage-safe train-only calibration of environment transition headroom before any heavier JEPA architecture change.

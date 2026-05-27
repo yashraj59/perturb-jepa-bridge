@@ -1,0 +1,28 @@
+{
+  "decision": "F093_CALIBRATION_AND_DESCRIPTOR_REPAIR_REQUIRED",
+  "input_dir": "outputs/autoresearch_total_autonomy_bioguard_wm_jepa/external_validation_f082_scgenescope",
+  "model_promoted": false,
+  "next_repair_target": "F094_SPLIT_SAFE_JEPA_CALIBRATION_ABSTENTION_GATE",
+  "no_raw_h5ad_loaded": true,
+  "preflight_descriptor_summary": {
+    "action_descriptor": "PubChem numeric molecular properties plus found/control flags; not exact treatment one-hot",
+    "action_dim": 12,
+    "descriptor_columns": [
+      "MolecularWeight",
+      "XLogP",
+      "TPSA",
+      "Complexity",
+      "Charge",
+      "HBondDonorCount",
+      "HBondAcceptorCount",
+      "RotatableBondCount",
+      "HeavyAtomCount",
+      "CovalentUnitCount",
+      "pubchem_found",
+      "is_control_descriptor"
+    ],
+    "missing_noncontrol_descriptor_rows": 10,
+    "pubchem_found_treatments": 26,
+    "total_treatments": 29
+  }
+}

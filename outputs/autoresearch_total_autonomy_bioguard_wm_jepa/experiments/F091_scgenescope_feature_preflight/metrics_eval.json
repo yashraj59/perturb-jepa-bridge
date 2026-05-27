@@ -1,9 +1,9 @@
 {
   "anndata_available": true,
-  "available_disk_bytes": 216435434389504,
-  "available_disk_gib": 201571.20599365234,
-  "available_memory_bytes": 445950296064,
-  "available_memory_gib": 415.3235778808594,
+  "available_disk_bytes": 201563709440,
+  "available_disk_gib": 187.72083282470703,
+  "available_memory_bytes": 52657135616,
+  "available_memory_gib": 49.04077911376953,
   "backed_io_gate_pass": true,
   "diagnostic_label": "F091_SCGENESCOPE_FEATURE_PREFLIGHT_APPROVES_BACKED_OBS_ONLY_DRY_RUN",
   "estimated_full_in_memory_bytes": 54358658604,

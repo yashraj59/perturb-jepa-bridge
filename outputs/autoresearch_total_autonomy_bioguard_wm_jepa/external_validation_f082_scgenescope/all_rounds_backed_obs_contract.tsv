@@ -1,0 +1,5 @@
+modality	round	path	n_obs	n_vars	required_obs_columns_present	replicate_values	split_values	treatment_unique_count	batch_unique_count	group_unique_count
+rna	1	data/raw/scgenescope/features/rnaseq/scvi/n200/round_1.h5ad	406412	2000	True	3,4,5	test,train,validation	29	6	2
+rna	2	data/raw/scgenescope/features/rnaseq/scvi/n200/round_2.h5ad	221292	2000	True	1,2	alternate_test	29	4	2
+image	1	data/raw/scgenescope/features/imaging/imagenet/vit-l/round_1.h5ad	449292	5120	True	3,4,5	test,train,validation	29	6	2
+image	2	data/raw/scgenescope/features/imaging/imagenet/vit-l/round_2.h5ad	267475	5120	True	1,2	alternate_test	29	4	2

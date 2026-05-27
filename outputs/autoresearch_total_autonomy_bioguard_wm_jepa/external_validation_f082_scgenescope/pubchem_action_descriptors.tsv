@@ -1,0 +1,30 @@
+treatment	pubchem_cid	pubchem_matched_name	pubchem_found	is_control_descriptor	MolecularWeight	XLogP	TPSA	Complexity	Charge	HBondDonorCount	HBondAcceptorCount	RotatableBondCount	HeavyAtomCount	CovalentUnitCount
+(R)-MG132	45103781	(R)-MG132	True	False	475.6	4.8	114.0	644.0	0.0	3.0	5.0	15.0	34.0	1.0
+(R)-Roscovitine	160355	(R)-Roscovitine	True	False	354.4	3.2	87.9	417.0	0.0	3.0	6.0	8.0	26.0	1.0
+12-O-tetradecanoylphorbol-13-acetate	27924	12-O-tetradecanoylphorbol-13-acetate	True	False	616.8	6.5	130.0	1150.0	0.0	3.0	8.0	17.0	44.0	1.0
+AMG-900	24856041	AMG-900	True	False	503.6	5.1	140.0	725.0	0.0	2.0	9.0	6.0	37.0	1.0
+Aloxistatin / E-64d	65663	Aloxistatin	True	False	342.4	2.3	97.0	450.0	0.0	2.0	5.0	11.0	24.0	1.0
+BAY 11-7082	5353431	BAY 11-7082	True	False	207.25	1.4	66.3	347.0	0.0	0.0	3.0	2.0	14.0	1.0
+Benzbromarone	2333	Benzbromarone	True	False	424.1	5.7	50.4	405.0	0.0	1.0	3.0	3.0	22.0	1.0
+CGK-733	6605258	CGK-733	True	False	555.8	6.1	131.0	725.0	0.0	3.0	5.0	6.0	35.0	1.0
+Caffeine	2519	Caffeine	True	False	194.19	-0.1	58.4	293.0	0.0	0.0	3.0	0.0	14.0	1.0
+Colchicine	6167	Colchicine	True	False	399.4	1.0	83.1	740.0	0.0	1.0	6.0	5.0	29.0	1.0
+Cycloheximide	6197	Cycloheximide	True	False	281.35	0.5	83.5	404.0	0.0	2.0	4.0	3.0	20.0	1.0
+DBeQ	676352	DBeQ	True	False	340.4	5.3	49.8	403.0	0.0	2.0	4.0	6.0	26.0	1.0
+DMSO			False	True	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+Daporinad / FK-866	6914657	Daporinad	True	False	391.5	3.7	62.3	534.0	0.0	1.0	3.0	8.0	29.0	1.0
+Fluocinonide	9642	Fluocinonide	True	False	494.5	3.2	99.1	1070.0	0.0	1.0	9.0	4.0	35.0	1.0
+GW-843682X	9826308	GW-843682X	True	False	477.5	4.6	117.0	688.0	0.0	1.0	9.0	7.0	33.0	1.0
+HARMAN	5281404	HARMAN	True	False	182.22	3.6	28.7	216.0	0.0	1.0	1.0	0.0	14.0	1.0
+LY303511 (hydrochloride)	73012448	LY303511 (hydrochloride)	True	False	379.3	0.0	41.6	464.0	0.0	3.0	4.0	2.0	25.0	3.0
+PD-98059	4713	PD-98059	True	False	267.28	2.9	61.6	407.0	0.0	1.0	4.0	2.0	20.0	1.0
+PQ401			False	False	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+Pantoprazole	4679	Pantoprazole	True	False	383.4	2.4	106.0	490.0	0.0	1.0	9.0	7.0	26.0	1.0
+Phenacetin	4754	Phenacetin	True	False	179.22	1.6	38.3	162.0	0.0	1.0	2.0	3.0	13.0	1.0
+Quinidine	441074	Quinidine	True	False	324.4	2.9	45.6	457.0	0.0	1.0	4.0	4.0	24.0	1.0
+SKII			False	False	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0	0.0
+Simvastatin	54454	Simvastatin	True	False	418.6	4.7	72.8	706.0	0.0	1.0	5.0	7.0	30.0	1.0
+Splitomicin	5269	Splitomicin	True	False	198.22	2.9	26.3	261.0	0.0	0.0	2.0	0.0	15.0	1.0
+Thapsigargin	446378	Thapsigargin	True	False	650.8	3.6	172.0	1270.0	0.0	2.0	12.0	17.0	46.0	1.0
+Vorinostat / SAHA	5311	SAHA	True	False	264.32	1.9	78.4	276.0	0.0	3.0	3.0	8.0	19.0	1.0
+Wy 14643 / Pirinixic Acid	5694	Wy 14643	True	False	323.8	4.2	100.0	361.0	0.0	2.0	6.0	5.0	21.0	1.0

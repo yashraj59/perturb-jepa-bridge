@@ -1,26 +1,27 @@
 {
   "all_expected_files_present": true,
   "backed_open_error": false,
-  "cleanup_performed": true,
-  "diagnostic_label": "HARD_ESCALATE_COMPUTE_OR_STORAGE_EXHAUSTED",
+  "diagnostic_label": "F092_SCGENESCOPE_OBS_ONLY_BACKED_DRY_RUN_PASS",
   "download_error": false,
-  "downloaded_payloads_before_cleanup": [
-    {
-      "bytes": 2565764148,
-      "path": "data/raw/scgenescope/features/rnaseq/scvi/n200/round_2.h5ad"
-    },
-    {
-      "bytes": 11023900503,
-      "path": "data/raw/scgenescope/features/imaging/imagenet/vit-l/round_2.h5ad"
-    }
-  ],
-  "error": "OSError: [Errno 122] Disk quota exceeded",
+  "download_errors": {},
   "expected_paired_bytes": 13589664651,
   "f091_preflight_approved": true,
+  "leakage_controls": "F092 downloads only the smallest public feature files selected by F091 and opens H5AD obs metadata in backed mode; no encoders, whitening, target means, residual gates, or model selection are fit.",
+  "low_compute_pair_cap_bytes": 17179869184,
   "model_promoted": false,
-  "obs_contract_pass": false,
+  "obs_contract_pass": true,
   "payload_cap_violation": false,
   "payload_download_attempted": true,
-  "protected_model_of_record": "Protected rank-3 train-split-only PLS raw-linear readout",
-  "source_experiments": "F091"
+  "shared_obs_columns": [
+    "Group",
+    "Replicate",
+    "Sample_ID",
+    "Seen",
+    "Treatment",
+    "batch",
+    "source"
+  ],
+  "source_experiments": "F091",
+  "status_write_reserve_error": "",
+  "status_write_reserve_ok": true
 }

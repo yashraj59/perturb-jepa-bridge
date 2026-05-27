@@ -2,6 +2,88 @@
 
 Use this prompt when starting Codex on another cluster for external validation.
 
+## Current Actual Resume Point
+
+Start from the pushed branch:
+
+```bash
+git checkout dev
+```
+
+The older setup said to start from `synthetic_pass`; that branch remains the
+synthetic-pass baseline. The current external-validation handoff is `dev`.
+
+Current status as of the latest handoff:
+
+```text
+F082 original scGeneScope external validation failed.
+F094 split-safe calibration gate failed.
+F095 PubChem fingerprint split-safe gate nearly passed but failed by recall.
+F096 froze PubChem fingerprint descriptors plus train-only delta calibration and passed scGeneScope.
+F096 is NON-PROMOTING because scGeneScope guided the repair loop.
+Fresh external Tier 3 confirmation is still required before promotion.
+Protected rank-3 train-split-only PLS raw-linear readout remains model of record.
+```
+
+The actual next step is F097:
+
+```text
+F097_CPG0003_ROSETTA_FRESH_CONFIRMATION_PREFLIGHT
+```
+
+Use cpg0003 Rosetta CDRPBIO-BBBC036-Bray as the first fresh external
+confirmation candidate:
+
+```text
+assays = Cell Painting morphology + L1000 expression
+cell line = U2OS
+shared exact compound+dose pairs = 1469
+controls = DMSO/negcon in both modalities
+Cell Painting replicates per shared pair = min 4, median 8, max 16
+L1000 replicates per shared pair = min 1, median 2, max 2
+SMILES missing among shared pairs = 0
+```
+
+This is a fresh perturbational transcriptomics+morphology validator, but it is
+not scRNA. A pass must be reported with that caveat, and the promotion decision
+must explicitly state whether strict paired scRNA+imaging confirmation is still
+required.
+
+If the ignored Rosetta files are absent, download only these small files:
+
+```bash
+mkdir -p data/raw/cpg0003_rosetta/CDRPBIO-BBBC036-Bray/CellPainting \
+  data/raw/cpg0003_rosetta/CDRPBIO-BBBC036-Bray/L1000
+curl -L --fail --retry 3 --retry-delay 2 \
+  -o data/raw/cpg0003_rosetta/CDRPBIO-BBBC036-Bray/CellPainting/replicate_level_cp_normalized_variable_selected.csv.gz \
+  https://cellpainting-gallery.s3.amazonaws.com/cpg0003-rosetta/broad/workspace/preprocessed_data/CDRPBIO-BBBC036-Bray/CellPainting/replicate_level_cp_normalized_variable_selected.csv.gz
+curl -L --fail --retry 3 --retry-delay 2 \
+  -o data/raw/cpg0003_rosetta/CDRPBIO-BBBC036-Bray/L1000/replicate_level_l1k.csv.gz \
+  https://cellpainting-gallery.s3.amazonaws.com/cpg0003-rosetta/broad/workspace/preprocessed_data/CDRPBIO-BBBC036-Bray/L1000/replicate_level_l1k.csv.gz
+```
+
+Then implement/run a fresh confirmation runner that reuses the frozen F096 path,
+not a redesigned architecture:
+
+```text
+ProgramBootstrapJEPA
+non-exact chemical action descriptors from PubChem/SMILES plus dose
+train-only split statistics, train-only image/CP PCA, train-only calibration
+source-as-target, protected full-ridge floor, and no-residual baselines
+transition improvement, delta cosine, recall@1, bidirectional retrieval, rank,
+identity, and leakage checks
+```
+
+Use GPU for model work:
+
+```bash
+nvidia-smi --query-gpu=index,name,memory.used,memory.total,utilization.gpu --format=csv,noheader,nounits || true
+```
+
+Only use CPU if GPU is unavailable or already occupied.
+
+## Original F082 Prompt
+
 ```text
 Start from branch `synthetic_pass`.
 

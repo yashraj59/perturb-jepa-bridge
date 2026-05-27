@@ -1,0 +1,5 @@
+split	paired_conditions	noncontrol_conditions	treatments	min_rna_profiles	min_image_profiles
+alternate_test	57	55	29	90	2289
+test	29	28	29	1641	2688
+train	29	28	29	1494	3829
+validation	28	27	28	2281	3661
